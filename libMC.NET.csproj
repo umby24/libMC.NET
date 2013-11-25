@@ -1,0 +1,166 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{97892E21-B6A7-47E5-AEC7-FD2CD7C70FA2}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>libMC.NET</RootNamespace>
+    <AssemblyName>libMC.NET</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Cryptography">
+      <HintPath>..\..\Visual Studio 2012\Projects\Cryptography\Cryptography\bin\Debug\Cryptography.dll</HintPath>
+    </Reference>
+    <Reference Include="Newtonsoft.Json">
+      <HintPath>..\..\programming\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Web" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+    <Reference Include="Wrapped">
+      <HintPath>..\Wrapped\Wrapped\bin\Debug\Wrapped.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Classes\Block.cs" />
+    <Compile Include="Classes\Chunk.cs" />
+    <Compile Include="Classes\Decompressor.cs" />
+    <Compile Include="Classes\Entity.cs" />
+    <Compile Include="Classes\Item.cs" />
+    <Compile Include="Classes\Object.cs" />
+    <Compile Include="Classes\Packet.cs" />
+    <Compile Include="Classes\Player.cs" />
+    <Compile Include="Classes\Section.cs" />
+    <Compile Include="Classes\Vector.cs" />
+    <Compile Include="Classes\World.cs" />
+    <Compile Include="Minecraft.cs" />
+    <Compile Include="MinecraftServer.cs" />
+    <Compile Include="Minecraft_Net_Interaction.cs" />
+    <Compile Include="networkHandler.cs" />
+    <Compile Include="NetworkHandlerServer.cs" />
+    <Compile Include="Packets\Packet.cs" />
+    <Compile Include="Packets\Play\attachEntity.cs" />
+    <Compile Include="Packets\Play\blockAction.cs" />
+    <Compile Include="Packets\Play\blockBreakAnimation.cs" />
+    <Compile Include="Packets\Play\blockChange.cs" />
+    <Compile Include="Packets\Play\changeGameState.cs" />
+    <Compile Include="Packets\Play\ChunkData.cs" />
+    <Compile Include="Packets\Play\closeWindow.cs" />
+    <Compile Include="Packets\Play\confirmTransaction.cs" />
+    <Compile Include="Packets\Play\destroyEntities.cs" />
+    <Compile Include="Packets\Play\Disconnect.cs" />
+    <Compile Include="Packets\Play\displayScoreboard.cs" />
+    <Compile Include="Packets\Play\Effects.cs" />
+    <Compile Include="Packets\Play\Entity.cs" />
+    <Compile Include="Packets\Play\entityEffect.cs" />
+    <Compile Include="Packets\Play\entityHeadLook.cs" />
+    <Compile Include="Packets\Play\entityLook.cs" />
+    <Compile Include="Packets\Play\entityLookRelativeMove.cs" />
+    <Compile Include="Packets\Play\entityMetadata.cs" />
+    <Compile Include="Packets\Play\entityProperties.cs" />
+    <Compile Include="Packets\Play\entityRelativeMove.cs" />
+    <Compile Include="Packets\Handshake\Handshake.cs" />
+    <Compile Include="Packets\Login\Disconnect.cs" />
+    <Compile Include="Packets\Login\encryptionRequest.cs" />
+    <Compile Include="Packets\Login\encryptionResponse.cs" />
+    <Compile Include="Packets\Login\loginStart.cs" />
+    <Compile Include="Packets\Login\loginSuccess.cs" />
+    <Compile Include="Packets\Play\Animation.cs" />
+    <Compile Include="Packets\Play\chatMessage.cs" />
+    <Compile Include="Packets\Play\collectItem.cs" />
+    <Compile Include="Packets\Play\entityEquipment.cs" />
+    <Compile Include="Packets\Play\entityStatus.cs" />
+    <Compile Include="Packets\Play\entityTeleport.cs" />
+    <Compile Include="Packets\Play\entityVelocity.cs" />
+    <Compile Include="Packets\Play\explosion.cs" />
+    <Compile Include="Packets\Play\heldItemChange.cs" />
+    <Compile Include="Packets\Play\joinGame.cs" />
+    <Compile Include="Packets\Play\keepAlive.cs" />
+    <Compile Include="Packets\Play\MapChunkBulk.cs" />
+    <Compile Include="Packets\Play\Maps.cs" />
+    <Compile Include="Packets\Play\multiBlockChange.cs" />
+    <Compile Include="Packets\Play\openWindow.cs" />
+    <Compile Include="Packets\Play\Particle.cs" />
+    <Compile Include="Packets\Play\playerAbilities.cs" />
+    <Compile Include="Packets\Play\playerListItem.cs" />
+    <Compile Include="Packets\Play\playerPositionandLook.cs" />
+    <Compile Include="Packets\Play\pluginMessage.cs" />
+    <Compile Include="Packets\Play\removeEntityEffect.cs" />
+    <Compile Include="Packets\Play\Respawn.cs" />
+    <Compile Include="Packets\Play\scoreboardObjective.cs" />
+    <Compile Include="Packets\Play\ServerBound\chatMessage.cs" />
+    <Compile Include="Packets\Play\ServerBound\clientSettings.cs" />
+    <Compile Include="Packets\Play\ServerBound\clientStatus.cs" />
+    <Compile Include="Packets\Play\ServerBound\Player.cs" />
+    <Compile Include="Packets\Play\ServerBound\PlayerPosition.cs" />
+    <Compile Include="Packets\Play\ServerBound\playerPositionAndLook.cs" />
+    <Compile Include="Packets\Play\setExperience.cs" />
+    <Compile Include="Packets\Play\setSlot.cs" />
+    <Compile Include="Packets\Play\signEditorOpen.cs" />
+    <Compile Include="Packets\Play\soundEffect.cs" />
+    <Compile Include="Packets\Play\spawnExpOrb.cs" />
+    <Compile Include="Packets\Play\spawnGlobalEntity.cs" />
+    <Compile Include="Packets\Play\spawnMob.cs" />
+    <Compile Include="Packets\Play\spawnObject.cs" />
+    <Compile Include="Packets\Play\spawnPainting.cs" />
+    <Compile Include="Packets\Play\spawnPlayer.cs" />
+    <Compile Include="Packets\Play\spawnPosition.cs" />
+    <Compile Include="Packets\Play\Statistics.cs" />
+    <Compile Include="Packets\Play\tabComplete.cs" />
+    <Compile Include="Packets\Play\Teams.cs" />
+    <Compile Include="Packets\Play\timeUpdate.cs" />
+    <Compile Include="Packets\Play\updateBlockEntity.cs" />
+    <Compile Include="Packets\Play\updateHealth.cs" />
+    <Compile Include="Packets\Play\updateScore.cs" />
+    <Compile Include="Packets\Play\updateSign.cs" />
+    <Compile Include="Packets\Play\useBed.cs" />
+    <Compile Include="Packets\Play\windowItems.cs" />
+    <Compile Include="Packets\Play\windowProperty.cs" />
+    <Compile Include="Packets\Status\ClientPing.cs" />
+    <Compile Include="Packets\Status\Request.cs" />
+    <Compile Include="Packets\Status\Response.cs" />
+    <Compile Include="Packets\Status\ServerPing.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="ServerClasses\" />
+    <Folder Include="ServerPackets\" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

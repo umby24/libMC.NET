@@ -1,0 +1,11 @@
+D:\Documents\GitHub\libMC.NET\bin\Debug\libMC.NET.dll
+D:\Documents\GitHub\libMC.NET\bin\Debug\libMC.NET.pdb
+D:\Documents\GitHub\libMC.NET\bin\Debug\Cryptography.dll
+D:\Documents\GitHub\libMC.NET\bin\Debug\Wrapped.dll
+D:\Documents\GitHub\libMC.NET\bin\Debug\Cryptography.pdb
+D:\Documents\GitHub\libMC.NET\bin\Debug\Wrapped.pdb
+D:\Documents\GitHub\libMC.NET\bin\Debug\Wrapped.xml
+D:\Documents\GitHub\libMC.NET\obj\Debug\libMC.NET.dll
+D:\Documents\GitHub\libMC.NET\obj\Debug\libMC.NET.pdb
+D:\Documents\GitHub\libMC.NET\bin\Debug\Newtonsoft.Json.dll
+D:\Documents\GitHub\libMC.NET\obj\Debug\libMC.NET.csprojResolveAssemblyReference.cache
