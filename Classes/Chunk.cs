@@ -84,8 +84,8 @@ namespace libMC.NET.Classes {
             byte[] newMeta = new byte[4096];
 
             for (int i = 0; i < oldMeta.Length; i++) {
-                byte block1 = (byte)((oldMeta[i] >> 4) & 15);
-                byte block2 = (byte)(oldMeta[i] & 15);
+                byte block2 = (byte)((oldMeta[i] >> 4) & 15);
+                byte block1 = (byte)(oldMeta[i] & 15);
 
                 newMeta[(i * 2)] = block1;
                 newMeta[(i * 2) + 1] = block2;
