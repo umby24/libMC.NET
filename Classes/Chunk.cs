@@ -30,14 +30,14 @@ namespace libMC.NET.Classes {
 
         void createSections() {
             for (int i = 0; i < 16; i++) {
-                if (Convert.ToBoolean(pbitmap & (1 << i))) {
+                if ((pbitmap & (1 << i)) != 0) {
                     numBlocks++;
                     sections.Add(new Section((byte)i));
                 }
             }
 
             for (int i = 0; i < 16; i++) {
-                if (Convert.ToBoolean(abitmap & (1 << i))) {
+                if ((abitmap & (1 << i)) != 0) {
                     aBlocks++;
                 }
             }
@@ -47,22 +47,25 @@ namespace libMC.NET.Classes {
         }
 
         void populate() {
-            int offset = 0, current = 0;
+            int offset = 0, current = 0, metaOff = 0;
 
             for (int i = 0; i < 16; i++) {
-                if (Convert.ToBoolean(pbitmap & (1 << i))) {
+                if ((pbitmap & (1 << i)) != 0) {
 
                     byte[] temp = new byte[4096];
-                    byte[] temp2 = new byte[4096];
+                    byte[] temp2 = new byte[2048];
 
                     Array.Copy(blocks, offset, temp, 0, 4096); // -- Block IDs
-                    Array.Copy(Metadata, offset, temp2, 0, 4096); // -- Metadata and lighting.
+                    Array.Copy(Metadata, metaOff, temp2, 0, 2048); // -- Metadata and lighting.
 
                     Section mySection = sections[current];
 
                     mySection.blocks = temp;
-                    mySection.metadata = temp2;
+                    mySection.metadata = createMetadataBytes(temp2);
+
                     offset += 4096;
+                    metaOff += 2048;
+
                     current += 1;
                 }
             }
@@ -72,12 +75,31 @@ namespace libMC.NET.Classes {
             Metadata = null;
         }
 
+        /// <summary>
+        /// Expand the compressed metadata (half-byte per block) into single-byte per block for easier reading.
+        /// </summary>
+        /// <param name="oldMeta">Old (2048-byte) Metadata</param>
+        /// <returns>4096 uncompressed metadata</returns>
+        public byte[] createMetadataBytes(byte[] oldMeta) {
+            byte[] newMeta = new byte[4096];
+
+            for (int i = 0; i < oldMeta.Length; i++) {
+                byte block1 = (byte)((oldMeta[i] >> 4) & 15);
+                byte block2 = (byte)(oldMeta[i] & 15);
+
+                newMeta[(i * 2)] = block1;
+                newMeta[(i * 2) + 1] = block2;
+            }
+
+            return newMeta;
+        }
+
         public byte[] getData(byte[] deCompressed) {
             // -- Loading chunks, network handler hands off the decompressed bytes
             // -- This function takes its portion, and returns what's left.
 
             blocks = new byte[numBlocks];
-            Metadata = new byte[numBlocks]; // -- Contains block light and block metadata.
+            Metadata = new byte[numBlocks / 2]; // -- Contains block light and block metadata.
 
             byte[] temp;
             int removeable = numBlocks;
@@ -88,13 +110,8 @@ namespace libMC.NET.Classes {
             if (groundup)
                 removeable += 256;
 
-            if (deCompressed.Length < numBlocks) // -- Remove edge cases, fill the rest with air.
-                numBlocks = deCompressed.Length;
-            else
-                Array.Copy(deCompressed, numBlocks, Metadata, 0, numBlocks);
-
             Array.Copy(deCompressed, 0, blocks, 0, numBlocks);
-            Array.Copy(deCompressed, numBlocks, Metadata, 0, numBlocks); // -- Copy in Block light and Metadata.
+            Array.Copy(deCompressed, numBlocks, Metadata, 0, numBlocks / 2); // -- Copy in Metadata
 
             temp = new byte[deCompressed.Length - (numBlocks + removeable)];
 
@@ -135,10 +152,6 @@ namespace libMC.NET.Classes {
         public int getBlockMetadata(int Bx, int By, int Bz) {
             Section thisSection = GetSectionByNumber(By);
             return thisSection.getBlockMetadata(getXinSection(Bx), GetPositionInSection(By), getZinSection(Bz));
-        }
-        public int getBlockLighting(int Bx, int By, int Bz) {
-            Section thisSection = GetSectionByNumber(By);
-            return thisSection.getBlockLighting(getXinSection(Bx), GetPositionInSection(By), getZinSection(Bz));
         }
 
         public void setBlockData(int Bx, int By, int Bz, byte data) {

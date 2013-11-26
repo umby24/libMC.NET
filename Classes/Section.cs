@@ -16,7 +16,7 @@ namespace libMC.NET.Classes {
         }
 
         public void setBlock(int x, int y, int z, int id) {
-            int index = x + (z * 16) + (y * 256);
+            int index = x + (z * 16) + (y * 16 * 16);
             blocks[index] = (byte)id;
         }
 
@@ -28,19 +28,14 @@ namespace libMC.NET.Classes {
         }
 
         public int getBlockMetadata(int x, int y, int z) {
-            int index = x + (z * 16) + (y * 16 * 16);
+            int index = (x + (z * 16) + (y * 16 * 16));
             byte value = metadata[index];
 
-            return value & 128;
+            return value;
         }
-        public int getBlockLighting(int x, int y, int z) {
-            int index = x + (z * 16) + (y * 16 * 16);
-            byte value = metadata[index];
 
-            return value & 240;
-        }
         public void setBlockData(int x, int y, int z, byte data) {
-            int index = x + (z * 16) + (y * 16 * 16);
+            int index = (x + (z * 16) + (y * 16 * 16));
             metadata[index] = data;
         }
     }

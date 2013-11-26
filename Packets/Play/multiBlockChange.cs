@@ -36,6 +36,7 @@ namespace libMC.NET.Packets.Play {
                 Z = (Z * 16) + z;
 
                 thisChunk.updateBlock(x, y, z, block_id);
+                thisChunk.setBlockData(x, y, z, (byte)metadata);
             }
 
             mc.raiseMultiBlockChange(X, Z);
