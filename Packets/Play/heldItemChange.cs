@@ -14,6 +14,7 @@ namespace libMC.NET.Packets.Play {
                 mc.thisPlayer = new Classes.Player();
 
             mc.thisPlayer.selectedSlot = slot;
+            ServerBound.HeldItemChange hic = new ServerBound.HeldItemChange(ref mc);
 
             mc.raiseHeldSlotChanged(slot);
         }

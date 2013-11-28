@@ -37,5 +37,17 @@ namespace libMC.NET.Classes {
 
             return ((Block.blockitemid)itemID).ToString();
         }
+
+        public static void writeSlot(ref Minecraft mc, Item item) {
+            if (item == null) {
+                mc.nh.wSock.writeShort(-1);
+                return;
+            }
+
+            mc.nh.wSock.writeShort((short)item.itemID);
+            mc.nh.wSock.writeByte(item.itemCount);
+            mc.nh.wSock.writeShort(item.itemDamage);
+            mc.nh.wSock.writeShort(-1);
+        }
     }
 }

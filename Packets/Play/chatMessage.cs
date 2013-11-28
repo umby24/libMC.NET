@@ -54,24 +54,25 @@ namespace libMC.NET.Packets.Play {
                     text = jsonObj.with[1];
                     break;
                 case "multiplayer.player.joined":
-                    sender = jsonObj.with[0].text;
-                    text = sender + " joined the game.";
+                    sender = "EVENT";
+                    text = jsonObj.with[0].text + " joined the game.";
                     break;
                 case "multiplayer.player.left":
-                    sender = jsonObj.with[0].text;
-                    text = sender + " left the game.";
+                    sender = "EVENT";
+                    text = jsonObj.with[0].text + " left the game.";
                     break;
                 case "death.attack.player":
                     //name = jsonObj.with[0].text;
-                    sender = jsonObj.with[2].text;
-                    text = jsonObj.with[0].text + " killed by " + sender;
+                    sender = "EVENT";
+                    text = jsonObj.with[0].text + " killed by " + jsonObj.with[2].text;
                     break;
                 case "chat.type.admin":
+                    sender = "EVENT";
                     break;
                 case "chat.type.announcement":
                     name = "Server";
                     sender = name;
-                    text = string.Join(" ", jsonObj.with[1].extra);
+                    text = string.Join("", jsonObj.with[1].extra);
                     break;
             }
 

@@ -13,6 +13,11 @@ namespace libMC.NET.Packets.Play {
             short length = mc.nh.wSock.readShort();
             Data = mc.nh.wSock.readByteArray(length);
 
+            if (Channel == "MC|Brand") {
+                ServerBound.PluginMessage PM = new ServerBound.PluginMessage(ref mc, "MC|Brand", Encoding.UTF8.GetBytes("Minebot"));
+                ServerBound.playerPositionAndLook ppal = new ServerBound.playerPositionAndLook(ref mc);
+            }
+
             mc.raisePluginMessage(Channel, Data);
         }
     }

@@ -36,7 +36,7 @@ namespace libMC.NET.Packets.Play {
             mc.raiseGameJoined();
 
             ServerBound.clientSettings b = new ServerBound.clientSettings(ref mc);
-            ServerBound.PlayerPosition c = new ServerBound.PlayerPosition(ref mc);
+            //ServerBound.PlayerPosition c = new ServerBound.PlayerPosition(ref mc);
         }
     }
 }

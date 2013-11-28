@@ -15,7 +15,9 @@ namespace libMC.NET.Packets.Play {
 
             mc.minecraftWorld.worldAge = worldAge;
             mc.minecraftWorld.currentTime = worldTime;
-            Packets.Play.ServerBound.playerPositionAndLook c = new Packets.Play.ServerBound.playerPositionAndLook(ref mc);
+            //Packets.Play.ServerBound.playerPositionAndLook c = new Packets.Play.ServerBound.playerPositionAndLook(ref mc);
+
+           
             mc.raiseDebug(this, "World time updated");
         }
     }

@@ -120,9 +120,11 @@
     <Compile Include="Packets\Play\ServerBound\chatMessage.cs" />
     <Compile Include="Packets\Play\ServerBound\clientSettings.cs" />
     <Compile Include="Packets\Play\ServerBound\clientStatus.cs" />
+    <Compile Include="Packets\Play\ServerBound\HeldItemChange.cs" />
     <Compile Include="Packets\Play\ServerBound\Player.cs" />
     <Compile Include="Packets\Play\ServerBound\PlayerPosition.cs" />
     <Compile Include="Packets\Play\ServerBound\playerPositionAndLook.cs" />
+    <Compile Include="Packets\Play\ServerBound\PluginMessage.cs" />
     <Compile Include="Packets\Play\setExperience.cs" />
     <Compile Include="Packets\Play\setSlot.cs" />
     <Compile Include="Packets\Play\signEditorOpen.cs" />

@@ -34,7 +34,7 @@ namespace libMC.NET.Packets.Play {
                 }
             }
 
-            ServerBound.Player player = new ServerBound.Player(ref mc);
+            //ServerBound.Player player = new ServerBound.Player(ref mc);
         }
     }
 }

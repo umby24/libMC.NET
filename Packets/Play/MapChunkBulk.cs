@@ -36,6 +36,8 @@ namespace libMC.NET.Packets.Play {
 
                 mc.minecraftWorld.worldChunks.Add(chunks[i]);
             }
+
+            ServerBound.Player p = new ServerBound.Player(ref mc);
         }
     }
 }
