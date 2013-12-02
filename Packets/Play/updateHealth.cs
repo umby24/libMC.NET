@@ -18,7 +18,7 @@ namespace libMC.NET.Packets.Play {
             mc.thisPlayer.foodSaturation = saturation;
 
             mc.raisePlayerHealthUpdate(health, hunger, saturation);
-            //mc.raiseDebug(this, "Player health updated.");
+            mc.raiseDebug(this, "Player health updated.");
         }
     }
 }

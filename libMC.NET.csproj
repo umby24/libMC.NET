@@ -152,6 +152,7 @@
     <Compile Include="Packets\Status\Response.cs" />
     <Compile Include="Packets\Status\ServerPing.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Proxy.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="ServerClasses\" />

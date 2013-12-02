@@ -35,8 +35,11 @@ namespace libMC.NET.Packets.Play {
             mc.raiseDebug(this, string.Format("Entity ID: {0}", Entity_ID));
             mc.raiseGameJoined();
 
+            // -- Vanilla client at this point sends client settings, and plugin message designating the 
+            // -- modpack that the client is using.
+
             ServerBound.clientSettings b = new ServerBound.clientSettings(ref mc);
-            //ServerBound.PlayerPosition c = new ServerBound.PlayerPosition(ref mc);
+            ServerBound.PluginMessage c = new ServerBound.PluginMessage(ref mc, "MC|Brand", Encoding.UTF8.GetBytes(mc.ClientBrand));
         }
     }
 }

@@ -10,7 +10,7 @@ namespace libMC.NET {
     /// </summary>
     public class Minecraft {
         #region Variables
-        public string serverIP, clientName, clientPassword, accessToken, selectedProfile;
+        public string serverIP, clientName, clientPassword, accessToken, selectedProfile, ClientBrand;
         public int serverPort, serverState;
         public bool verifyNames, running;
         public networkHandler nh;
@@ -36,6 +36,7 @@ namespace libMC.NET {
             clientName = username;
             clientPassword = password;
             verifyNames = nameVerification;
+            ClientBrand = "libMC.NET"; // -- Used in the plugin message reporting the client brand to the server.
         }
 
         /// <summary>
