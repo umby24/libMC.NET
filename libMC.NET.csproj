@@ -153,6 +153,7 @@
     <Compile Include="Packets\Status\ServerPing.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Proxy.cs" />
+    <Compile Include="MinecraftWorld\TickHandler.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="ServerClasses\" />

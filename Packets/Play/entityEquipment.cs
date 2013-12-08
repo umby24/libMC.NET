@@ -29,7 +29,7 @@ namespace libMC.NET.Packets.Play {
             }
             
 
-            mc.raiseDebug(this, String.Format("Entity Equipment update.\n EID: {0}\nSlot: {1}\nFriendly name: {2}", Entity_ID, slot.ToString(), slotItem.friendlyName()));
+            mc.RaiseDebug(this, String.Format("Entity Equipment update.\n EID: {0}\nSlot: {1}\nFriendly name: {2}", Entity_ID, slot.ToString(), slotItem.friendlyName()));
         }
     }
 }

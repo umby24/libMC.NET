@@ -13,7 +13,7 @@ namespace libMC.NET.Packets.Play {
             mc.nh.wSock.readByte(); // -- Type (Currently always 1, thunderbolt)
             location = new Vector(mc.nh.wSock.readInt(), mc.nh.wSock.readInt(), mc.nh.wSock.readInt());
 
-            mc.raiseDebug(this, "Thunderbolt has stricken.");
+            mc.RaiseDebug(this, "Thunderbolt has stricken.");
         }
     }
 }

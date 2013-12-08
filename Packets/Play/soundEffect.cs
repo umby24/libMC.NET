@@ -17,7 +17,7 @@ namespace libMC.NET.Packets.Play {
             volume = mc.nh.wSock.readFloat();
             pitch = mc.nh.wSock.readByte();
 
-            mc.raiseDebug(this, "Creeeeepy sounnnddd");
+            mc.RaiseDebug(this, "Creeeeepy sounnnddd");
         }
     }
 }

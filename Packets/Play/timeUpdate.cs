@@ -15,10 +15,13 @@ namespace libMC.NET.Packets.Play {
 
             mc.minecraftWorld.worldAge = worldAge;
             mc.minecraftWorld.currentTime = worldTime;
-            // -- Packets.Play.ServerBound.playerPositionAndLook c = new Packets.Play.ServerBound.playerPositionAndLook(ref mc);
 
-           
-            mc.raiseDebug(this, "World time updated");
+            var Player = new ServerBound.Player(ref mc);
+
+            if (mc.nh.worldTick == null)
+                mc.nh.worldTick = new MinecraftWorld.TickHandler(ref mc);
+
+            mc.RaiseDebug(this, "World time updated");
         }
     }
 }

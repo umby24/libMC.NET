@@ -8,7 +8,7 @@ namespace libMC.NET.Packets.Login {
         public Disconnect(ref Minecraft mc) {
             string reason = mc.nh.wSock.readString();
 
-            mc.raiseLoginFailure(this, reason);
+            mc.RaiseLoginFailure(this, reason);
             mc.Disconnect();
         }
     }

@@ -32,7 +32,7 @@ namespace libMC.NET.Packets.Play {
                 mc.raiseLocationChanged();
 
                 Packets.Play.ServerBound.playerPositionAndLook c = new Packets.Play.ServerBound.playerPositionAndLook(ref mc);
-                mc.first = true;
+                mc.First = true;
                 
         }
     }

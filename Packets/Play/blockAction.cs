@@ -38,8 +38,8 @@ namespace libMC.NET.Packets.Play {
                     mc.raiseChestStateChange(byte2, x, y, z);
                     break;
                 default:
-                    mc.raiseError(this, "Unknown block action received.");
-                    mc.raiseDebug(this, "Error info: Block ID: " + type);
+                    mc.RaiseError(this, "Unknown block action received.");
+                    mc.RaiseDebug(this, "Error info: Block ID: " + type);
                     break;
             }
         }

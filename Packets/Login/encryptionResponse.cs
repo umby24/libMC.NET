@@ -15,7 +15,7 @@ namespace libMC.NET.Packets.Login {
 
             // -- Packet sent, now enable encryption.
             mc.nh.wSock.EncEnabled = true;
-            mc.nh.raiseSocketInfo(this, "Encryption Enabled");
+            mc.nh.RaiseSocketInfo(this, "Encryption Enabled");
         }
     }
 }

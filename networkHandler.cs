@@ -8,6 +8,7 @@ using System.Net.Sockets;
 using System.Threading;
 using libMC.NET.Packets.Handshake;
 using libMC.NET.Packets.Login;
+using libMC.NET.MinecraftWorld;
 
 namespace libMC.NET {
     public class NetworkHandler {
@@ -17,6 +18,7 @@ namespace libMC.NET {
         TcpClient baseSock;
         NetworkStream baseStream;
         public Wrapped.Wrapped wSock;
+        public TickHandler worldTick;
 
         #region Packet Dictionaries
         Dictionary<int, Func<Minecraft, Packets.Packet>> packetsLogin;
@@ -95,6 +97,7 @@ namespace libMC.NET {
 
             baseSock.Close();
             InfoMessage(this, "Disconnected from Minecraft Server.");
+
 
         }
         
@@ -232,9 +235,9 @@ namespace libMC.NET {
                                 RaisePacketHandled(this, packetp, packetID);
 
                                 break;
-                        
                         }
-                        //Packets.Play.ServerBound.playerPositionAndLook c = new Packets.Play.ServerBound.playerPositionAndLook(ref mainMC);
+                        if (worldTick != null)
+                            worldTick.DoTick();
                     }
                 }
             } catch (Exception e) {

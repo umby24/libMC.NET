@@ -15,8 +15,7 @@ namespace libMC.NET
 
         public string[] Login(string username, string password) {
             string json = "{\"agent\": {\"name\": \"minecraft\",\"version\": 1},\"username\": \"" + username + "\",\"password\": \"" + password + "\"}";
-            string accessToken = "";
-            string profileID = "";
+            string accessToken = "", profileID = "", clientToken = "";
 
             HttpWebRequest wreq = (HttpWebRequest)WebRequest.Create("https://authserver.mojang.com/authenticate");
 
@@ -28,8 +27,16 @@ namespace libMC.NET
                 stream.Write(Encoding.ASCII.GetBytes(json), 0, json.Length);
             }
 
-            HttpWebResponse response = (HttpWebResponse)wreq.GetResponse();
-            string code = new StreamReader(response.GetResponseStream()).ReadToEnd();
+            HttpWebResponse response;
+            String code;
+
+            try {
+                 response = (HttpWebResponse)wreq.GetResponse();
+                 code = new StreamReader(response.GetResponseStream()).ReadToEnd();
+            } catch {
+                // -- Error occured possible incorrect password.
+                return new[] { "", "", "" };
+            }
 
             var root = JObject.Parse(code);
 
@@ -40,13 +47,16 @@ namespace libMC.NET
                     case "accessToken":
                         accessToken = app.Value.ToString();
                         break;
+                    case "clientToken":
+                        clientToken = app.Value.ToString();
+                        break;
                     case "selectedProfile":
                         profileID = app.Value.First.First.ToString();
                         break;
                 }
             }
 
-            return new string[] { accessToken, profileID };
+            return new string[] { accessToken, profileID, clientToken };
         }
 
         public bool VerifyName(string username, string accessToken, string selectedProfile, string ServerHash) {
@@ -70,6 +80,76 @@ namespace libMC.NET
             }
 
             return true;
+        }
+
+        public string[] SessionRefresh(string accessToken, string clientToken) {
+            string json = "{\"accessToken\": \"" + accessToken + "\",\"clientToken\": \"" + clientToken + "\"}";
+            string accessTokenIn = "", clientTokenIn = "";
+
+            HttpWebRequest wreq = (HttpWebRequest)WebRequest.Create("https://authserver.mojang.com/refresh");
+
+            wreq.Method = "POST";
+            wreq.ContentType = "application/json";
+            wreq.ContentLength = json.Length;
+
+            using (Stream stream = wreq.GetRequestStream()) {
+                stream.Write(Encoding.ASCII.GetBytes(json), 0, json.Length);
+            }
+
+            HttpWebResponse response;
+            String code;
+
+            try {
+                response = (HttpWebResponse)wreq.GetResponse();
+                code = new StreamReader(response.GetResponseStream()).ReadToEnd();
+            } catch {
+                // -- Error occured possible incorrect credentials provided.
+                return new[] { "", "", "" };
+            }
+
+            var root = JObject.Parse(code);
+
+            foreach (KeyValuePair<string, JToken> app in root) {
+                var appName = app.Key;
+
+                switch (appName) {
+                    case "accessToken":
+                        accessTokenIn = app.Value.ToString();
+                        break;
+                    case "clientToken":
+                        clientTokenIn = app.Value.ToString();
+                        break;
+                }
+            }
+
+            return new[] { accessTokenIn, clientTokenIn};
+        }
+
+        public bool ValidateSession(string accessToken) {
+            string json = "{\"accessToken\": \"" + accessToken + "\"}";
+
+            HttpWebRequest wreq = (HttpWebRequest)WebRequest.Create("https://authserver.mojang.com/validate");
+
+            wreq.Method = "POST";
+            wreq.ContentType = "application/json";
+            wreq.ContentLength = json.Length;
+
+            using (Stream stream = wreq.GetRequestStream()) {
+                stream.Write(Encoding.ASCII.GetBytes(json), 0, json.Length);
+            }
+
+            try {
+                HttpWebResponse response = (HttpWebResponse)wreq.GetResponse();
+                string code = new StreamReader(response.GetResponseStream()).ReadToEnd();
+
+                if (code == "")
+                    return true;
+
+            } catch {
+                return false;
+            }
+
+            return false;
         }
     }
 }

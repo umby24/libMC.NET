@@ -19,7 +19,7 @@ namespace libMC.NET.Packets.Play {
 
             //TODO: Track other entities entering beds.
 
-            mc.raiseDebug(this, "Player entered a bed");
+            mc.RaiseDebug(this, "Player entered a bed");
         }
     }
 }

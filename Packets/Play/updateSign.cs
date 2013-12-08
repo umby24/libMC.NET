@@ -19,7 +19,7 @@ namespace libMC.NET.Packets.Play {
             Line_3 = mc.nh.wSock.readString();
             Line_4 = mc.nh.wSock.readString();
 
-            mc.raiseDebug(this, "Sign updated.");
+            mc.RaiseDebug(this, "Sign updated.");
         }
     }
 }

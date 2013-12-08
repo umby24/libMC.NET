@@ -10,6 +10,7 @@ namespace libMC.NET.Packets.Play {
         public Disconnect(ref Minecraft mc) {
             reason = mc.nh.wSock.readString();
 
+            mc.RaiseInfo(this, "You were kicked! Reason: " + reason);
             mc.raiseKicked(reason);
             mc.Disconnect();
         }

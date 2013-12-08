@@ -21,7 +21,7 @@ namespace libMC.NET.Packets.Play {
                 EntityID = mc.nh.wSock.readInt();
 
             mc.raiseOpenWindow(windowID, inventoryType, windowTitle, slots, useTitle);
-            mc.raiseDebug(this, "Window opened forcably");
+            mc.RaiseDebug(this, "Window opened forcably");
         }
     }
 }

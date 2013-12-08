@@ -13,7 +13,7 @@ namespace libMC.NET.Packets.Play {
             rawMessage = mc.nh.wSock.readString();
             parsedMessage = parseJsonChat(rawMessage);
 
-            mc.raiseMC(this, parsedMessage, sender);
+            mc.RaiseMC(this, parsedMessage, sender);
         }
 
         string parseJsonChat(string raw) {

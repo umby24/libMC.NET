@@ -22,7 +22,7 @@ namespace libMC.NET.Packets.Play {
                     mc.minecraftWorld.Entities[eIndex].animation = Ani;
             }
 
-            mc.raiseEntityAnimationChanged(this, Entity_ID, Ani);
+            mc.RaiseEntityAnimationChanged(this, Entity_ID, Ani);
         }
     }
 }

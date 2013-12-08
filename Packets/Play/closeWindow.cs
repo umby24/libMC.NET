@@ -10,7 +10,7 @@ namespace libMC.NET.Packets.Play {
         public closeWindow(ref Minecraft mc) {
             windowID = mc.nh.wSock.readByte();
 
-            mc.raiseDebug(this, "Window forcably closed");
+            mc.RaiseDebug(this, "Window forcably closed");
             mc.raiseWindowClosed(windowID);
         }
     }

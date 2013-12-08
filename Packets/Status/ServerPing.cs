@@ -10,7 +10,7 @@ namespace libMC.NET.Packets.Status {
             long time = mc.nh.wSock.readLong();
             msPing = (int)(DateTime.Now.Ticks - time) / 10000; // -- 10,000 ticks per millisecond.
 
-            mc.nh.raiseSocketInfo(this, "Server Ping Completed.");
+            mc.nh.RaiseSocketInfo(this, "Server Ping Completed.");
         }
     }
 }

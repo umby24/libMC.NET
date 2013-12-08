@@ -11,7 +11,7 @@ namespace libMC.NET {
     /// </summary>
     public class Minecraft {
         #region Variables
-        public string ServerIP, ClientName, ClientPassword, AccessToken, SelectedProfile, ClientBrand;
+        public string ServerIP, ClientName, ClientPassword, AccessToken, ClientToken, SelectedProfile, ClientBrand;
         public int ServerPort, ServerState;
         public bool VerifyNames, Running, First = false;
         public NetworkHandler nh;
@@ -59,6 +59,7 @@ namespace libMC.NET {
 
                     AccessToken = credentials[0];
                     SelectedProfile = credentials[1];
+                    ClientToken = credentials[2];
                 }
 
             } else {
@@ -67,7 +68,54 @@ namespace libMC.NET {
             }
         
         }
-        
+        /// <summary>
+        /// Uses a client's stored credentials to verify with Minecraft.net
+        /// </summary>
+        public bool VerifySession() {
+            if (AccessToken == null || ClientToken == null) {
+                RaiseError(this, "Credentials are not set!");
+                return false;
+            }
+
+            var SessionVerifier = new Minecraft_Net_Interaction();
+            string[] Response = SessionVerifier.SessionRefresh(AccessToken, ClientToken);
+
+            if (Response[0] == "") {
+                RaiseError(this, "Unable to Verify Session!");
+                return false;
+            }
+
+            RaiseInfo(this, "Credentials verified and refreshed!");
+
+            AccessToken = Response[0];
+            ClientToken = Response[1];
+
+            return true;
+        }
+        /// <summary>
+        /// Uses a client's stored credentials to verify with Minecraft.net
+        /// </summary>
+        /// <param name="accessToken">Stored Access Token</param>
+        /// <param name="clientToken">Stored Client Token</param>
+        public bool VerifySession(string accessToken, string clientToken) {
+            AccessToken = accessToken;
+            ClientToken = clientToken;
+
+            var SessionVerifier = new Minecraft_Net_Interaction();
+            string[] Response = SessionVerifier.SessionRefresh(AccessToken, ClientToken);
+
+            if (Response[0] == "") {
+                RaiseError(this, "Unable to Verify Session!");
+                return false;
+            }
+
+            RaiseInfo(this, "Credentials verified and refreshed!");
+
+            AccessToken = Response[0];
+            ClientToken = Response[1];
+
+            return true;
+        }
         /// <summary>
         /// Connects to the Minecraft Server.
         /// </summary>

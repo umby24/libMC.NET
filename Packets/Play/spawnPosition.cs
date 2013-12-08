@@ -18,7 +18,7 @@ namespace libMC.NET.Packets.Play {
             mc.minecraftWorld.Spawn_Y = y;
             mc.minecraftWorld.Spawn_Z = z;
 
-            mc.raiseDebug(this, String.Format("World spawn Set/Changed\nX: {0}\nY: {1}\nZ: {2}", x, y, z));
+            mc.RaiseDebug(this, String.Format("World spawn Set/Changed\nX: {0}\nY: {1}\nZ: {2}", x, y, z));
         }
     }
 }

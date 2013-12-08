@@ -11,7 +11,7 @@ namespace libMC.NET.Packets.Play {
             collectedEID = mc.nh.wSock.readInt();
             collectorEID = mc.nh.wSock.readInt();
 
-            mc.raiseDebug(this, "Item collected by " + collectorEID);
+            mc.RaiseDebug(this, "Item collected by " + collectorEID);
             mc.raiseItemCollected(collectedEID, collectorEID);
         }
     }

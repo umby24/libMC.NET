@@ -19,7 +19,7 @@ namespace libMC.NET.Packets.Play {
                 mc.raiseEntityDestruction(Entity_ID);
             }
 
-            mc.raiseDebug(this, "Entities Deleted.");
+            mc.RaiseDebug(this, "Entities Deleted.");
         }
     }
 }
