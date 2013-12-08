@@ -5,7 +5,7 @@ using System.Text;
 using System.IO;
 using System.IO.Compression;
 
-namespace libMC.NET.Classes {
+namespace libMC.NET.Common {
     class Decompressor {
         // ZLib Decompressor.
         public static byte[] decompress(byte[] data) {

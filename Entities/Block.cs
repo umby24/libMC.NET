@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace libMC.NET.Classes {
+namespace libMC.NET.Entities {
     public class Block {
        public int ID;
        public string Name;

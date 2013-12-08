@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using libMC.NET.Classes;
+using libMC.NET.Entities;
 
 namespace libMC.NET.Packets.Play {
     class entityEquipment : Packet {
@@ -17,15 +17,15 @@ namespace libMC.NET.Packets.Play {
             slotItem = new Item();
             slotItem.readSlot(ref mc); // -- read the slot data.
 
-            if (mc.thisPlayer != null && Entity_ID == mc.thisPlayer.Entity_ID) {
-                mc.thisPlayer.setInventory(slotItem, slot);
+            if (mc.ThisPlayer != null && Entity_ID == mc.ThisPlayer.Entity_ID) {
+                mc.ThisPlayer.setInventory(slotItem, slot);
             }
 
-            if (mc.minecraftWorld != null && mc.minecraftWorld.Entities != null) {
-                int eIndex = mc.minecraftWorld.getEntityById(Entity_ID);
+            if (mc.MinecraftWorld != null && mc.MinecraftWorld.Entities != null) {
+                int eIndex = mc.MinecraftWorld.getEntityById(Entity_ID);
 
                 if (eIndex != -1)
-                    mc.minecraftWorld.Entities[eIndex].handleInventory(slot, slotItem);
+                    mc.MinecraftWorld.Entities[eIndex].handleInventory(slot, slotItem);
             }
             
 

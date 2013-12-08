@@ -10,11 +10,11 @@ namespace libMC.NET.Packets.Play {
 
             for (int x = 0; x < (int)count; x++) {
                 int Entity_ID = mc.nh.wSock.readInt();
-                if (mc.minecraftWorld != null) {
-                    int eIndex = mc.minecraftWorld.getEntityById(Entity_ID);
+                if (mc.MinecraftWorld != null) {
+                    int eIndex = mc.MinecraftWorld.getEntityById(Entity_ID);
 
                     if (eIndex != -1)
-                        mc.minecraftWorld.Entities.RemoveAt(eIndex);
+                        mc.MinecraftWorld.Entities.RemoveAt(eIndex);
                 }
                 mc.raiseEntityDestruction(Entity_ID);
             }

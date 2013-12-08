@@ -2,7 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using libMC.NET.Classes;
+using libMC.NET.Common;
+using libMC.NET.World;
 
 namespace libMC.NET.Packets.Play {
     class MapChunkBulk : Packet {
@@ -31,10 +32,10 @@ namespace libMC.NET.Packets.Play {
 
                 DecompressedData = chunks[i].getData(DecompressedData); // -- Calls the chunk class to take all of the bytes it needs, and return whats left.
 
-                if (mc.minecraftWorld == null)
-                    mc.minecraftWorld = new World();
+                if (mc.MinecraftWorld == null)
+                    mc.MinecraftWorld = new WorldClass();
 
-                mc.minecraftWorld.worldChunks.Add(chunks[i]);
+                mc.MinecraftWorld.worldChunks.Add(chunks[i]);
             }
 
         }

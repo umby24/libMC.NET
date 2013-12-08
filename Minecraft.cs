@@ -3,8 +3,16 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+
+using libMC.NET.Common;
+using libMC.NET.World;
+using libMC.NET.Entities;
+
 // TODO: Convert cases likeThis to LikeThis.
-// TODO: Implement session storage for save credential storage.
+// TODO: Comment more things
+// TODO: Speed things up, optimize code.
+
+// [Low]: Refactor packets to be universal for Server/Client, and be usable with proxies
 namespace libMC.NET {
     /// <summary>
     /// Main class for libMC.Net, a Minecraft interaction library for .net languages.
@@ -17,9 +25,9 @@ namespace libMC.NET {
         public NetworkHandler nh;
 
         #region Trackers
-        public Classes.World minecraftWorld; // -- Holds all of the world information. Time, chunks, players, ect.
-        public Classes.Player thisPlayer; // -- Holds all user information, location, inventory and so on.
-        public Dictionary<string, short> players;
+        public WorldClass MinecraftWorld; // -- Holds all of the world information. Time, chunks, players, ect.
+        public Player ThisPlayer; // -- Holds all user information, location, inventory and so on.
+        public Dictionary<string, short> Players;
         #endregion
         #endregion
 
@@ -29,7 +37,7 @@ namespace libMC.NET {
         /// <param name="ip">The IP of the server to connect to</param>
         /// <param name="port">The port of the server to connect to</param>
         /// <param name="username">The username to use when connecting to Minecraft</param>
-        /// <param name="password">The password to use when connecting to Minecraft</param>
+        /// <param name="password">The password to use when connecting to Minecraft (Ignore if you are providing credentials)</param>
         /// <param name="nameVerification">To connect using Name Verification or not</param>
         public Minecraft(string ip, int port, string username, string password, bool nameVerification) {
             ServerIP = ip;
@@ -123,7 +131,7 @@ namespace libMC.NET {
             if (nh != null)
                 Disconnect();
 
-            players = new Dictionary<string,short>();
+            Players = new Dictionary<string,short>();
 
             nh = new NetworkHandler(this);
 
@@ -152,9 +160,9 @@ namespace libMC.NET {
             Running = false;
             ServerState = 0;
             nh = null;
-            minecraftWorld = null;
-            thisPlayer = null;
-            players = null;
+            MinecraftWorld = null;
+            ThisPlayer = null;
+            Players = null;
 
             RaiseDebug(this, "Variables reset, disconnected from server.");
         }
@@ -253,7 +261,7 @@ namespace libMC.NET {
                 chestStateChanged(state, x, y, z);
         }
 
-        public void raiseBlockBreakingEvent(Classes.Vector Location, int Entity_ID, byte Stage) {
+        public void raiseBlockBreakingEvent(Vector Location, int Entity_ID, byte Stage) {
             if (blockBreaking != null)
                 blockBreaking(Location, Entity_ID, Stage);
         }
@@ -318,7 +326,7 @@ namespace libMC.NET {
                 entityStatusChanged(Entity_ID);
         }
 
-        public void raiseEntityEquipment(int Entity_ID, int slot, Classes.Item newItem) {
+        public void raiseEntityEquipment(int Entity_ID, int slot, Item newItem) {
             if (entityEquipmentChanged != null)
                 entityEquipmentChanged(Entity_ID, slot, newItem);
         }
@@ -418,12 +426,12 @@ namespace libMC.NET {
                 experienceSet(expBar, level, totalExp);
         }
 
-        public void raiseSetWindowSlot(byte windowid, short slot, Classes.Item item) {
+        public void raiseSetWindowSlot(byte windowid, short slot, Item item) {
             if (setWindowItem != null)
                 setWindowItem(windowid, slot, item);
         }
 
-        public void raiseInventoryItem(short slot, Classes.Item item) {
+        public void raiseInventoryItem(short slot, Item item) {
             if (setInventoryItem != null)
                 setInventoryItem(slot, item);
         }
@@ -456,7 +464,7 @@ namespace libMC.NET {
         public delegate void blockChangedEventHandler(int x, byte y, int z, int newType, byte data);
         public event blockChangedEventHandler blockChanged;
 
-        public delegate void blockBreakAnimationHandler(Classes.Vector Location, int Entity_ID, byte Stage);
+        public delegate void blockBreakAnimationHandler(Vector Location, int Entity_ID, byte Stage);
         public event blockBreakAnimationHandler blockBreaking;
 
         public delegate void pistonMoveHandler(byte state, byte direction, int x, short y, int z);
@@ -501,7 +509,7 @@ namespace libMC.NET {
         public delegate void entityHeadLookChangedHandler(int Entity_ID, byte head_yaw);
         public event entityHeadLookChangedHandler entityHeadLookChanged;
 
-        public delegate void entityEquipmentChangedHandler(int Entity_ID, int slot, Classes.Item newItem);
+        public delegate void entityEquipmentChangedHandler(int Entity_ID, int slot, Item newItem);
         public event entityEquipmentChangedHandler entityEquipmentChanged;
 
         public delegate void entityAnimationChangedHandler(object sender, int Entity_ID, byte Animation);
@@ -539,10 +547,10 @@ namespace libMC.NET {
         public delegate void heldSlotChangedHandler(byte slot);
         public event heldSlotChangedHandler heldSlotChanged;
 
-        public delegate void setWindowItemHandler(byte window_ID, short slot, Classes.Item item);
+        public delegate void setWindowItemHandler(byte window_ID, short slot, Item item);
         public event setWindowItemHandler setWindowItem;
 
-        public delegate void setInventoryItemHandler(short slot, Classes.Item item);
+        public delegate void setInventoryItemHandler(short slot, Item item);
         public event setInventoryItemHandler setInventoryItem;
 
         public delegate void setPlayerHealthHandleR(float health, short hunger, float saturation);

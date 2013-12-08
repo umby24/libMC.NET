@@ -14,8 +14,8 @@ namespace libMC.NET.Packets.Play {
             Y = mc.nh.wSock.readByte();
             Z = mc.nh.wSock.readInt();
 
-            if (mc.thisPlayer != null && Entity_ID == mc.thisPlayer.Entity_ID)
-                mc.thisPlayer.inBed = true;
+            if (mc.ThisPlayer != null && Entity_ID == mc.ThisPlayer.Entity_ID)
+                mc.ThisPlayer.inBed = true;
 
             //TODO: Track other entities entering beds.
 

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using libMC.NET.Classes;
+using libMC.NET.Entities;
 
 namespace libMC.NET.Packets.Play {
     class windowItems : Packet {
@@ -21,7 +21,7 @@ namespace libMC.NET.Packets.Play {
                 items[i].readSlot(ref mc);
 
                 if (windowID == 0)
-                    mc.thisPlayer.setInventory(items[i], (short) i);
+                    mc.ThisPlayer.setInventory(items[i], (short) i);
             }
         }
     }

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using libMC.NET.Entities;
 
 namespace libMC.NET.Packets.Play {
     class playerAbilities : Packet {
@@ -14,11 +15,11 @@ namespace libMC.NET.Packets.Play {
             flyingSpeed = mc.nh.wSock.readFloat();
             walkingSpeed = mc.nh.wSock.readFloat();
 
-            if (mc.thisPlayer == null)
-                mc.thisPlayer = new Classes.Player();
+            if (mc.ThisPlayer == null)
+                mc.ThisPlayer = new Player();
 
-            mc.thisPlayer.flyingSpeed = flyingSpeed;
-            mc.thisPlayer.WalkingSpeed = walkingSpeed;
+            mc.ThisPlayer.flyingSpeed = flyingSpeed;
+            mc.ThisPlayer.WalkingSpeed = walkingSpeed;
 
         }
     }

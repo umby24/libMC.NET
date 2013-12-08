@@ -2,15 +2,17 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using libMC.NET.Entities;
 
-namespace libMC.NET.Classes {
+namespace libMC.NET.World {
     public class Chunk {
         public int x, z, numBlocks, aBlocks;
         public short pbitmap, abitmap;
         public byte[] blocks;
         public byte[] Metadata;
         public bool lighting, groundup = false;
-        public List<Section> sections;
+        // public List<Section> sections;
+        public Section[] sections;
 
         public Chunk(int X, int Z, short PBitmap, short ABitmap, bool Lighting, bool Groundup) {
             x = X;
@@ -20,7 +22,7 @@ namespace libMC.NET.Classes {
             lighting = Lighting;
             groundup = Groundup;
 
-            sections = new List<Section>();
+            sections = new Section[16];
 
             numBlocks = 0;
             aBlocks = 0;
@@ -32,7 +34,7 @@ namespace libMC.NET.Classes {
             for (int i = 0; i < 16; i++) {
                 if ((pbitmap & (1 << i)) != 0) {
                     numBlocks++;
-                    sections.Add(new Section((byte)i));
+                    sections[i] = new Section((byte)i);
                 }
             }
 
@@ -161,21 +163,7 @@ namespace libMC.NET.Classes {
         }
         #region Helping Methods
         private Section GetSectionByNumber(int blockY) {
-            Section thisSection = null;
-
-            foreach (Section y in sections) {
-                if (y.y == blockY / 16) {
-                    thisSection = y;
-                    break;
-                }
-            }
-
-            if (thisSection == null) { // Add a new section, if it doesn't exist yet.
-                thisSection = new Section((byte)(blockY / 16));
-                sections.Add(thisSection);
-            }
-
-            return thisSection;
+            return sections[(byte)(blockY / 16)];
         }
         private int getXinSection(int BlockX) {
             return Math.Abs(BlockX - (x * 16));

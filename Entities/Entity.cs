@@ -2,8 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using libMC.NET.Common;
 
-namespace libMC.NET.Classes {
+namespace libMC.NET.Entities {
     /// <summary>
     /// Handles all Entities, including mobs and other players.
     /// </summary>
@@ -55,7 +56,7 @@ namespace libMC.NET.Classes {
                         handleMetadata(index, mc.nh.wSock.readString());
                         break;
                     case 5:
-                        Classes.Item temp = new Classes.Item();
+                        Item temp = new Item();
                         temp.readSlot(ref mc);
 
                         handleMetadata(index, temp);

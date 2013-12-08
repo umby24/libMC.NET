@@ -2,14 +2,15 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using libMC.NET.Classes;
+using libMC.NET.Common;
+using libMC.NET.World;
 
 namespace libMC.NET.Packets.Play {
     class spawnPainting : Packet {
-        Classes.Entity thisPainting;
+        Entities.Entity thisPainting;
 
         public spawnPainting(ref Minecraft mc) {
-            thisPainting = new Classes.Entity(ref mc, "Painting");
+            thisPainting = new Entities.Entity(ref mc, "Painting");
 
             thisPainting.Entity_ID = mc.nh.wSock.readVarInt();
             thisPainting.playerName = mc.nh.wSock.readString();
@@ -21,13 +22,13 @@ namespace libMC.NET.Packets.Play {
 
             thisPainting.direction = mc.nh.wSock.readInt();
 
-            if (mc.minecraftWorld == null)
-                mc.minecraftWorld = new World();
+            if (mc.MinecraftWorld == null)
+                mc.MinecraftWorld = new WorldClass();
 
-            if (mc.minecraftWorld.Entities == null)
-                mc.minecraftWorld.Entities = new List<Classes.Entity>();
+            if (mc.MinecraftWorld.Entities == null)
+                mc.MinecraftWorld.Entities = new List<Entities.Entity>();
 
-            mc.minecraftWorld.Entities.Add(thisPainting);
+            mc.MinecraftWorld.Entities.Add(thisPainting);
         }
     }
 }

@@ -3,6 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
+using libMC.NET.Entities;
+using libMC.NET.World;
+
 namespace libMC.NET.Packets.Play {
     class joinGame : Packet {
         public int Entity_ID;
@@ -18,19 +21,19 @@ namespace libMC.NET.Packets.Play {
             maxPlayers = mc.nh.wSock.readByte();
             levelType = mc.nh.wSock.readString();
 
-            if (mc.thisPlayer == null) 
-                mc.thisPlayer = new Classes.Player();
+            if (mc.ThisPlayer == null) 
+                mc.ThisPlayer = new Player();
 
-            mc.thisPlayer.Entity_ID = Entity_ID;
-            mc.thisPlayer.gameMode = gameMode;
+            mc.ThisPlayer.Entity_ID = Entity_ID;
+            mc.ThisPlayer.gameMode = gameMode;
 
-            if (mc.minecraftWorld == null)
-                mc.minecraftWorld = new Classes.World();
+            if (mc.MinecraftWorld == null)
+                mc.MinecraftWorld = new WorldClass();
 
-            mc.minecraftWorld.dimension = dimension;
-            mc.minecraftWorld.difficulty = difficulty;
-            mc.minecraftWorld.maxPlayers = maxPlayers;
-            mc.minecraftWorld.levelType = levelType;
+            mc.MinecraftWorld.dimension = dimension;
+            mc.MinecraftWorld.difficulty = difficulty;
+            mc.MinecraftWorld.maxPlayers = maxPlayers;
+            mc.MinecraftWorld.levelType = levelType;
 
             mc.RaiseDebug(this, string.Format("Entity ID: {0}", Entity_ID));
             mc.RaiseGameJoined();

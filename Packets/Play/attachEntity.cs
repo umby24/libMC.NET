@@ -10,13 +10,13 @@ namespace libMC.NET.Packets.Play {
             int Vechile_ID = mc.nh.wSock.readInt();
             bool leash = mc.nh.wSock.readBool();
 
-            if (mc.minecraftWorld != null) {
-                int eIndex = mc.minecraftWorld.getEntityById(Entity_ID);
+            if (mc.MinecraftWorld != null) {
+                int eIndex = mc.MinecraftWorld.getEntityById(Entity_ID);
 
                 if (eIndex != -1) {
-                    mc.minecraftWorld.Entities[eIndex].attached = true;
-                    mc.minecraftWorld.Entities[eIndex].Vehicle_ID = Vechile_ID;
-                    mc.minecraftWorld.Entities[eIndex].leashed = leash;
+                    mc.MinecraftWorld.Entities[eIndex].attached = true;
+                    mc.MinecraftWorld.Entities[eIndex].Vehicle_ID = Vechile_ID;
+                    mc.MinecraftWorld.Entities[eIndex].leashed = leash;
                 }
             }
 

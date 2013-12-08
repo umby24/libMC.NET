@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using libMC.NET.World;
+using libMC.NET.Entities;
 
 namespace libMC.NET.Packets.Play {
     class Respawn : Packet {
@@ -15,16 +17,16 @@ namespace libMC.NET.Packets.Play {
             gameMode = mc.nh.wSock.readByte();
             levelType = mc.nh.wSock.readString();
 
-            mc.minecraftWorld = new Classes.World(); // -- We *should* be receiving a new world, so completely redefine it!
+            mc.MinecraftWorld = new WorldClass(); // -- We *should* be receiving a new world, so completely redefine it!
 
-            mc.minecraftWorld.dimension = (sbyte)dimension;
-            mc.minecraftWorld.difficulty = difficulty;
-            mc.minecraftWorld.levelType = levelType;
+            mc.MinecraftWorld.dimension = (sbyte)dimension;
+            mc.MinecraftWorld.difficulty = difficulty;
+            mc.MinecraftWorld.levelType = levelType;
 
-            if (mc.thisPlayer == null)
-                mc.thisPlayer = new Classes.Player();
+            if (mc.ThisPlayer == null)
+                mc.ThisPlayer = new Player();
 
-            mc.thisPlayer.gameMode = gameMode;
+            mc.ThisPlayer.gameMode = gameMode;
 
             mc.raisePlayerRespawn();
         }

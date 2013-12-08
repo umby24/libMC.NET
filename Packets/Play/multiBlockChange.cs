@@ -2,7 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using libMC.NET.Classes;
+using libMC.NET.Common;
+using libMC.NET.World;
 
 namespace libMC.NET.Packets.Play {
     public class multiBlockChange : Packet {
@@ -13,14 +14,14 @@ namespace libMC.NET.Packets.Play {
             int dataSize = mc.nh.wSock.readInt();
 
             byte[] data = mc.nh.wSock.readByteArray(dataSize);
-            int chunkID = mc.minecraftWorld.getChunk(X, Z);
+            int chunkID = mc.MinecraftWorld.getChunk(X, Z);
 
             if (chunkID == -1) {
                 mc.RaiseError(this, "Attempted to access uninitilized chunk");
                 return;
             }
 
-            Chunk thisChunk = mc.minecraftWorld.worldChunks[chunkID];
+            Chunk thisChunk = mc.MinecraftWorld.worldChunks[chunkID];
 
             for (int i = 0; i < recordCount - 1; i++) {
                 byte[] blockData = new byte[4];

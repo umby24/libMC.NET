@@ -13,15 +13,15 @@ namespace libMC.NET.Packets.Play {
             byte yaw = mc.nh.wSock.readByte();
             byte pitch = mc.nh.wSock.readByte();
 
-            if (mc.minecraftWorld != null) {
-                int eIndex = mc.minecraftWorld.getEntityById(Entity_ID);
+            if (mc.MinecraftWorld != null) {
+                int eIndex = mc.MinecraftWorld.getEntityById(Entity_ID);
 
                 if (eIndex != -1) {
-                    mc.minecraftWorld.Entities[eIndex].Location.x += (Diff_X * 32);
-                    mc.minecraftWorld.Entities[eIndex].Location.y += (Diff_Y * 32);
-                    mc.minecraftWorld.Entities[eIndex].Location.z += (Diff_Z * 32);
-                    mc.minecraftWorld.Entities[eIndex].yaw = yaw;
-                    mc.minecraftWorld.Entities[eIndex].pitch = pitch;
+                    mc.MinecraftWorld.Entities[eIndex].Location.x += (Diff_X * 32);
+                    mc.MinecraftWorld.Entities[eIndex].Location.y += (Diff_Y * 32);
+                    mc.MinecraftWorld.Entities[eIndex].Location.z += (Diff_Z * 32);
+                    mc.MinecraftWorld.Entities[eIndex].yaw = yaw;
+                    mc.MinecraftWorld.Entities[eIndex].pitch = pitch;
                 }
             }
 

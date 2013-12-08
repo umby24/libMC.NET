@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
+using libMC.NET.Entities;
+
 namespace libMC.NET.Packets.Play {
     class updateHealth : Packet {
         public updateHealth(ref Minecraft mc) {
@@ -10,12 +12,12 @@ namespace libMC.NET.Packets.Play {
             short hunger = mc.nh.wSock.readShort();
             float saturation = mc.nh.wSock.readFloat();
 
-            if (mc.thisPlayer == null)
-                mc.thisPlayer = new Classes.Player();
+            if (mc.ThisPlayer == null)
+                mc.ThisPlayer = new Player();
 
-            mc.thisPlayer.playerHealth = health;
-            mc.thisPlayer.playerHunger = hunger;
-            mc.thisPlayer.foodSaturation = saturation;
+            mc.ThisPlayer.playerHealth = health;
+            mc.ThisPlayer.playerHunger = hunger;
+            mc.ThisPlayer.foodSaturation = saturation;
 
             mc.raisePlayerHealthUpdate(health, hunger, saturation);
             mc.RaiseDebug(this, "Player health updated.");

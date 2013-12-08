@@ -2,9 +2,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using libMC.NET.Entities;
 
-namespace libMC.NET.Classes {
-    public class World {
+namespace libMC.NET.World {
+    public class WorldClass {
         public long currentTime;
         public long worldAge;
         public sbyte dimension;
@@ -19,12 +20,12 @@ namespace libMC.NET.Classes {
         //---------------------
 
         public List<Entity> Entities;
-        public List<Classes.Object> worldObjects;
-        public List<Classes.Chunk> worldChunks;
+        public List<ObjectEntity> worldObjects;
+        public List<Chunk> worldChunks;
         //--------------------
 
-        public World() {
-            worldObjects = new List<Object>();
+        public WorldClass() {
+            worldObjects = new List<ObjectEntity>();
             worldChunks = new List<Chunk>();
             Entities = new List<Entity>();
         }
@@ -62,7 +63,7 @@ namespace libMC.NET.Classes {
             int chunkIndex = -1;
 
             try {
-                foreach (Classes.Chunk c in worldChunks) {
+                foreach (Chunk c in worldChunks) {
                     if (c.x == x && c.z == z) {
                         chunkIndex = worldChunks.IndexOf(c);
                     }

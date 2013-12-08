@@ -2,8 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using libMC.NET.Entities;
 
-namespace libMC.NET.Classes {
+namespace libMC.NET.World {
     public class Section {
         public byte[] blocks;
         public byte[] metadata;

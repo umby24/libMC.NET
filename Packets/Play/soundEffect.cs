@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using libMC.NET.Classes;
+using libMC.NET.Common;
 
 namespace libMC.NET.Packets.Play {
     class soundEffect : Packet {
@@ -17,7 +17,7 @@ namespace libMC.NET.Packets.Play {
             volume = mc.nh.wSock.readFloat();
             pitch = mc.nh.wSock.readByte();
 
-            mc.RaiseDebug(this, "Creeeeepy sounnnddd");
+            mc.RaiseDebug(this, "Sound effect");
         }
     }
 }

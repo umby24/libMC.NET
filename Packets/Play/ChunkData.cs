@@ -2,7 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using libMC.NET.Classes;
+using libMC.NET.Common;
+using libMC.NET.World;
 
 namespace libMC.NET.Packets.Play {
     class ChunkData : Packet {
@@ -24,11 +25,11 @@ namespace libMC.NET.Packets.Play {
                 // -- Unload chunk.
                 int cIndex = -1;
 
-                if (mc.minecraftWorld != null)
-                    cIndex = mc.minecraftWorld.getChunk(X, Z);
+                if (mc.MinecraftWorld != null)
+                    cIndex = mc.MinecraftWorld.getChunk(X, Z);
 
                 if (cIndex != -1)
-                    mc.minecraftWorld.worldChunks.RemoveAt(cIndex);
+                    mc.MinecraftWorld.worldChunks.RemoveAt(cIndex);
 
                 mc.raiseChunkUnload(X, Z);
                 return;
@@ -44,11 +45,11 @@ namespace libMC.NET.Packets.Play {
             Chunk newChunk = new Chunk(X, Z, pbitmap, abitmap, true, groundUp); // -- Skylight assumed true
             newChunk.getData(decompressedData);
 
-            if (mc.minecraftWorld == null)
-                mc.minecraftWorld = new World();
+            if (mc.MinecraftWorld == null)
+                mc.MinecraftWorld = new WorldClass();
 
             // -- Add the chunk to the world
-            mc.minecraftWorld.worldChunks.Add(newChunk);
+            mc.MinecraftWorld.worldChunks.Add(newChunk);
 
             mc.raiseChunkLoad(X, Z);
         }

@@ -15,15 +15,15 @@ namespace libMC.NET.Packets.Play {
             ping = mc.nh.wSock.readShort();
 
             if (online == true) {
-                if (mc.players.ContainsKey(playerName)) {
-                    mc.players[playerName] = ping;
+                if (mc.Players.ContainsKey(playerName)) {
+                    mc.Players[playerName] = ping;
                     mc.raisePlayerlistUpdate(playerName, ping);
                 } else {
-                    mc.players.Add(playerName, ping);
+                    mc.Players.Add(playerName, ping);
                     mc.raisePlayerlistAdd(playerName, ping);
                 }
             } else {
-                mc.players.Remove(playerName);
+                mc.Players.Remove(playerName);
                 mc.raisePlayerlistRemove(playerName);
             }
         }

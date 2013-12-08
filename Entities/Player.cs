@@ -2,8 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using libMC.NET.Common;
 
-namespace libMC.NET.Classes {
+namespace libMC.NET.Entities {
     /// <summary>
     /// This class holds all information for the minecraft client. This includes location, inventory, direction, and names.
     /// </summary>
@@ -17,7 +18,7 @@ namespace libMC.NET.Classes {
         public bool inBed, onGround;
 
         #region Location Information
-        public double[] vector = new double[3];
+        public DoubleVector location = new DoubleVector();
         public float[] look = new float[2];
         #endregion
 

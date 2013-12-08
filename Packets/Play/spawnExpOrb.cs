@@ -2,11 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using libMC.NET.Classes;
+using libMC.NET.Common;
 
 namespace libMC.NET.Packets.Play {
     class spawnExpOrb : Packet {
-        Classes.Entity expOrb;
+        Entities.Entity expOrb;
 
         public spawnExpOrb(ref Minecraft mc) {
             int Entity_ID = mc.nh.wSock.readVarInt();
@@ -15,7 +15,7 @@ namespace libMC.NET.Packets.Play {
             int Z = mc.nh.wSock.readInt();
             short count = mc.nh.wSock.readShort();
 
-            expOrb = new Classes.Entity(ref mc, "ExpOrb");
+            expOrb = new Entities.Entity(ref mc, "ExpOrb");
             expOrb.Location = new Vector(X, Y, Z);
             expOrb.count = count;
 

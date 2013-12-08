@@ -12,13 +12,13 @@ namespace libMC.NET.Packets.Play {
             short Velocity_Y = mc.nh.wSock.readShort();
             short Velocity_Z = mc.nh.wSock.readShort();
 
-            if (mc.minecraftWorld != null) {
-                int eIndex = mc.minecraftWorld.getEntityById(Entity_ID);
+            if (mc.MinecraftWorld != null) {
+                int eIndex = mc.MinecraftWorld.getEntityById(Entity_ID);
 
                 if (eIndex != -1) {
-                    mc.minecraftWorld.Entities[eIndex].Velocity_X = Velocity_X;
-                    mc.minecraftWorld.Entities[eIndex].Velocity_Y = Velocity_Y;
-                    mc.minecraftWorld.Entities[eIndex].Velocity_Z = Velocity_Z;
+                    mc.MinecraftWorld.Entities[eIndex].Velocity_X = Velocity_X;
+                    mc.MinecraftWorld.Entities[eIndex].Velocity_Y = Velocity_Y;
+                    mc.MinecraftWorld.Entities[eIndex].Velocity_Z = Velocity_Z;
                 }
             }
 

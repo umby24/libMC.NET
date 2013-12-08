@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace libMC.NET.Classes {
-    public class Object {
+namespace libMC.NET.Entities {
+    public class ObjectEntity {
         public int ObjectID;
         public string ObjectFriendlyName;
         public byte type;
@@ -20,7 +20,7 @@ namespace libMC.NET.Classes {
         short Speed_Z;
         #endregion
 
-        public Object(byte Type) {
+        public ObjectEntity(byte Type) {
             type = Type;
         }
 

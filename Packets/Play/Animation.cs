@@ -12,14 +12,14 @@ namespace libMC.NET.Packets.Play {
             Entity_ID = mc.nh.wSock.readVarInt();
             Ani = mc.nh.wSock.readByte();
 
-            if (mc.thisPlayer != null && Entity_ID == mc.thisPlayer.Entity_ID)
-                mc.thisPlayer.Animation = Ani;
+            if (mc.ThisPlayer != null && Entity_ID == mc.ThisPlayer.Entity_ID)
+                mc.ThisPlayer.Animation = Ani;
 
-            if (mc.minecraftWorld != null) {
-                int eIndex = mc.minecraftWorld.getEntityById(Entity_ID);
+            if (mc.MinecraftWorld != null) {
+                int eIndex = mc.MinecraftWorld.getEntityById(Entity_ID);
 
                 if (eIndex != -1)
-                    mc.minecraftWorld.Entities[eIndex].animation = Ani;
+                    mc.MinecraftWorld.Entities[eIndex].animation = Ani;
             }
 
             mc.RaiseEntityAnimationChanged(this, Entity_ID, Ani);

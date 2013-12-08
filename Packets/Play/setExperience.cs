@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using libMC.NET.Entities;
 
 namespace libMC.NET.Packets.Play {
     class setExperience : Packet {
@@ -10,12 +11,12 @@ namespace libMC.NET.Packets.Play {
             short level = mc.nh.wSock.readShort();
             short totalExp = mc.nh.wSock.readShort();
 
-            if (mc.thisPlayer == null)
-                mc.thisPlayer = new Classes.Player();
+            if (mc.ThisPlayer == null)
+                mc.ThisPlayer = new Player();
 
-            mc.thisPlayer.ExpBar = ExpBar;
-            mc.thisPlayer.level = level;
-            mc.thisPlayer.totalExp = totalExp;
+            mc.ThisPlayer.ExpBar = ExpBar;
+            mc.ThisPlayer.level = level;
+            mc.ThisPlayer.totalExp = totalExp;
 
             mc.raiseExperienceUpdate(ExpBar, level, totalExp);
         }

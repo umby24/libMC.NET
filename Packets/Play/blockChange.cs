@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using libMC.NET.Classes;
+using libMC.NET.World;
 
 namespace libMC.NET.Packets.Play {
     class blockChange : Packet {
@@ -22,7 +22,7 @@ namespace libMC.NET.Packets.Play {
             ChunkX = Math.Floor(ChunkX);
             ChunkZ = Math.Floor(ChunkZ);
 
-            Chunk thisChunk = mc.minecraftWorld.worldChunks[mc.minecraftWorld.getChunk(int.Parse(ChunkX.ToString()), int.Parse(ChunkZ.ToString()))];
+            Chunk thisChunk = mc.MinecraftWorld.worldChunks[mc.MinecraftWorld.getChunk(int.Parse(ChunkX.ToString()), int.Parse(ChunkZ.ToString()))];
             thisChunk.updateBlock(x, y, z, type);
             thisChunk.setBlockData(x, y, z, data);
 

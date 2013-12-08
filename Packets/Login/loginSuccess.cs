@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using libMC.NET.Entities;
 
 namespace libMC.NET.Packets.Login {
     class loginSuccess : Packet {
@@ -12,10 +13,10 @@ namespace libMC.NET.Packets.Login {
             mc.RaiseLoginSuccess(this);
             mc.RaiseDebug(this, "UUID: " + UUID + " Username: " + Username);
 
-            if (mc.thisPlayer == null)
-                mc.thisPlayer = new Classes.Player();
+            if (mc.ThisPlayer == null)
+                mc.ThisPlayer = new Player();
 
-            mc.thisPlayer.playerName = Username;
+            mc.ThisPlayer.playerName = Username;
 
             mc.ServerState = 3;
             mc.RaiseDebug(this, "The server state is now 3 (Play)");

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using libMC.NET.World;
 
 namespace libMC.NET.Packets.Play {
     class timeUpdate : Packet {
@@ -10,11 +11,11 @@ namespace libMC.NET.Packets.Play {
             long worldAge = mc.nh.wSock.readLong();
             long worldTime = mc.nh.wSock.readLong();
 
-            if (mc.minecraftWorld == null)
-                mc.minecraftWorld = new Classes.World();
+            if (mc.MinecraftWorld == null)
+                mc.MinecraftWorld = new WorldClass();
 
-            mc.minecraftWorld.worldAge = worldAge;
-            mc.minecraftWorld.currentTime = worldTime;
+            mc.MinecraftWorld.worldAge = worldAge;
+            mc.MinecraftWorld.currentTime = worldTime;
 
             var Player = new ServerBound.Player(ref mc);
 

@@ -2,14 +2,15 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using libMC.NET.Classes;
+using libMC.NET.Common;
+using libMC.NET.World;
 
 namespace libMC.NET.Packets.Play {
     class spawnMob : Packet {
-        public Classes.Entity thisMob;
+        public Entities.Entity thisMob;
 
         public spawnMob(ref Minecraft mc) {
-            thisMob = new Classes.Entity(ref mc, "Mob");
+            thisMob = new Entities.Entity(ref mc, "Mob");
 
             thisMob.Entity_ID = mc.nh.wSock.readVarInt();
             thisMob.mobType = mc.nh.wSock.readByte();
@@ -29,13 +30,13 @@ namespace libMC.NET.Packets.Play {
 
             thisMob.readEntityMetadata(ref mc);
 
-            if (mc.minecraftWorld == null)
-                mc.minecraftWorld = new World();
+            if (mc.MinecraftWorld == null)
+                mc.MinecraftWorld = new WorldClass();
 
-            if (mc.minecraftWorld.Entities == null)
-                mc.minecraftWorld.Entities = new List<Classes.Entity>();
+            if (mc.MinecraftWorld.Entities == null)
+                mc.MinecraftWorld.Entities = new List<Entities.Entity>();
 
-            mc.minecraftWorld.Entities.Add(thisMob);
+            mc.MinecraftWorld.Entities.Add(thisMob);
         }
     }
 }

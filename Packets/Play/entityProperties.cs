@@ -14,13 +14,13 @@ namespace libMC.NET.Packets.Play {
                 string s = mc.nh.wSock.readString();
                 double d = mc.nh.wSock.readDouble();
 
-                if (mc.minecraftWorld != null) {
-                    int b = mc.minecraftWorld.getEntityById(Entity_ID);
+                if (mc.MinecraftWorld != null) {
+                    int b = mc.MinecraftWorld.getEntityById(Entity_ID);
                         if (b != -1) {
                             if (s == "horse.jumpStrength")
-                                mc.minecraftWorld.Entities[b].jumpStrength = d;
+                                mc.MinecraftWorld.Entities[b].jumpStrength = d;
                             if (s == "generic.movementSpeed")
-                                mc.minecraftWorld.Entities[b].movementSpeed = d;
+                                mc.MinecraftWorld.Entities[b].movementSpeed = d;
                     }
                 }
 

@@ -8,16 +8,16 @@ namespace libMC.NET.Packets.Play {
         public entityMetadata(ref Minecraft mc) {
             int Entity_ID = mc.nh.wSock.readInt();
 
-            if (mc.minecraftWorld != null) {
-                int eIndex = mc.minecraftWorld.getEntityById(Entity_ID);
+            if (mc.MinecraftWorld != null) {
+                int eIndex = mc.MinecraftWorld.getEntityById(Entity_ID);
 
                 if (eIndex == -1) {
-                    Classes.Entity asdf = new Classes.Entity(ref mc, "");
+                    Entities.Entity asdf = new Entities.Entity(ref mc, "");
                     asdf.readEntityMetadata(ref mc);
                     // -- The problem is that we don't know what kind of entity this is.
                     // -- That can cause redundencies and multiple entries for one entity of an indeterminant type.
                 } else {
-                    mc.minecraftWorld.Entities[eIndex].readEntityMetadata(ref mc);
+                    mc.MinecraftWorld.Entities[eIndex].readEntityMetadata(ref mc);
                 }
 
             }

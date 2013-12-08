@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
+using libMC.NET.Entities;
 namespace libMC.NET.Packets.Play {
     class playerPositionandLook : Packet {
         public double x, y, z;
@@ -19,15 +20,12 @@ namespace libMC.NET.Packets.Play {
 
             onGround = mc.nh.wSock.readBool();
 
-            if (mc.thisPlayer == null)  // -- Update player's location.
-                mc.thisPlayer = new Classes.Player();
+            if (mc.ThisPlayer == null)  // -- Update player's location.
+                mc.ThisPlayer = new Player();
 
-                mc.thisPlayer.vector[0] = x; mc.thisPlayer.vector[1] = y; mc.thisPlayer.vector[2] = z;
-                mc.thisPlayer.look[0] = yaw; mc.thisPlayer.look[1] = pitch;
-                mc.thisPlayer.onGround = onGround;
-
-                if (mc.thisPlayer.vector[0] != x)
-                    mc.thisPlayer.vector[0] = x;
+                mc.ThisPlayer.location.x = x; mc.ThisPlayer.location.y = y; mc.ThisPlayer.location.z = z;
+                mc.ThisPlayer.look[0] = yaw; mc.ThisPlayer.look[1] = pitch;
+                mc.ThisPlayer.onGround = onGround;
 
                 mc.raiseLocationChanged();
 
