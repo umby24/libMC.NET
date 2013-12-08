@@ -32,8 +32,8 @@ namespace libMC.NET.Packets.Play {
             mc.minecraftWorld.maxPlayers = maxPlayers;
             mc.minecraftWorld.levelType = levelType;
 
-            mc.raiseDebug(this, string.Format("Entity ID: {0}", Entity_ID));
-            mc.raiseGameJoined();
+            mc.RaiseDebug(this, string.Format("Entity ID: {0}", Entity_ID));
+            mc.RaiseGameJoined();
 
             // -- Vanilla client at this point sends client settings, and plugin message designating the 
             // -- modpack that the client is using.

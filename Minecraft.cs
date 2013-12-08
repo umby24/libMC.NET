@@ -3,17 +3,18 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-
+// TODO: Convert cases likeThis to LikeThis.
+// TODO: Implement session storage for save credential storage.
 namespace libMC.NET {
     /// <summary>
     /// Main class for libMC.Net, a Minecraft interaction library for .net languages.
     /// </summary>
     public class Minecraft {
         #region Variables
-        public string serverIP, clientName, clientPassword, accessToken, selectedProfile, ClientBrand;
-        public int serverPort, serverState;
-        public bool verifyNames, running;
-        public networkHandler nh;
+        public string ServerIP, ClientName, ClientPassword, AccessToken, SelectedProfile, ClientBrand;
+        public int ServerPort, ServerState;
+        public bool VerifyNames, Running, First = false;
+        public NetworkHandler nh;
 
         #region Trackers
         public Classes.World minecraftWorld; // -- Holds all of the world information. Time, chunks, players, ect.
@@ -31,11 +32,11 @@ namespace libMC.NET {
         /// <param name="password">The password to use when connecting to Minecraft</param>
         /// <param name="nameVerification">To connect using Name Verification or not</param>
         public Minecraft(string ip, int port, string username, string password, bool nameVerification) {
-            serverIP = ip;
-            serverPort = port;
-            clientName = username;
-            clientPassword = password;
-            verifyNames = nameVerification;
+            ServerIP = ip;
+            ServerPort = port;
+            ClientName = username;
+            ClientPassword = password;
+            VerifyNames = nameVerification;
             ClientBrand = "libMC.NET"; // -- Used in the plugin message reporting the client brand to the server.
         }
 
@@ -43,26 +44,26 @@ namespace libMC.NET {
         /// Login to Minecraft.net and store credentials
         /// </summary>
         public void Login() {
-            if (verifyNames) {
+            if (VerifyNames) {
                 Minecraft_Net_Interaction loginHandler = new Minecraft_Net_Interaction();
-                string[] credentials = loginHandler.Login(clientName, clientPassword);
+                string[] credentials = loginHandler.Login(ClientName, ClientPassword);
 
                 if (credentials[0] == "") {  // -- Fall back to no auth.
-                    raiseError(this, "Failed to login to Minecraft.net! (Incorrect username or password)");
+                    RaiseError(this, "Failed to login to Minecraft.net! (Incorrect username or password)");
 
-                    verifyNames = false;
+                    VerifyNames = false;
                 } else {
-                    raiseInfo(this, "Logged in to Minecraft.net successfully.");
+                    RaiseInfo(this, "Logged in to Minecraft.net successfully.");
 
-                    raiseDebug(this, string.Format("Token: {0}\nProfile: {1}", credentials[0], credentials[1]));
+                    RaiseDebug(this, string.Format("Token: {0}\nProfile: {1}", credentials[0], credentials[1]));
 
-                    accessToken = credentials[0];
-                    selectedProfile = credentials[1];
+                    AccessToken = credentials[0];
+                    SelectedProfile = credentials[1];
                 }
 
             } else {
-                accessToken = "Asdf";
-                selectedProfile = "asd";
+                AccessToken = "None";
+                SelectedProfile = "None";
             }
         
         }
@@ -76,19 +77,19 @@ namespace libMC.NET {
 
             players = new Dictionary<string,short>();
 
-            nh = new networkHandler(this);
+            nh = new NetworkHandler(this);
 
-            // -- Register our event handlers
+            // -- Register our event handlers.
+            nh.InfoMessage += NetworkInfo;
+            nh.debugMessage += NetworkDebug;
+            nh.SocketError += NetworkError;
+            nh.PacketHandled += RaisePacketHandled;
 
-            nh.infoMessage += new networkHandler.networkInfoHandler(networkInfo);
-            nh.debugMessage += new networkHandler.networkDebugHandler(networkDebug);
-            nh.socketError += new networkHandler.socketErrorHandler(networkError);
-            nh.PacketHandled += new networkHandler.packetHandledHandler(raisePacketHandled);
-            // -- Connect to the server and begin reading packets
+            // -- Connect to the server and begin reading packets.
 
             nh.Start();
 
-            raiseDebug(this, "Network handler created, Connecting to server...");
+            RaiseDebug(this, "Network handler created, Connecting to server...");
         }
 
         /// <summary>
@@ -100,73 +101,89 @@ namespace libMC.NET {
 
             // -- Reset all variables to default so we can make a new connection.
 
-            running = false;
-            serverState = 0;
+            Running = false;
+            ServerState = 0;
             nh = null;
             minecraftWorld = null;
             thisPlayer = null;
             players = null;
 
-            raiseDebug(this, "Variables reset, disconnected from server.");
+            RaiseDebug(this, "Variables reset, disconnected from server.");
         }
 
         #region Event Messengers
+        void NetworkInfo(object Sender, string Message) {
+            if (InfoMessage != null)
+                InfoMessage(Sender, "(NETWORK): " + Message);
+        }
+        void NetworkDebug(object Sender, string Message) {
+            if (DebugMessage != null)
+                DebugMessage(Sender, "(NETWORK): " + Message);
+        }
+        void NetworkError(object Sender, string Message) {
+            if (ErrorMessage != null)
+                ErrorMessage(Sender, "(NETWORK): " + Message);
+        }
+        void RaisePacketHandled(object Sender, object Packet, int id) {
+            if (PacketHandled != null)
+                PacketHandled(Sender, Packet, id);
+        }
+
         /// <summary>
         /// Raises a Minecraft Error from another class
         /// </summary>
         /// <param name="sender">Sending class</param>
         /// <param name="message">Error Message</param>
-        public void raiseError(object sender, string message) {
-            if (errorMessage != null)
-                errorMessage(sender, message);
+        public void RaiseError(object Sender, string Message) {
+            if (ErrorMessage != null)
+                ErrorMessage(Sender, Message);
         }
         /// <summary>
         /// Raises Minecraft Info from another class
         /// </summary>
         /// <param name="sender">Sending class</param>
         /// <param name="message">Info Message</param>
-        public void raiseInfo(object sender, string message) {
-            if (infoMessage != null)
-                infoMessage(sender, message);
+        public void RaiseInfo(object Sender, string Message) {
+            if (InfoMessage != null)
+                InfoMessage(Sender, Message);
         }
         /// <summary>
         /// Raises Minecraft debug message from another class
         /// </summary>
         /// <param name="sender">Sending class</param>
         /// <param name="message">Debug message</param>
-        public void raiseDebug(object sender, string message) {
-            if (debugMessage != null)
-                debugMessage(sender, message);
+        public void RaiseDebug(object Sender, string Message) {
+            if (DebugMessage != null)
+                DebugMessage(Sender, Message);
         }
         /// <summary>
         /// Raises a normal minecraft message (such as chat)
         /// </summary>
         /// <param name="sender">Sending class</param>
         /// <param name="Message">Minecraft message</param>
-        public void raiseMC(object sender, string Message, string name) {
-            if (message != null)
-                message(sender, Message, name);
+        public void RaiseMC(object Sender, string McMessage, string Name) {
+            if (Message != null)
+                Message(Sender, McMessage, Name);
         }
 
-        public void raiseLoginSuccess(object sender) {
-            if (loginSuccess != null)
-                loginSuccess(sender);
+        public void RaiseLoginSuccess(object Sender) {
+            if (LoginSuccess != null)
+                LoginSuccess(Sender);
         }
 
-        public void raiseLoginFailure(object sender, string reason) {
-            if (loginFailure != null)
-                loginFailure(sender, reason);
+        public void RaiseLoginFailure(object Sender, string Reason) {
+            if (LoginFailure != null)
+                LoginFailure(Sender, Reason);
         }
 
-        public void raiseGameJoined() {
-            if (joinedGame != null)
-                joinedGame();
+        public void RaiseGameJoined() {
+            if (JoinedGame != null)
+                JoinedGame();
         }
 
-        public void raiseEntityAnimationChanged(object sender, int Entity_ID, byte Animation) {
+        public void RaiseEntityAnimationChanged(object Sender, int Entity_ID, byte Animation) {
             if (EntityAnimationChanged != null)
-                
-                EntityAnimationChanged(sender, Entity_ID, Animation);
+                EntityAnimationChanged(Sender, Entity_ID, Animation);
         }
         public void raiseEntityAttached(int Entity_ID, int Vehicle_ID, bool Leashed) {
             if (entityAttached != null)
@@ -224,13 +241,13 @@ namespace libMC.NET {
         }
 
         public void raiseTransactionRejected(byte Window_ID, short Action_ID) {
-            if (transactionRejected != null)
-                transactionRejected(Window_ID, Action_ID);
+            if (TransactionRejected != null)
+                TransactionRejected(Window_ID, Action_ID);
         }
 
         public void raiseTransactionAccepted(byte Window_ID, short Action_ID) {
-            if (transactionAccepted != null)
-                transactionAccepted(Window_ID, Action_ID);
+            if (TransactionAccepted != null)
+                TransactionAccepted(Window_ID, Action_ID);
         }
 
         public void raiseEntityDestruction(int Entity_ID) {
@@ -239,8 +256,8 @@ namespace libMC.NET {
         }
 
         public void raiseKicked(string reason) {
-            if (playerKicked != null)
-                playerKicked(reason);
+            if (PlayerKicked != null)
+                PlayerKicked(reason);
         }
 
         public void raiseScoreBoard(byte position, string name) {
@@ -304,18 +321,18 @@ namespace libMC.NET {
         }
 
         public void raisePlayerlistAdd(string name, short ping) {
-            if (playerListitemAdd != null)
-                playerListitemAdd(name, ping);
+            if (PlayerListitemAdd != null)
+                PlayerListitemAdd(name, ping);
         }
 
         public void raisePlayerlistRemove(string name) {
-            if (playerListitemRemove != null)
-                playerListitemRemove(name);
+            if (PlayerListitemRemove != null)
+                PlayerListitemRemove(name);
         }
 
         public void raisePlayerlistUpdate(string name, short ping) {
-            if (playerListitemUpdate != null)
-                playerListitemUpdate(name, ping);
+            if (PlayerListitemUpdate != null)
+                PlayerListitemUpdate(name, ping);
         }
 
         public void raiseLocationChanged() {
@@ -324,8 +341,8 @@ namespace libMC.NET {
         }
 
         public void raisePluginMessage(string channel, byte[] data) {
-            if (pluginMessage != null)
-                pluginMessage(channel, data);
+            if (PluginMessage != null)
+                PluginMessage(channel, data);
         }
 
         public void raisePlayerRespawn() {
@@ -368,42 +385,23 @@ namespace libMC.NET {
                 setPlayerHealth(health, hunger, saturation);
         }
         #endregion
-        #region Event Handlers
-        void networkInfo(object Sender, string Message) {
-            if (infoMessage != null)
-                infoMessage(Sender, "(NETWORK): " + Message);
-        }
-        void networkDebug(object Sender, string Message) {
-            if (debugMessage != null)
-                debugMessage(Sender, "(NETWORK): " + Message);
-        }
-        void networkError(object Sender, string Message) {
-            if (errorMessage != null)
-                errorMessage(Sender, "(NETWORK): " + Message);
-        }
-        void raisePacketHandled(object Sender, object Packet, int id) {
-            if (packetHandled != null)
-                packetHandled(Sender, Packet, id);
-        }
-
-        #endregion
-        #region Events
+        #region Event Delegates
         
         #region Base Events
-        public delegate void debugMessageHandler(object sender, string message);
-        public event debugMessageHandler debugMessage;
+        public delegate void DebugMessageHandler(object sender, string message);
+        public event DebugMessageHandler DebugMessage;
 
-        public delegate void errorMessageHandler(object sender, string message);
-        public event errorMessageHandler errorMessage;
+        public delegate void ErrorMessageHandler(object sender, string message);
+        public event ErrorMessageHandler ErrorMessage;
 
-        public delegate void infoMessageHandler(object sender, string message);
-        public event infoMessageHandler infoMessage;
+        public delegate void InfoMessageHandler(object sender, string message);
+        public event InfoMessageHandler InfoMessage;
 
-        public delegate void messageHandler(object sender, string message, string name);
-        public event messageHandler message;
+        public delegate void MessageHandler(object sender, string message, string name);
+        public event MessageHandler Message;
 
-        public delegate void packetHandler(object sender, object packet, int id);
-        public event packetHandler packetHandled;
+        public delegate void PacketHandler(object sender, object packet, int id);
+        public event PacketHandler PacketHandled;
         #endregion
 
         #region Block Events
@@ -516,37 +514,39 @@ namespace libMC.NET {
         public delegate void displayScoreboardHandler(byte position, string scoreName);
         public event displayScoreboardHandler displayScoreboard;
         #endregion
-        // -- Server Events (Connected, Disconnected, Kicked)
+
+        // -- Server Events (Connected, Disconnected, Kicked).
+
         #region Server Events
-        public delegate void pluginMessageHandler(string channel, byte[] data);
-        public event pluginMessageHandler pluginMessage;
+        public delegate void PluginMessageHandler(string channel, byte[] data);
+        public event PluginMessageHandler PluginMessage;
 
-        public delegate void playerListitemAddHandler(string name, short ping);
-        public event playerListitemAddHandler playerListitemAdd;
+        public delegate void PlayerListitemAddHandler(string name, short ping);
+        public event PlayerListitemAddHandler PlayerListitemAdd;
 
-        public delegate void playerListitemRemoveHandler(string name);
-        public event playerListitemRemoveHandler playerListitemRemove;
+        public delegate void PlayerListitemRemoveHandler(string name);
+        public event PlayerListitemRemoveHandler PlayerListitemRemove;
 
-        public delegate void playerListitemUpdateHandler(string name, short ping);
-        public event playerListitemUpdateHandler playerListitemUpdate;
+        public delegate void PlayerListitemUpdateHandler(string name, short ping);
+        public event PlayerListitemUpdateHandler PlayerListitemUpdate;
 
-        public delegate void loginSuccessHandler(object sender);
-        public event loginSuccessHandler loginSuccess;
+        public delegate void LoginSuccessHandler(object sender);
+        public event LoginSuccessHandler LoginSuccess;
 
-        public delegate void loginFailureHandler(object sender, string reason);
-        public event loginFailureHandler loginFailure;
+        public delegate void LoginFailureHandler(object sender, string reason);
+        public event LoginFailureHandler LoginFailure;
 
-        public delegate void joinGameHandler();
-        public event joinGameHandler joinedGame;
+        public delegate void JoinGameHandler();
+        public event JoinGameHandler JoinedGame;
 
-        public delegate void transactionRejectedHandler(byte Window_ID, short Action_ID);
-        public event transactionRejectedHandler transactionRejected;
+        public delegate void TransactionRejectedHandler(byte Window_ID, short Action_ID);
+        public event TransactionRejectedHandler TransactionRejected;
 
-        public delegate void transactionAcceptedHandler(byte Window_ID, short Action_ID);
-        public event transactionAcceptedHandler transactionAccepted;
+        public delegate void TransactionAcceptedHandler(byte Window_ID, short Action_ID);
+        public event TransactionAcceptedHandler TransactionAccepted;
 
-        public delegate void playerKickedHandler(string reason);
-        public event playerKickedHandler playerKicked;
+        public delegate void PlayerKickedHandler(string reason);
+        public event PlayerKickedHandler PlayerKicked;
         #endregion
         #endregion
     }

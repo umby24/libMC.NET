@@ -10,7 +10,7 @@ using libMC.NET.Packets.Handshake;
 using libMC.NET.Packets.Login;
 
 namespace libMC.NET {
-    public class networkHandler {
+    public class NetworkHandler {
         #region Variables
         Thread handler;
         Minecraft mainMC;
@@ -25,9 +25,9 @@ namespace libMC.NET {
         #endregion
         #endregion
 
-        public networkHandler(Minecraft mc) {
+        public NetworkHandler(Minecraft mc) {
             mainMC = mc;
-            populateLists();
+            PopulateLists();
         } 
         
         /// <summary>
@@ -36,13 +36,13 @@ namespace libMC.NET {
         public void Start() {
             try {
                 baseSock = new TcpClient();
-                IAsyncResult AR = baseSock.BeginConnect(mainMC.serverIP, mainMC.serverPort, null, null);
+                IAsyncResult AR = baseSock.BeginConnect(mainMC.ServerIP, mainMC.ServerPort, null, null);
                 WaitHandle wh = AR.AsyncWaitHandle;
 
                 try {
                     if (!AR.AsyncWaitHandle.WaitOne(TimeSpan.FromSeconds(5), false)) {
                         baseSock.Close();
-                        raiseSocketError(this, "Failed to connect: Connection Timeout");
+                        RaiseSocketError(this, "Failed to connect: Connection Timeout");
                         return;
                     }
 
@@ -52,35 +52,35 @@ namespace libMC.NET {
                 }
 
             } catch (Exception e) {
-                raiseSocketError(this, "Failed to connect: " + e.Message);
+                RaiseSocketError(this, "Failed to connect: " + e.Message);
                 return;
             }
             
-            mainMC.running = true;
+            mainMC.Running = true;
 
-            raiseSocketInfo(this, "Connected to server.");
-            raiseSocketDebug(this, string.Format("IP: {0} Port: {1}", mainMC.serverIP,mainMC.serverPort.ToString()));
+            RaiseSocketInfo(this, "Connected to server.");
+            RaiseSocketDebug(this, string.Format("IP: {0} Port: {1}", mainMC.ServerIP, mainMC.ServerPort.ToString()));
 
             // -- Create our Wrapped socket.
             baseStream = baseSock.GetStream();
             wSock = new Wrapped.Wrapped(baseStream);
 
-            raiseSocketDebug(this, "Socket Created");
+            RaiseSocketDebug(this, "Socket Created");
 
             // -- Send a handshake packet
-            if (mainMC.serverState != 1) {
+
+            if (mainMC.ServerState != 1) {
                 Handshake hs = new Handshake(ref mainMC);
-                raiseSocketDebug(this, "Handshake sent.");
+                RaiseSocketDebug(this, "Handshake sent.");
             } else {
-                //TODO: Implement Server Pinging
                 Handshake hs = new Handshake(ref mainMC);
-                raiseSocketDebug(this, "Handshake sent, Pinging server!");
+                RaiseSocketDebug(this, "Handshake sent, Pinging server!");
             }
 
             // -- Start network parsing.
-            handler = new Thread(packetHandler);
+            handler = new Thread(PacketHandler);
             handler.Start();
-            raiseSocketDebug(this, "Handler thread started");
+            RaiseSocketDebug(this, "Handler thread started");
         }
        
         /// <summary>
@@ -94,7 +94,7 @@ namespace libMC.NET {
             baseStream = null;
 
             baseSock.Close();
-            infoMessage(this, "Disconnected from Minecraft Server.");
+            InfoMessage(this, "Disconnected from Minecraft Server.");
 
         }
         
@@ -102,7 +102,7 @@ namespace libMC.NET {
         /// Populates the packet lists with reconized types.
         /// </summary>
         /// 
-        void populateLists() {
+        void PopulateLists() {
             packetsLogin = new Dictionary<int,Func<Minecraft,Packets.Packet>> {
                 {0, (mainMC) => new Disconnect(ref mainMC) },
                 {1, (mainMC) => new encryptionRequest(ref mainMC) },
@@ -183,12 +183,12 @@ namespace libMC.NET {
                 {64, (mainMC) => new Packets.Play.Disconnect(ref mainMC) }
             };
 
-            raiseSocketDebug(this, "List populated");
+            RaiseSocketDebug(this, "List populated");
         }
         /// <summary>
         /// Creates an instance of each new packet, so it can be parsed.
         /// </summary>
-        void packetHandler() {
+        void PacketHandler() {
             try {
                 int length = 0;
 
@@ -196,40 +196,40 @@ namespace libMC.NET {
                     if (baseSock.Connected) {
                         int packetID = wSock.readVarInt();
 
-                        switch (mainMC.serverState) {
+                        switch (mainMC.ServerState) {
                             case (int)ServerState.Status:
                                 if (packetsStatus.Keys.Contains(packetID) == false) {
-                                    raiseSocketError(this, "Unknown Packet ID. State: 1, Packet: " + packetID);
+                                    RaiseSocketError(this, "Unknown Packet ID. State: 1, Packet: " + packetID);
                                     wSock.readByteArray(length - 1); // -- bypass the packet
                                     continue;
                                 }
 
                                 var packet = packetsStatus[packetID](mainMC);
-                                raisePacketHandled(this, packet, packetID);
+                                RaisePacketHandled(this, packet, packetID);
 
                                 break;
 
                             case (int)ServerState.Login:
                                 if (packetsLogin.Keys.Contains(packetID) == false) {
-                                    raiseSocketError(this, "Unknown Packet ID. State: 2, Packet: " + packetID);
+                                    RaiseSocketError(this, "Unknown Packet ID. State: 2, Packet: " + packetID);
                                     wSock.readByteArray(length - 1); // -- bypass the packet
                                     continue;
                                 }
 
                                 var packetl = packetsLogin[packetID](mainMC);
-                                raisePacketHandled(this, packetl, packetID);
+                                RaisePacketHandled(this, packetl, packetID);
 
                                 break;
 
                             case (int)ServerState.Play:
                                 if (packetsPlay.Keys.Contains(packetID) == false) {
-                                    raiseSocketError(this, "Unknown Packet ID. State: 3, Packet: " + packetID);
+                                    RaiseSocketError(this, "Unknown Packet ID. State: 3, Packet: " + packetID);
                                     wSock.readByteArray(length - 1); // -- bypass the packet
                                     continue;
                                 }
 
                                 var packetp = packetsPlay[packetID](mainMC);
-                                raisePacketHandled(this, packetp, packetID);
+                                RaisePacketHandled(this, packetp, packetID);
 
                                 break;
                         
@@ -239,9 +239,9 @@ namespace libMC.NET {
                 }
             } catch (Exception e) {
                 if (e.GetType() != typeof(ThreadAbortException)) {
-                    raiseSocketError(this, "Critical error in handling packets.");
-                    raiseSocketError(this, e.Message);
-                    raiseSocketError(this, e.StackTrace);
+                    RaiseSocketError(this, "Critical error in handling packets.");
+                    RaiseSocketError(this, e.Message);
+                    RaiseSocketError(this, e.StackTrace);
                     Stop();
                 }
             }
@@ -253,36 +253,36 @@ namespace libMC.NET {
             Play
         }
         #region Event Messengers
-        public void raiseSocketError(object sender, string message) {
-            if (socketError != null)
-                socketError(sender, message);
+        public void RaiseSocketError(object sender, string message) {
+            if (SocketError != null)
+                SocketError(sender, message);
             
         }
-        public void raiseSocketInfo(object sender, string message) {
-            if (infoMessage != null)
-                infoMessage(sender, message);
+        public void RaiseSocketInfo(object sender, string message) {
+            if (InfoMessage != null)
+                InfoMessage(sender, message);
         }
-        public void raiseSocketDebug(object sender, string message) {
+        public void RaiseSocketDebug(object sender, string message) {
             if (debugMessage != null)
                 debugMessage(sender, message);
         }
-        public void raisePacketHandled(object sender, object packet, int id) {
+        public void RaisePacketHandled(object sender, object packet, int id) {
             if (PacketHandled != null)
                 PacketHandled(sender, packet, id);
         }
         #endregion
-        #region Events
-        public delegate void socketErrorHandler(object sender, string message);
-        public event socketErrorHandler socketError;
+        #region Event Delegates
+        public delegate void SocketErrorHandler(object sender, string message);
+        public event SocketErrorHandler SocketError;
 
-        public delegate void networkInfoHandler(object sender, string message);
-        public event networkInfoHandler infoMessage;
+        public delegate void NetworkInfoHandler(object sender, string message);
+        public event NetworkInfoHandler InfoMessage;
 
-        public delegate void networkDebugHandler(object sender, string message);
-        public event networkDebugHandler debugMessage;
+        public delegate void NetworkDebugHandler(object sender, string message);
+        public event NetworkDebugHandler debugMessage;
 
-        public delegate void packetHandledHandler(object sender, object packet, int id);
-        public event packetHandledHandler PacketHandled;
+        public delegate void PacketHandledHandler(object sender, object packet, int id);
+        public event PacketHandledHandler PacketHandled;
         #endregion
     }
 }

@@ -22,23 +22,6 @@ namespace libMC.NET.Packets.Login {
             RandomNumberGenerator random = RandomNumberGenerator.Create();
             random.GetBytes(sharedKey);
 
-            // -- AsnKeyParser is a part of the cryptography.dll, which is simply a compiled version
-            // -- of SMProxy's Cryptography.cs, with the server side parts stripped out.
-            // -- You pass it the key data and ask it to parse, and it will 
-            // -- Extract the server's public key, then parse that into RSA for us.
-
-            AsnKeyParser keyParser = new AsnKeyParser(publicKey);
-            RSAParameters Dekey = keyParser.ParseRSAPublicKey();
-
-            // -- Now we create an encrypter, and encrypt the token sent to us by the server
-            // -- as well as our newly made shared key (Which can then only be decrypted with the server's private key)
-            // -- and we send it to the server.
-
-            RSACryptoServiceProvider cryptoService = new RSACryptoServiceProvider();
-            cryptoService.ImportParameters(Dekey);
-
-            byte[] EncryptedSecret = cryptoService.Encrypt(sharedKey, false);
-            byte[] EncryptedVerify = cryptoService.Encrypt(token, false);
 
             if (serverID == "" && mc.verifyNames) {
                 // -- Verify with Minecraft.net
@@ -65,6 +48,23 @@ namespace libMC.NET.Packets.Login {
                 mc.raiseInfo(this, "Name verification off, Skipping authentication.");
             }
 
+            // -- AsnKeyParser is a part of the cryptography.dll, which is simply a compiled version
+            // -- of SMProxy's Cryptography.cs, with the server side parts stripped out.
+            // -- You pass it the key data and ask it to parse, and it will 
+            // -- Extract the server's public key, then parse that into RSA for us.
+
+            AsnKeyParser keyParser = new AsnKeyParser(publicKey);
+            RSAParameters Dekey = keyParser.ParseRSAPublicKey();
+
+            // -- Now we create an encrypter, and encrypt the token sent to us by the server
+            // -- as well as our newly made shared key (Which can then only be decrypted with the server's private key)
+            // -- and we send it to the server.
+
+            RSACryptoServiceProvider cryptoService = new RSACryptoServiceProvider();
+            cryptoService.ImportParameters(Dekey);
+
+            byte[] EncryptedSecret = cryptoService.Encrypt(sharedKey, false);
+            byte[] EncryptedVerify = cryptoService.Encrypt(token, false);
             mc.nh.wSock.InitEncryption(sharedKey);
             encryptionResponse er = new encryptionResponse(ref mc, EncryptedSecret, EncryptedVerify);
         }

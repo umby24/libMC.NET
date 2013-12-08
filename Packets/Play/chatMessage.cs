@@ -21,50 +21,50 @@ namespace libMC.NET.Packets.Play {
             string text = "", translate = "", color = "", name = "";//, final = "";
             //dynamic clickEvent, hoverEvent;
 
-            dynamic jsonObj = JObject.Parse(raw);
+            JToken jsonObj = JToken.Parse(raw);
 
-            if (jsonObj.text != null) // -- Raw text, just let the clients parse it from here.
-                return jsonObj.text;
+            if (jsonObj["text"] != null) // -- Raw text, just let the clients parse it from here.
+                return jsonObj["text"].Value<string>();
 
-            if (jsonObj.translate != null)
-                translate = jsonObj.translate;
+            if (jsonObj["translate"] != null)
+                translate = jsonObj["translate"].Value<string>();
 
-            if (jsonObj.bold != null)
-                bold = jsonObj.bold;
+            if (jsonObj["bold"] != null)
+                bold = jsonObj["bold"].Value<bool>();
 
-            if (jsonObj.italic != null)
-                italic = jsonObj.italic;
+            if (jsonObj["italic"] != null)
+                italic = jsonObj["italic"].Value<bool>();
 
-            if (jsonObj.underlined != null)
-                underlined = jsonObj.underlined;
+            if (jsonObj["underlined"] != null)
+                underlined = jsonObj["underlined"].Value<bool>();
 
-            if (jsonObj.strikethrough != null)
-                strikethrough = jsonObj.strikethrough;
+            if (jsonObj["strikethrough"] != null)
+                strikethrough = jsonObj["strikethrough"].Value<bool>();
 
-            if (jsonObj.obfuscated != null)
-                obfs = jsonObj.obfuscated;
+            if (jsonObj["obfuscated"]!= null)
+                obfs = jsonObj["obfuscated"].Value<bool>();
 
-            if (jsonObj.color != null)
-                color = jsonObj.color;
+            if (jsonObj["color"] != null)
+                color = jsonObj["color"].Value<string>();
 
             switch (translate) {
                 case "chat.type.text":
-                    name = jsonObj.with[0].text;
+                    name = jsonObj["with"][0]["text"].Value<string>();
                     sender = name;
-                    text = jsonObj.with[1];
+                    text = jsonObj["with"][1].Value<string>();
                     break;
                 case "multiplayer.player.joined":
                     sender = "EVENT";
-                    text = jsonObj.with[0].text + " joined the game.";
+                    text = jsonObj["with"][0]["text"].Value<string>() + " joined the game.";
                     break;
                 case "multiplayer.player.left":
                     sender = "EVENT";
-                    text = jsonObj.with[0].text + " left the game.";
+                    text = jsonObj["with"][0]["text"].Value<string>() + " left the game.";
                     break;
                 case "death.attack.player":
                     //name = jsonObj.with[0].text;
                     sender = "EVENT";
-                    text = jsonObj.with[0].text + " killed by " + jsonObj.with[2].text;
+                    text = jsonObj["with"][0]["text"].Value<string>() + " killed by " + jsonObj["with"][2]["text"].Value<string>();
                     break;
                 case "chat.type.admin":
                     sender = "EVENT";
@@ -72,7 +72,7 @@ namespace libMC.NET.Packets.Play {
                 case "chat.type.announcement":
                     name = "Server";
                     sender = name;
-                    text = string.Join("", jsonObj.with[1].extra);
+                    text = string.Join("", jsonObj["with"][1]["extra"].Value<string>());
                     break;
             }
 
