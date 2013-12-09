@@ -177,6 +177,72 @@ namespace libMC.NET {
         }
         #endregion
         #region Event Messengers
+        #region Server Events
+        public void raisePlayerlistAdd(string name, short ping) {
+            if (PlayerListitemAdd != null)
+                PlayerListitemAdd(name, ping);
+        }
+
+        public void raisePlayerlistRemove(string name) {
+            if (PlayerListitemRemove != null)
+                PlayerListitemRemove(name);
+        }
+
+        public void raisePlayerlistUpdate(string name, short ping) {
+            if (PlayerListitemUpdate != null)
+                PlayerListitemUpdate(name, ping);
+        }
+
+
+
+        public void raisePluginMessage(string channel, byte[] data) {
+            if (PluginMessage != null)
+                PluginMessage(channel, data);
+        }
+        public void RaiseLoginSuccess(object Sender) {
+            if (LoginSuccess != null)
+                LoginSuccess(Sender);
+        }
+
+        public void RaiseLoginFailure(object Sender, string Reason) {
+            if (LoginFailure != null)
+                LoginFailure(Sender, Reason);
+        }
+
+        public void RaiseGameJoined() {
+            if (JoinedGame != null)
+                JoinedGame();
+        }
+
+        public void raiseTransactionRejected(byte Window_ID, short Action_ID) {
+            if (TransactionRejected != null)
+                TransactionRejected(Window_ID, Action_ID);
+        }
+
+        public void raiseTransactionAccepted(byte Window_ID, short Action_ID) {
+            if (TransactionAccepted != null)
+                TransactionAccepted(Window_ID, Action_ID);
+        }
+
+        public void raiseKicked(string reason) {
+            if (PlayerKicked != null)
+                PlayerKicked(reason);
+        }
+
+        public void raiseExplosion(float X, float Y, float Z) {
+            if (explosion != null)
+                explosion(X, Y, Z);
+        }
+        public void RaisePingResponse(string VersionName, int ProtocolVersion, int MaxPlayers, int OnlinePlayers, string[] PlayersSample, string MOTD, Image Favicon) {
+            if (PingResponseReceived != null)
+                PingResponseReceived(VersionName, ProtocolVersion, MaxPlayers, OnlinePlayers, PlayersSample, MOTD, Favicon);
+        }
+        public void RaisePingMs(int MsPing) {
+            if (MsPingReceived != null)
+                MsPingReceived(MsPing);
+        }
+        #endregion
+        #region Base Events
         void NetworkInfo(object Sender, string Message) {
             if (InfoMessage != null)
                 InfoMessage(Sender, "(NETWORK): " + Message);
@@ -193,78 +259,24 @@ namespace libMC.NET {
             if (PacketHandled != null)
                 PacketHandled(Sender, Packet, id);
         }
-
-        /// <summary>
-        /// Raises a Minecraft Error from another class
-        /// </summary>
-        /// <param name="sender">Sending class</param>
-        /// <param name="message">Error Message</param>
         public void RaiseError(object Sender, string Message) {
             if (ErrorMessage != null)
                 ErrorMessage(Sender, Message);
         }
-        /// <summary>
-        /// Raises Minecraft Info from another class
-        /// </summary>
-        /// <param name="sender">Sending class</param>
-        /// <param name="message">Info Message</param>
         public void RaiseInfo(object Sender, string Message) {
             if (InfoMessage != null)
                 InfoMessage(Sender, Message);
         }
-        /// <summary>
-        /// Raises Minecraft debug message from another class
-        /// </summary>
-        /// <param name="sender">Sending class</param>
-        /// <param name="message">Debug message</param>
         public void RaiseDebug(object Sender, string Message) {
             if (DebugMessage != null)
                 DebugMessage(Sender, Message);
         }
-        /// <summary>
-        /// Raises a normal minecraft message (such as chat)
-        /// </summary>
-        /// <param name="sender">Sending class</param>
-        /// <param name="Message">Minecraft message</param>
         public void RaiseMC(object Sender, string McMessage, string Name) {
             if (Message != null)
                 Message(Sender, McMessage, Name);
         }
-
-        public void RaiseLoginSuccess(object Sender) {
-            if (LoginSuccess != null)
-                LoginSuccess(Sender);
-        }
-
-        public void RaiseLoginFailure(object Sender, string Reason) {
-            if (LoginFailure != null)
-                LoginFailure(Sender, Reason);
-        }
-
-        public void RaiseGameJoined() {
-            if (JoinedGame != null)
-                JoinedGame();
-        }
-
-        public void RaiseEntityAnimationChanged(object Sender, int Entity_ID, byte Animation) {
-            if (EntityAnimationChanged != null)
-                EntityAnimationChanged(Sender, Entity_ID, Animation);
-        }
-        public void raiseEntityAttached(int Entity_ID, int Vehicle_ID, bool Leashed) {
-            if (entityAttached != null)
-                entityAttached(Entity_ID, Vehicle_ID, Leashed);
-        }
-
-        public void raiseNoteBlockSound(byte instrument, byte pitch, int x, short y, int z) {
-            if (noteBlockPlay != null)
-                noteBlockPlay(instrument, pitch, x, y, z);
-        }
-
-        public void raisePistonMoved(byte state, byte direction, int x, short y, int z) {
-            if (pistonMoved != null)
-                pistonMoved(state, direction, x, y, z);
-        }
-
+        #endregion
+        #region Block Events
         public void raiseChestStateChange(byte state, int x, short y, int z) {
             if (chestStateChanged != null)
                 chestStateChanged(state, x, y, z);
@@ -280,11 +292,13 @@ namespace libMC.NET {
                 blockChanged(x, y, z, type, data);
         }
 
-        public void raiseGameStateChanged(string eventName, float value) {
-            if (gameStateChanged != null)
-                gameStateChanged(eventName, value);
+        public void raisePistonMoved(byte state, byte direction, int x, short y, int z) {
+            if (pistonMoved != null)
+                pistonMoved(state, direction, x, y, z);
         }
 
+        #endregion
+        #region World Events
         public void raiseChunkUnload(int X, int Z) {
             if (chunkUnloaded != null)
                 chunkUnloaded(X, Z);
@@ -295,41 +309,34 @@ namespace libMC.NET {
                 chunkLoaded(X, Z);
         }
 
-        public void raiseWindowClosed(byte window_ID) {
-            if (closeWindow != null)
-                closeWindow(window_ID);
+        public void raiseNoteBlockSound(byte instrument, byte pitch, int x, short y, int z) {
+            if (noteBlockPlay != null)
+                noteBlockPlay(instrument, pitch, x, y, z);
         }
 
-        public void raiseItemCollected(int item_EID, int collector_eid) {
-            if (itemCollected != null)
-                itemCollected(item_EID, collector_eid);
+        public void raiseGameStateChanged(string eventName, float value) {
+            if (gameStateChanged != null)
+                gameStateChanged(eventName, value);
         }
 
-        public void raiseTransactionRejected(byte Window_ID, short Action_ID) {
-            if (TransactionRejected != null)
-                TransactionRejected(Window_ID, Action_ID);
+        public void raiseMultiBlockChange(int Chunk_X, int Chunk_Z) {
+            if (multiBlockChange != null)
+                multiBlockChange(Chunk_X, Chunk_Z);
         }
-
-        public void raiseTransactionAccepted(byte Window_ID, short Action_ID) {
-            if (TransactionAccepted != null)
-                TransactionAccepted(Window_ID, Action_ID);
+        #endregion
+        #region Entity Events
+        public void RaiseEntityAnimationChanged(object Sender, int Entity_ID, byte Animation) {
+            if (EntityAnimationChanged != null)
+                EntityAnimationChanged(Sender, Entity_ID, Animation);
         }
-
+        public void raiseEntityAttached(int Entity_ID, int Vehicle_ID, bool Leashed) {
+            if (entityAttached != null)
+                entityAttached(Entity_ID, Vehicle_ID, Leashed);
+        }
         public void raiseEntityDestruction(int Entity_ID) {
             if (entityDestroyed != null)
                 entityDestroyed(Entity_ID);
         }
-
-        public void raiseKicked(string reason) {
-            if (PlayerKicked != null)
-                PlayerKicked(reason);
-        }
-
-        public void raiseScoreBoard(byte position, string name) {
-            if (displayScoreboard != null)
-                displayScoreboard(position, name);
-        }
-
         public void raiseEntityStatus(int Entity_ID) {
             if (entityStatusChanged != null)
                 entityStatusChanged(Entity_ID);
@@ -364,72 +371,32 @@ namespace libMC.NET {
             if (entityVelocityChanged != null)
                 entityVelocityChanged(Entity_ID, X, Y, Z);
         }
-
-        public void raiseExplosion(float X, float Y, float Z) {
-            if (explosion != null)
-                explosion(X, Y, Z);
+        #endregion
+        #region Player Events
+        public void raiseWindowClosed(byte window_ID) {
+            if (closeWindow != null)
+                closeWindow(window_ID);
         }
-
-        public void raiseHeldSlotChanged(byte slot) {
-            if (heldSlotChanged != null)
-                heldSlotChanged(slot);
-        }
-
-        public void raiseMultiBlockChange(int Chunk_X, int Chunk_Z) {
-            if (multiBlockChange != null)
-                multiBlockChange(Chunk_X, Chunk_Z);
-        }
-
         public void raiseOpenWindow(byte Window_ID, byte Type, string Title, byte slots, bool useTitle) {
             if (openWindow != null)
                 openWindow(Window_ID, Type, Title, slots, useTitle);
         }
-
-        public void raisePlayerlistAdd(string name, short ping) {
-            if (PlayerListitemAdd != null)
-                PlayerListitemAdd(name, ping);
+        public void raiseItemCollected(int item_EID, int collector_eid) {
+            if (itemCollected != null)
+                itemCollected(item_EID, collector_eid);
         }
-
-        public void raisePlayerlistRemove(string name) {
-            if (PlayerListitemRemove != null)
-                PlayerListitemRemove(name);
+        public void raiseHeldSlotChanged(byte slot) {
+            if (heldSlotChanged != null)
+                heldSlotChanged(slot);
         }
-
-        public void raisePlayerlistUpdate(string name, short ping) {
-            if (PlayerListitemUpdate != null)
-                PlayerListitemUpdate(name, ping);
-        }
-
         public void raiseLocationChanged() {
             if (locationChanged != null)
                 locationChanged();
         }
-
-        public void raisePluginMessage(string channel, byte[] data) {
-            if (PluginMessage != null)
-                PluginMessage(channel, data);
-        }
-
         public void raisePlayerRespawn() {
             if (playerRespawned != null)
                 playerRespawned();
         }
-
-        public void raiseScoreboardAdd(string name, string value) {
-            if (scoreboardObjectiveAdd != null)
-                scoreboardObjectiveAdd(name, value);
-        }
-
-        public void raiseScoreboardRemove(string name) {
-            if (scoreboardObjectiveRemove != null)
-                scoreboardObjectiveRemove(name);
-        }
-
-        public void raiseScoreboardUpdate(string name, string value) {
-            if (scoreboardObjectiveUpdate != null)
-                scoreboardObjectiveUpdate(name, value);
-        }
-
         public void raiseExperienceUpdate(float expBar, short level, short totalExp) {
             if (experienceSet != null)
                 experienceSet(expBar, level, totalExp);
@@ -449,14 +416,28 @@ namespace libMC.NET {
             if (setPlayerHealth != null)
                 setPlayerHealth(health, hunger, saturation);
         }
-        public void RaisePingResponse(string VersionName, int ProtocolVersion, int MaxPlayers, int OnlinePlayers, string[] PlayersSample, string MOTD, Image Favicon) {
-            if (PingResponseReceived != null)
-                PingResponseReceived(VersionName, ProtocolVersion, MaxPlayers, OnlinePlayers, PlayersSample, MOTD, Favicon);
+        #endregion
+        #region Scoreboard Events
+        public void raiseScoreBoard(byte position, string name) {
+            if (displayScoreboard != null)
+                displayScoreboard(position, name);
         }
-        public void RaisePingMs(int MsPing) {
-            if (MsPingReceived != null)
-                MsPingReceived(MsPing);
+
+        public void raiseScoreboardAdd(string name, string value) {
+            if (scoreboardObjectiveAdd != null)
+                scoreboardObjectiveAdd(name, value);
         }
+
+        public void raiseScoreboardRemove(string name) {
+            if (scoreboardObjectiveRemove != null)
+                scoreboardObjectiveRemove(name);
+        }
+
+        public void raiseScoreboardUpdate(string name, string value) {
+            if (scoreboardObjectiveUpdate != null)
+                scoreboardObjectiveUpdate(name, value);
+        }
+        #endregion
         #endregion
         #region Event Delegates
         
