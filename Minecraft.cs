@@ -167,6 +167,13 @@ namespace libMC.NET {
             RaiseDebug(this, "Variables reset, disconnected from server.");
         }
 
+        #region Simple Actions
+        public void SendChat(string Message) {
+            if (nh != null) {
+                Packets.Play.ServerBound.chatMessage.sendChat(this, Message);
+            }
+        }
+        #endregion
         #region Event Messengers
         void NetworkInfo(object Sender, string Message) {
             if (InfoMessage != null)
