@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Drawing;
 
 using libMC.NET.Common;
 using libMC.NET.World;
@@ -11,6 +12,7 @@ using libMC.NET.Entities;
 // TODO: Convert cases likeThis to LikeThis.
 // TODO: Comment more things
 // TODO: Speed things up, optimize code.
+// TODO: Sort Event Messengers by type into regions
 
 // [Low]: Refactor packets to be universal for Server/Client, and be usable with proxies
 namespace libMC.NET {
@@ -447,6 +449,14 @@ namespace libMC.NET {
             if (setPlayerHealth != null)
                 setPlayerHealth(health, hunger, saturation);
         }
+        public void RaisePingResponse(string VersionName, int ProtocolVersion, int MaxPlayers, int OnlinePlayers, string[] PlayersSample, string MOTD, Image Favicon) {
+            if (PingResponseReceived != null)
+                PingResponseReceived(VersionName, ProtocolVersion, MaxPlayers, OnlinePlayers, PlayersSample, MOTD, Favicon);
+        }
+        public void RaisePingMs(int MsPing) {
+            if (MsPingReceived != null)
+                MsPingReceived(MsPing);
+        }
         #endregion
         #region Event Delegates
         
@@ -610,6 +620,13 @@ namespace libMC.NET {
 
         public delegate void PlayerKickedHandler(string reason);
         public event PlayerKickedHandler PlayerKicked;
+
+        public delegate void PingMsReceivedHandler(int msPing);
+        public event PingMsReceivedHandler MsPingReceived;
+
+        public delegate void PingResponseReceivedHandler(string VersionName, int ProtocolVersion, int MaxPlayers, int OnlinePlayers, string[] PlayersSample, string MOTD, Image Favicon);
+        public event PingResponseReceivedHandler PingResponseReceived;
+
         #endregion
         #endregion
     }
