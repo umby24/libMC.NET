@@ -4,8 +4,8 @@ using System.Linq;
 using System.Text;
 
 namespace libMC.NET.Packets.Login {
-    class encryptionResponse : Packet {
-        public encryptionResponse(ref Minecraft mc, byte[] encryptedKey, byte[] encryptedToken) {
+    class EncryptionResponse : Packet {
+        public EncryptionResponse(ref Minecraft mc, byte[] encryptedKey, byte[] encryptedToken) {
             mc.nh.wSock.writeVarInt(1);
             mc.nh.wSock.writeShort((short)encryptedKey.Length);
             mc.nh.wSock.Send(encryptedKey);

@@ -6,8 +6,8 @@ using System.Security.Cryptography;
 using SMProxy;
 
 namespace libMC.NET.Packets.Login {
-    class encryptionRequest : Packet {
-        public encryptionRequest(ref Minecraft mc) {
+    class EncryptionRequest : Packet {
+        public EncryptionRequest(ref Minecraft mc) {
             // -- Receive from server.
             string serverID = mc.nh.wSock.readString();
             int pkeyLength = mc.nh.wSock.readShort();
@@ -66,7 +66,7 @@ namespace libMC.NET.Packets.Login {
             byte[] EncryptedSecret = cryptoService.Encrypt(sharedKey, false);
             byte[] EncryptedVerify = cryptoService.Encrypt(token, false);
             mc.nh.wSock.InitEncryption(sharedKey);
-            encryptionResponse er = new encryptionResponse(ref mc, EncryptedSecret, EncryptedVerify);
+            EncryptionResponse er = new EncryptionResponse(ref mc, EncryptedSecret, EncryptedVerify);
         }
 
         private static string GetHexString(byte[] p) {

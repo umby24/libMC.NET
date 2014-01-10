@@ -8,14 +8,14 @@ using libMC.NET.Common;
 using libMC.NET.World;
 
 namespace libMC.NET.Packets.Play {
-    class spawnObject : Packet {
+    class SpawnObject : Packet {
         public int Entity_ID;
         public byte type, pitch, yaw;
         public Vector location;
         ObjectEntity newObj;
 
         //TODO: Implement 'Object' Class.
-        public spawnObject(ref Minecraft mc) {
+        public SpawnObject(ref Minecraft mc) {
             Entity_ID = mc.nh.wSock.readVarInt();
             type = mc.nh.wSock.readByte();
 
@@ -28,7 +28,7 @@ namespace libMC.NET.Packets.Play {
             yaw = mc.nh.wSock.readByte();
 
             newObj = new ObjectEntity(type);
-            newObj.readObjectData(ref mc);
+            newObj.ReadObjectData(ref mc);
 
             if (mc.MinecraftWorld == null)
                 mc.MinecraftWorld = new WorldClass();

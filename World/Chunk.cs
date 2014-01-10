@@ -27,10 +27,10 @@ namespace libMC.NET.World {
             numBlocks = 0;
             aBlocks = 0;
 
-            createSections();
+            CreateSections();
         }
 
-        void createSections() {
+        void CreateSections() {
             for (int i = 0; i < 16; i++) {
                 if ((pbitmap & (1 << i)) != 0) {
                     numBlocks++;
@@ -48,7 +48,7 @@ namespace libMC.NET.World {
             numBlocks = numBlocks * 4096;
         }
 
-        void populate() {
+        void Populate() {
             int offset = 0, current = 0, metaOff = 0;
 
             for (int i = 0; i < 16; i++) {
@@ -63,7 +63,7 @@ namespace libMC.NET.World {
                     Section mySection = sections[current];
 
                     mySection.blocks = temp;
-                    mySection.metadata = createMetadataBytes(temp2);
+                    mySection.metadata = CreateMetadataBytes(temp2);
 
                     offset += 4096;
                     metaOff += 2048;
@@ -82,7 +82,7 @@ namespace libMC.NET.World {
         /// </summary>
         /// <param name="oldMeta">Old (2048-byte) Metadata</param>
         /// <returns>4096 uncompressed metadata</returns>
-        public byte[] createMetadataBytes(byte[] oldMeta) {
+        public byte[] CreateMetadataBytes(byte[] oldMeta) {
             byte[] newMeta = new byte[4096];
 
             for (int i = 0; i < oldMeta.Length; i++) {
@@ -96,7 +96,7 @@ namespace libMC.NET.World {
             return newMeta;
         }
 
-        public byte[] getData(byte[] deCompressed) {
+        public byte[] GetData(byte[] deCompressed) {
             // -- Loading chunks, network handler hands off the decompressed bytes
             // -- This function takes its portion, and returns what's left.
 
@@ -119,12 +119,12 @@ namespace libMC.NET.World {
 
             Array.Copy(deCompressed, (numBlocks + removeable), temp, 0, temp.Length);
 
-            populate(); // -- Populate all of our sections with the bytes we just aquired.
+            Populate(); // -- Populate all of our sections with the bytes we just aquired.
 
             return temp;
         }
 
-        public void updateBlock(int Bx, int By, int Bz, int id) {
+        public void UpdateBlock(int Bx, int By, int Bz, int id) {
             // -- Updates the block in this chunk.
 
             decimal ChunkX = decimal.Divide(Bx, 16);
@@ -137,41 +137,42 @@ namespace libMC.NET.World {
                 return; // -- Block is not in this chunk, user-error somewhere.
 
             Section thisSection = GetSectionByNumber(By);
-            thisSection.setBlock(getXinSection(Bx), GetPositionInSection(By), getZinSection(Bz), id);
+            thisSection.SetBlock(GetXinSection(Bx), GetPositionInSection(By), GetZinSection(Bz), id);
             
         }
 
-        public int getBlockId(int Bx, int By, int Bz) {
+        public int GetBlockId(int Bx, int By, int Bz) {
             Section thisSection = GetSectionByNumber(By);
-            return thisSection.getBlock(getXinSection(Bx), GetPositionInSection(By), getZinSection(Bz)).ID;
+            return thisSection.GetBlock(GetXinSection(Bx), GetPositionInSection(By), GetZinSection(Bz)).ID;
         }
 
-        public Block getBlock(int Bx, int By, int Bz) {
+        public Block GetBlock(int Bx, int By, int Bz) {
             Section thisSection = GetSectionByNumber(By);
-            return thisSection.getBlock(getXinSection(Bx), GetPositionInSection(By), getZinSection(Bz));
+            return thisSection.GetBlock(GetXinSection(Bx), GetPositionInSection(By), GetZinSection(Bz));
         }
 
-        public int getBlockMetadata(int Bx, int By, int Bz) {
+        public int GetBlockMetadata(int Bx, int By, int Bz) {
             Section thisSection = GetSectionByNumber(By);
-            return thisSection.getBlockMetadata(getXinSection(Bx), GetPositionInSection(By), getZinSection(Bz));
+            return thisSection.GetBlockMetadata(GetXinSection(Bx), GetPositionInSection(By), GetZinSection(Bz));
         }
 
-        public void setBlockData(int Bx, int By, int Bz, byte data) {
+        public void SetBlockData(int Bx, int By, int Bz, byte data) {
             // -- Update the skylight and metadata on this block.
             Section thisSection = GetSectionByNumber(By);
-            thisSection.setBlockData(getXinSection(Bx), GetPositionInSection(By), getZinSection(Bz), data);
+            thisSection.SetBlockData(GetXinSection(Bx), GetPositionInSection(By), GetZinSection(Bz), data);
         }
+
         #region Helping Methods
         private Section GetSectionByNumber(int blockY) {
             return sections[(byte)(blockY / 16)];
         }
-        private int getXinSection(int BlockX) {
+        private int GetXinSection(int BlockX) {
             return Math.Abs(BlockX - (x * 16));
         }
         private int GetPositionInSection(int blockY) {
             return blockY % 16; // Credits: SirCmpwn Craft.net
         }
-        private int getZinSection(int BlockZ) {
+        private int GetZinSection(int BlockZ) {
             if (z == 0)
                 return BlockZ;
 

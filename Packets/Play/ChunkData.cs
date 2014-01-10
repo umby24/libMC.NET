@@ -26,12 +26,12 @@ namespace libMC.NET.Packets.Play {
                 int cIndex = -1;
 
                 if (mc.MinecraftWorld != null)
-                    cIndex = mc.MinecraftWorld.getChunk(X, Z);
+                    cIndex = mc.MinecraftWorld.GetChunk(X, Z);
 
                 if (cIndex != -1)
                     mc.MinecraftWorld.worldChunks.RemoveAt(cIndex);
 
-                mc.raiseChunkUnload(X, Z);
+                mc.RaiseChunkUnload(X, Z);
                 return;
             }
 
@@ -39,11 +39,11 @@ namespace libMC.NET.Packets.Play {
             Array.Copy(compressedData, 2, trim, 0, trim.Length);
 
             // -- Decompress the data
-            decompressedData = Decompressor.decompress(trim);
+            decompressedData = Decompressor.Decompress(trim);
 
             // -- Create new chunk
             Chunk newChunk = new Chunk(X, Z, pbitmap, abitmap, true, groundUp); // -- Skylight assumed true
-            newChunk.getData(decompressedData);
+            newChunk.GetData(decompressedData);
 
             if (mc.MinecraftWorld == null)
                 mc.MinecraftWorld = new WorldClass();
@@ -51,7 +51,7 @@ namespace libMC.NET.Packets.Play {
             // -- Add the chunk to the world
             mc.MinecraftWorld.worldChunks.Add(newChunk);
 
-            mc.raiseChunkLoad(X, Z);
+            mc.RaiseChunkLoad(X, Z);
         }
     }
 }

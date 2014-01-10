@@ -9,10 +9,8 @@ using libMC.NET.Common;
 using libMC.NET.World;
 using libMC.NET.Entities;
 
-// TODO: Convert cases likeThis to LikeThis.
 // TODO: Comment more things
 // TODO: Speed things up, optimize code.
-// TODO: Sort Event Messengers by type into regions
 
 // [Low]: Refactor packets to be universal for Server/Client, and be usable with proxies
 namespace libMC.NET {
@@ -139,7 +137,7 @@ namespace libMC.NET {
 
             // -- Register our event handlers.
             nh.InfoMessage += NetworkInfo;
-            nh.debugMessage += NetworkDebug;
+            nh.DebugMessage += NetworkDebug;
             nh.SocketError += NetworkError;
             nh.PacketHandled += RaisePacketHandled;
 
@@ -172,30 +170,28 @@ namespace libMC.NET {
         #region Simple Actions
         public void SendChat(string Message) {
             if (nh != null) {
-                Packets.Play.ServerBound.chatMessage.sendChat(this, Message);
+                Packets.Play.ServerBound.ChatMessage.sendChat(this, Message);
             }
         }
         #endregion
         #region Event Messengers
         #region Server Events
-        public void raisePlayerlistAdd(string name, short ping) {
+        public void RaisePlayerlistAdd(string name, short ping) {
             if (PlayerListitemAdd != null)
                 PlayerListitemAdd(name, ping);
         }
 
-        public void raisePlayerlistRemove(string name) {
+        public void RaisePlayerlistRemove(string name) {
             if (PlayerListitemRemove != null)
                 PlayerListitemRemove(name);
         }
 
-        public void raisePlayerlistUpdate(string name, short ping) {
+        public void RaisePlayerlistUpdate(string name, short ping) {
             if (PlayerListitemUpdate != null)
                 PlayerListitemUpdate(name, ping);
         }
 
-
-
-        public void raisePluginMessage(string channel, byte[] data) {
+        public void RaisePluginMessage(string channel, byte[] data) {
             if (PluginMessage != null)
                 PluginMessage(channel, data);
         }
@@ -214,24 +210,24 @@ namespace libMC.NET {
                 JoinedGame();
         }
 
-        public void raiseTransactionRejected(byte Window_ID, short Action_ID) {
+        public void RaiseTransactionRejected(byte Window_ID, short Action_ID) {
             if (TransactionRejected != null)
                 TransactionRejected(Window_ID, Action_ID);
         }
 
-        public void raiseTransactionAccepted(byte Window_ID, short Action_ID) {
+        public void RaiseTransactionAccepted(byte Window_ID, short Action_ID) {
             if (TransactionAccepted != null)
                 TransactionAccepted(Window_ID, Action_ID);
         }
 
-        public void raiseKicked(string reason) {
+        public void RaiseKicked(string reason) {
             if (PlayerKicked != null)
                 PlayerKicked(reason);
         }
 
-        public void raiseExplosion(float X, float Y, float Z) {
-            if (explosion != null)
-                explosion(X, Y, Z);
+        public void RaiseExplosion(float X, float Y, float Z) {
+            if (Explosion != null)
+                Explosion(X, Y, Z);
         }
         public void RaisePingResponse(string VersionName, int ProtocolVersion, int MaxPlayers, int OnlinePlayers, string[] PlayersSample, string MOTD, Image Favicon) {
             if (PingResponseReceived != null)
@@ -277,51 +273,51 @@ namespace libMC.NET {
         }
         #endregion
         #region Block Events
-        public void raiseChestStateChange(byte state, int x, short y, int z) {
-            if (chestStateChanged != null)
-                chestStateChanged(state, x, y, z);
+        public void RaiseChestStateChange(byte state, int x, short y, int z) {
+            if (ChestStateChanged != null)
+                ChestStateChanged(state, x, y, z);
         }
 
-        public void raiseBlockBreakingEvent(Vector Location, int Entity_ID, byte Stage) {
-            if (blockBreaking != null)
-                blockBreaking(Location, Entity_ID, Stage);
+        public void RaiseBlockBreakingEvent(Vector Location, int Entity_ID, byte Stage) {
+            if (BlockBreaking != null)
+                BlockBreaking(Location, Entity_ID, Stage);
         }
 
-        public void raiseBlockChangedEvent(int x, byte y, int z, int type, byte data) {
-            if (blockChanged != null)
-                blockChanged(x, y, z, type, data);
+        public void RaiseBlockChangedEvent(int x, byte y, int z, int type, byte data) {
+            if (BlockChanged != null)
+                BlockChanged(x, y, z, type, data);
         }
 
-        public void raisePistonMoved(byte state, byte direction, int x, short y, int z) {
-            if (pistonMoved != null)
-                pistonMoved(state, direction, x, y, z);
+        public void RaisePistonMoved(byte state, byte direction, int x, short y, int z) {
+            if (PistonMoved != null)
+                PistonMoved(state, direction, x, y, z);
         }
 
         #endregion
         #region World Events
-        public void raiseChunkUnload(int X, int Z) {
-            if (chunkUnloaded != null)
-                chunkUnloaded(X, Z);
+        public void RaiseChunkUnload(int X, int Z) {
+            if (ChunkUnloaded != null)
+                ChunkUnloaded(X, Z);
         }
 
-        public void raiseChunkLoad(int X, int Z) {
-            if (chunkLoaded != null)
-                chunkLoaded(X, Z);
+        public void RaiseChunkLoad(int X, int Z) {
+            if (ChunkLoaded != null)
+                ChunkLoaded(X, Z);
         }
 
-        public void raiseNoteBlockSound(byte instrument, byte pitch, int x, short y, int z) {
-            if (noteBlockPlay != null)
-                noteBlockPlay(instrument, pitch, x, y, z);
+        public void RaiseNoteBlockSound(byte instrument, byte pitch, int x, short y, int z) {
+            if (NoteBlockPlay != null)
+                NoteBlockPlay(instrument, pitch, x, y, z);
         }
 
-        public void raiseGameStateChanged(string eventName, float value) {
-            if (gameStateChanged != null)
-                gameStateChanged(eventName, value);
+        public void RaiseGameStateChanged(string eventName, float value) {
+            if (GameStateChanged != null)
+                GameStateChanged(eventName, value);
         }
 
-        public void raiseMultiBlockChange(int Chunk_X, int Chunk_Z) {
-            if (multiBlockChange != null)
-                multiBlockChange(Chunk_X, Chunk_Z);
+        public void RaiseMultiBlockChange(int Chunk_X, int Chunk_Z) {
+            if (MultiBlockChange != null)
+                MultiBlockChange(Chunk_X, Chunk_Z);
         }
         #endregion
         #region Entity Events
@@ -329,118 +325,117 @@ namespace libMC.NET {
             if (EntityAnimationChanged != null)
                 EntityAnimationChanged(Sender, Entity_ID, Animation);
         }
-        public void raiseEntityAttached(int Entity_ID, int Vehicle_ID, bool Leashed) {
-            if (entityAttached != null)
-                entityAttached(Entity_ID, Vehicle_ID, Leashed);
+        public void RaiseEntityAttached(int Entity_ID, int Vehicle_ID, bool Leashed) {
+            if (EntityAttached != null)
+                EntityAttached(Entity_ID, Vehicle_ID, Leashed);
         }
-        public void raiseEntityDestruction(int Entity_ID) {
-            if (entityDestroyed != null)
-                entityDestroyed(Entity_ID);
+        public void RaiseEntityDestruction(int Entity_ID) {
+            if (EntityDestroyed != null)
+                EntityDestroyed(Entity_ID);
         }
-        public void raiseEntityStatus(int Entity_ID) {
-            if (entityStatusChanged != null)
-                entityStatusChanged(Entity_ID);
-        }
-
-        public void raiseEntityEquipment(int Entity_ID, int slot, Item newItem) {
-            if (entityEquipmentChanged != null)
-                entityEquipmentChanged(Entity_ID, slot, newItem);
+        public void RaiseEntityStatus(int Entity_ID) {
+            if (EntityStatusChanged != null)
+                EntityStatusChanged(Entity_ID);
         }
 
-        public void raiseEntityHeadLookChanged(int Entity_ID, byte head_yaw) {
-            if (entityHeadLookChanged != null)
-                entityHeadLookChanged(Entity_ID, head_yaw);
+        public void RaiseEntityEquipment(int Entity_ID, int slot, Item newItem) {
+            if (EntityEquipmentChanged != null)
+                EntityEquipmentChanged(Entity_ID, slot, newItem);
         }
 
-        public void raiseEntityLookChanged(int Entity_ID, byte yaw, byte pitch) {
-            if (entityLookChanged != null)
-                entityLookChanged(Entity_ID, yaw, pitch);
+        public void RaiseEntityHeadLookChanged(int Entity_ID, byte head_yaw) {
+            if (EntityHeadLookChanged != null)
+                EntityHeadLookChanged(Entity_ID, head_yaw);
         }
 
-        public void raiseEntityRelMove(int Entity_ID, int Change_X, int Change_Y, int Change_Z) {
-            if (entityRelMove != null)
-                entityRelMove(Entity_ID, Change_X, Change_Y, Change_Z);
+        public void RaiseEntityLookChanged(int Entity_ID, byte yaw, byte pitch) {
+            if (EntityLookChanged != null)
+                EntityLookChanged(Entity_ID, yaw, pitch);
         }
 
-        public void raiseEntityTeleport(int Entity_ID, int X, int Y, int Z) {
-            if (entityTeleport != null)
-                entityTeleport(Entity_ID, X, Y, Z);
+        public void RaiseEntityRelMove(int Entity_ID, int Change_X, int Change_Y, int Change_Z) {
+            if (EntityRelMove != null)
+                EntityRelMove(Entity_ID, Change_X, Change_Y, Change_Z);
         }
 
-        public void raiseEntityVelocityChanged(int Entity_ID, int X, int Y, int Z) {
-            if (entityVelocityChanged != null)
-                entityVelocityChanged(Entity_ID, X, Y, Z);
+        public void RaiseEntityTeleport(int Entity_ID, int X, int Y, int Z) {
+            if (EntityTeleport != null)
+                EntityTeleport(Entity_ID, X, Y, Z);
+        }
+
+        public void RaiseEntityVelocityChanged(int Entity_ID, int X, int Y, int Z) {
+            if (EntityVelocityChanged != null)
+                EntityVelocityChanged(Entity_ID, X, Y, Z);
         }
         #endregion
         #region Player Events
-        public void raiseWindowClosed(byte window_ID) {
-            if (closeWindow != null)
-                closeWindow(window_ID);
+        public void RaiseWindowClosed(byte window_ID) {
+            if (CloseWindow != null)
+                CloseWindow(window_ID);
         }
-        public void raiseOpenWindow(byte Window_ID, byte Type, string Title, byte slots, bool useTitle) {
-            if (openWindow != null)
-                openWindow(Window_ID, Type, Title, slots, useTitle);
+        public void RaiseOpenWindow(byte Window_ID, byte Type, string Title, byte slots, bool useTitle) {
+            if (OpenWindow != null)
+                OpenWindow(Window_ID, Type, Title, slots, useTitle);
         }
-        public void raiseItemCollected(int item_EID, int collector_eid) {
-            if (itemCollected != null)
-                itemCollected(item_EID, collector_eid);
+        public void RaiseItemCollected(int item_EID, int collector_eid) {
+            if (ItemCollected != null)
+                ItemCollected(item_EID, collector_eid);
         }
-        public void raiseHeldSlotChanged(byte slot) {
-            if (heldSlotChanged != null)
-                heldSlotChanged(slot);
+        public void RaiseHeldSlotChanged(byte slot) {
+            if (HeldSlotChanged != null)
+                HeldSlotChanged(slot);
         }
-        public void raiseLocationChanged() {
-            if (locationChanged != null)
-                locationChanged();
+        public void RaiseLocationChanged() {
+            if (LocationChanged != null)
+                LocationChanged();
         }
-        public void raisePlayerRespawn() {
-            if (playerRespawned != null)
-                playerRespawned();
+        public void RaisePlayerRespawn() {
+            if (PlayerRespawned != null)
+                PlayerRespawned();
         }
-        public void raiseExperienceUpdate(float expBar, short level, short totalExp) {
+        public void RaiseExperienceUpdate(float expBar, short level, short totalExp) {
             if (experienceSet != null)
                 experienceSet(expBar, level, totalExp);
         }
 
-        public void raiseSetWindowSlot(byte windowid, short slot, Item item) {
-            if (setWindowItem != null)
-                setWindowItem(windowid, slot, item);
+        public void RaiseSetWindowSlot(byte windowid, short slot, Item item) {
+            if (SetWindowItem != null)
+                SetWindowItem(windowid, slot, item);
         }
 
-        public void raiseInventoryItem(short slot, Item item) {
-            if (setInventoryItem != null)
-                setInventoryItem(slot, item);
+        public void RaiseInventoryItem(short slot, Item item) {
+            if (SetInventoryItem != null)
+                SetInventoryItem(slot, item);
         }
 
-        public void raisePlayerHealthUpdate(float health, short hunger, float saturation) {
-            if (setPlayerHealth != null)
-                setPlayerHealth(health, hunger, saturation);
+        public void RaisePlayerHealthUpdate(float health, short hunger, float saturation) {
+            if (SetPlayerHealth != null)
+                SetPlayerHealth(health, hunger, saturation);
         }
         #endregion
         #region Scoreboard Events
-        public void raiseScoreBoard(byte position, string name) {
-            if (displayScoreboard != null)
-                displayScoreboard(position, name);
+        public void RaiseScoreBoard(byte position, string name) {
+            if (DisplayScoreboard != null)
+                DisplayScoreboard(position, name);
         }
 
-        public void raiseScoreboardAdd(string name, string value) {
-            if (scoreboardObjectiveAdd != null)
-                scoreboardObjectiveAdd(name, value);
+        public void RaiseScoreboardAdd(string name, string value) {
+            if (ScoreboardObjectiveAdd != null)
+                ScoreboardObjectiveAdd(name, value);
         }
 
-        public void raiseScoreboardRemove(string name) {
-            if (scoreboardObjectiveRemove != null)
-                scoreboardObjectiveRemove(name);
+        public void RaiseScoreboardRemove(string name) {
+            if (ScoreboardObjectiveRemove != null)
+                ScoreboardObjectiveRemove(name);
         }
 
-        public void raiseScoreboardUpdate(string name, string value) {
+        public void RaiseScoreboardUpdate(string name, string value) {
             if (scoreboardObjectiveUpdate != null)
                 scoreboardObjectiveUpdate(name, value);
         }
         #endregion
         #endregion
         #region Event Delegates
-        
         #region Base Events
         public delegate void DebugMessageHandler(object sender, string message);
         public event DebugMessageHandler DebugMessage;
@@ -457,120 +452,114 @@ namespace libMC.NET {
         public delegate void PacketHandler(object sender, object packet, int id);
         public event PacketHandler PacketHandled;
         #endregion
-
         #region Block Events
-        public delegate void blockChangedEventHandler(int x, byte y, int z, int newType, byte data);
-        public event blockChangedEventHandler blockChanged;
+        public delegate void BlockChangedEventHandler(int x, byte y, int z, int newType, byte data);
+        public event BlockChangedEventHandler BlockChanged;
 
-        public delegate void blockBreakAnimationHandler(Vector Location, int Entity_ID, byte Stage);
-        public event blockBreakAnimationHandler blockBreaking;
+        public delegate void BlockBreakAnimationHandler(Vector Location, int Entity_ID, byte Stage);
+        public event BlockBreakAnimationHandler BlockBreaking;
 
-        public delegate void pistonMoveHandler(byte state, byte direction, int x, short y, int z);
-        public event pistonMoveHandler pistonMoved;
+        public delegate void PistonMoveHandler(byte state, byte direction, int x, short y, int z);
+        public event PistonMoveHandler PistonMoved;
 
-        public delegate void chestStateChangedHandler(byte state, int x, short y, int z);
-        public event chestStateChangedHandler chestStateChanged;
+        public delegate void ChestStateChangedHandler(byte state, int x, short y, int z);
+        public event ChestStateChangedHandler ChestStateChanged;
         #endregion
         #region World Events
-        public delegate void noteBlockPlayHandler(byte instrument, byte pitch, int x, short y, int z);
-        public event noteBlockPlayHandler noteBlockPlay;
+        public delegate void NoteBlockPlayHandler(byte instrument, byte pitch, int x, short y, int z);
+        public event NoteBlockPlayHandler NoteBlockPlay;
 
-        public delegate void gameStateChangedHandler(string eventName, float value);
-        public event gameStateChangedHandler gameStateChanged;
+        public delegate void GameStateChangedHandler(string eventName, float value);
+        public event GameStateChangedHandler GameStateChanged;
 
-        public delegate void chunkUnloadedHandler(int X, int Z);
-        public event chunkUnloadedHandler chunkUnloaded;
+        public delegate void ChunkUnloadedHandler(int X, int Z);
+        public event ChunkUnloadedHandler ChunkUnloaded;
 
-        public delegate void chunkLoadedHandler(int X, int Z);
-        public event chunkLoadedHandler chunkLoaded;
+        public delegate void ChunkLoadedHandler(int X, int Z);
+        public event ChunkLoadedHandler ChunkLoaded;
 
-        public delegate void explosionHandler(float X, float Y, float Z);
-        public event explosionHandler explosion;
+        public delegate void ExplosionHandler(float X, float Y, float Z);
+        public event ExplosionHandler Explosion;
 
-        public delegate void multiBlockChangeHandler(int Chunk_X, int Chunk_Z);
-        public event multiBlockChangeHandler multiBlockChange;
+        public delegate void MultiBlockChangeHandler(int Chunk_X, int Chunk_Z);
+        public event MultiBlockChangeHandler MultiBlockChange;
         #endregion
-
         #region Entity Events
-        public delegate void entityVelocityChangedHandler(int Entity_ID, int X, int Y, int Z);
-        public event entityVelocityChangedHandler entityVelocityChanged;
+        public delegate void EntityVelocityChangedHandler(int Entity_ID, int X, int Y, int Z);
+        public event EntityVelocityChangedHandler EntityVelocityChanged;
 
-        public delegate void entityTeleportHandleR(int Entity_ID, int X, int Y, int Z);
-        public event entityTeleportHandleR entityTeleport;
+        public delegate void EntityTeleportHandler(int Entity_ID, int X, int Y, int Z);
+        public event EntityTeleportHandler EntityTeleport;
 
-        public delegate void entityRelMoveHandler(int Entity_ID, int Change_X, int Change_Y, int Change_Z);
-        public event entityRelMoveHandler entityRelMove;
+        public delegate void EntityRelMoveHandler(int Entity_ID, int Change_X, int Change_Y, int Change_Z);
+        public event EntityRelMoveHandler EntityRelMove;
 
-        public delegate void entityLookChangedHandler(int Entity_ID, byte yaw, byte pitch);
-        public event entityLookChangedHandler entityLookChanged;
+        public delegate void EntityLookChangedHandler(int Entity_ID, byte yaw, byte pitch);
+        public event EntityLookChangedHandler EntityLookChanged;
 
-        public delegate void entityHeadLookChangedHandler(int Entity_ID, byte head_yaw);
-        public event entityHeadLookChangedHandler entityHeadLookChanged;
+        public delegate void EntityHeadLookChangedHandler(int Entity_ID, byte head_yaw);
+        public event EntityHeadLookChangedHandler EntityHeadLookChanged;
 
-        public delegate void entityEquipmentChangedHandler(int Entity_ID, int slot, Item newItem);
-        public event entityEquipmentChangedHandler entityEquipmentChanged;
+        public delegate void EntityEquipmentChangedHandler(int Entity_ID, int slot, Item newItem);
+        public event EntityEquipmentChangedHandler EntityEquipmentChanged;
 
-        public delegate void entityAnimationChangedHandler(object sender, int Entity_ID, byte Animation);
-        public event entityAnimationChangedHandler EntityAnimationChanged;
+        public delegate void EntityAnimationChangedHandler(object sender, int Entity_ID, byte Animation);
+        public event EntityAnimationChangedHandler EntityAnimationChanged;
 
-        public delegate void entityAttachedHandler(int Entity_ID, int Vehicle_ID, bool Leashed);
-        public event entityAttachedHandler entityAttached;
+        public delegate void EntityAttachedHandler(int Entity_ID, int Vehicle_ID, bool Leashed);
+        public event EntityAttachedHandler EntityAttached;
 
-        public delegate void itemCollectedHandler(int item_EID, int collector_eid);
-        public event itemCollectedHandler itemCollected;
+        public delegate void ItemCollectedHandler(int item_EID, int collector_eid);
+        public event ItemCollectedHandler ItemCollected;
 
-        public delegate void entityDestroyedHandler(int Entity_ID);
-        public event entityDestroyedHandler entityDestroyed;
+        public delegate void EntityDestroyedHandler(int Entity_ID);
+        public event EntityDestroyedHandler EntityDestroyed;
 
-        public delegate void entityStatusChangedHandler(int Entity_ID);
-        public event entityStatusChangedHandler entityStatusChanged;
+        public delegate void EntityStatusChangedHandler(int Entity_ID);
+        public event EntityStatusChangedHandler EntityStatusChanged;
         #endregion
-
         #region Player Events
         public delegate void ExperienceSetHandler(float expBar, short level, short totalExp);
         public event ExperienceSetHandler experienceSet;
 
-        public delegate void playerRespawnedHandler();
-        public event playerRespawnedHandler playerRespawned;
+        public delegate void PlayerRespawnedHandler();
+        public event PlayerRespawnedHandler PlayerRespawned;
 
-        public delegate void locationChangedHandler();
-        public event locationChangedHandler locationChanged;
+        public delegate void LocationChangedHandler();
+        public event LocationChangedHandler LocationChanged;
 
-        public delegate void openWindowHandler(byte Window_ID, byte Type, string Title, byte slots, bool useTitle);
-        public event openWindowHandler openWindow;
+        public delegate void OpenWindowHandler(byte Window_ID, byte Type, string Title, byte slots, bool useTitle);
+        public event OpenWindowHandler OpenWindow;
 
-        public delegate void closeWindowHandler(byte windowID);
-        public event closeWindowHandler closeWindow;
+        public delegate void CloseWindowHandler(byte windowID);
+        public event CloseWindowHandler CloseWindow;
 
-        public delegate void heldSlotChangedHandler(byte slot);
-        public event heldSlotChangedHandler heldSlotChanged;
+        public delegate void HeldSlotChangedHandler(byte slot);
+        public event HeldSlotChangedHandler HeldSlotChanged;
 
-        public delegate void setWindowItemHandler(byte window_ID, short slot, Item item);
-        public event setWindowItemHandler setWindowItem;
+        public delegate void SetWindowItemHandler(byte window_ID, short slot, Item item);
+        public event SetWindowItemHandler SetWindowItem;
 
-        public delegate void setInventoryItemHandler(short slot, Item item);
-        public event setInventoryItemHandler setInventoryItem;
+        public delegate void SetInventoryItemHandler(short slot, Item item);
+        public event SetInventoryItemHandler SetInventoryItem;
 
-        public delegate void setPlayerHealthHandleR(float health, short hunger, float saturation);
-        public event setPlayerHealthHandleR setPlayerHealth;
+        public delegate void SetPlayerHealthHandler(float health, short hunger, float saturation);
+        public event SetPlayerHealthHandler SetPlayerHealth;
 
         #endregion
         #region Scoreboard Events
-        public delegate void scoreboardObjectiveAddHandler(string name, string value);
-        public event scoreboardObjectiveAddHandler scoreboardObjectiveAdd;
+        public delegate void ScoreboardObjectiveAddHandler(string name, string value);
+        public event ScoreboardObjectiveAddHandler ScoreboardObjectiveAdd;
 
-        public delegate void scoreboardObjectiveUpdateHandler(string name, string value);
-        public event scoreboardObjectiveUpdateHandler scoreboardObjectiveUpdate;
+        public delegate void ScoreboardObjectiveUpdateHandler(string name, string value);
+        public event ScoreboardObjectiveUpdateHandler scoreboardObjectiveUpdate;
 
-        public delegate void scoreboardObjectiveRemoveHandleR(string name);
-        public event scoreboardObjectiveRemoveHandleR scoreboardObjectiveRemove;
+        public delegate void ScoreboardObjectiveRemoveHandler(string name);
+        public event ScoreboardObjectiveRemoveHandler ScoreboardObjectiveRemove;
 
-        public delegate void displayScoreboardHandler(byte position, string scoreName);
-        public event displayScoreboardHandler displayScoreboard;
+        public delegate void DisplayScoreboardHandler(byte position, string scoreName);
+        public event DisplayScoreboardHandler DisplayScoreboard;
         #endregion
-
-        // -- Server Events (Connected, Disconnected, Kicked).
-
         #region Server Events
         public delegate void PluginMessageHandler(string channel, byte[] data);
         public event PluginMessageHandler PluginMessage;

@@ -6,10 +6,10 @@ using libMC.NET.Common;
 using libMC.NET.World;
 
 namespace libMC.NET.Packets.Play {
-    class spawnPainting : Packet {
+    class SpawnPainting : Packet {
         Entities.Entity thisPainting;
 
-        public spawnPainting(ref Minecraft mc) {
+        public SpawnPainting(ref Minecraft mc) {
             thisPainting = new Entities.Entity(ref mc, "Painting");
 
             thisPainting.Entity_ID = mc.nh.wSock.readVarInt();

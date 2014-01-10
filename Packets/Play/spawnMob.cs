@@ -6,10 +6,10 @@ using libMC.NET.Common;
 using libMC.NET.World;
 
 namespace libMC.NET.Packets.Play {
-    class spawnMob : Packet {
+    class SpawnMob : Packet {
         public Entities.Entity thisMob;
 
-        public spawnMob(ref Minecraft mc) {
+        public SpawnMob(ref Minecraft mc) {
             thisMob = new Entities.Entity(ref mc, "Mob");
 
             thisMob.Entity_ID = mc.nh.wSock.readVarInt();
@@ -28,7 +28,7 @@ namespace libMC.NET.Packets.Play {
             thisMob.Velocity_Y = mc.nh.wSock.readShort();
             thisMob.Velocity_Z = mc.nh.wSock.readShort();
 
-            thisMob.readEntityMetadata(ref mc);
+            thisMob.ReadEntityMetadata(ref mc);
 
             if (mc.MinecraftWorld == null)
                 mc.MinecraftWorld = new WorldClass();

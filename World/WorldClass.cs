@@ -36,7 +36,7 @@ namespace libMC.NET.World {
         /// </summary>
         /// <param name="Entity_ID"></param>
         /// <returns></returns>
-        public int getEntityById(int Entity_ID) {
+        public int GetEntityById(int Entity_ID) {
             int thisEntity = -1;
 
             try {
@@ -59,7 +59,7 @@ namespace libMC.NET.World {
         /// <param name="x">X location of chunk</param>
         /// <param name="z">Z location of chunk</param>
         /// <returns>Index of Chunk in worldChunks</returns>
-        public int getChunk(int x, int z) {
+        public int GetChunk(int x, int z) {
             int chunkIndex = -1;
 
             try {

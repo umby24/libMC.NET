@@ -5,12 +5,12 @@ using System.Text;
 using libMC.NET.Entities;
 
 namespace libMC.NET.Packets.Play {
-    class windowItems : Packet {
+    class WindowItems : Packet {
         public byte windowID;
         public short count;
         Item[] items;
 
-        public windowItems(ref Minecraft mc) {
+        public WindowItems(ref Minecraft mc) {
             windowID = mc.nh.wSock.readByte();
             count = mc.nh.wSock.readShort();
 
@@ -18,10 +18,10 @@ namespace libMC.NET.Packets.Play {
 
             for (int i = 0; i < count; i++) {
                 items[i] = new Item();
-                items[i].readSlot(ref mc);
+                items[i].ReadSlot(ref mc);
 
                 if (windowID == 0)
-                    mc.ThisPlayer.setInventory(items[i], (short) i);
+                    mc.ThisPlayer.SetInventory(items[i], (short) i);
             }
         }
     }

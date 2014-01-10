@@ -6,10 +6,10 @@ using libMC.NET.Common;
 using libMC.NET.World;
 
 namespace libMC.NET.Packets.Play {
-    class spawnPlayer : Packet {
+    class SpawnPlayer : Packet {
         Entities.Entity newPlayer;
 
-        public spawnPlayer(ref Minecraft mc) {
+        public SpawnPlayer(ref Minecraft mc) {
             newPlayer = new Entities.Entity(ref mc, "Player");
             newPlayer.Entity_ID = mc.nh.wSock.readVarInt();
             newPlayer.UUID = mc.nh.wSock.readString();
@@ -24,7 +24,7 @@ namespace libMC.NET.Packets.Play {
             newPlayer.pitch = mc.nh.wSock.readByte();
             newPlayer.heldItem = mc.nh.wSock.readShort();
 
-            newPlayer.readEntityMetadata(ref mc);
+            newPlayer.ReadEntityMetadata(ref mc);
 
             if (mc.MinecraftWorld == null)
                 mc.MinecraftWorld = new WorldClass();

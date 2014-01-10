@@ -4,8 +4,8 @@ using System.Linq;
 using System.Text;
 
 namespace libMC.NET.Packets.Play {
-    class keepAlive : Packet {
-        public keepAlive(ref Minecraft mc) {
+    class KeepAlive : Packet {
+        public KeepAlive(ref Minecraft mc) {
             int id = mc.nh.wSock.readInt();
 
             // -- Respond

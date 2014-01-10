@@ -10,7 +10,7 @@ namespace libMC.NET.Entities {
         public short itemDamage;
         public byte[] nbtData;
 
-        public void readSlot(ref Minecraft mc) {
+        public void ReadSlot(ref Minecraft mc) {
             int blockID = mc.nh.wSock.readShort();
 
             if (blockID == -1) {
@@ -32,13 +32,13 @@ namespace libMC.NET.Entities {
 
             return;
         }
-        public string friendlyName() {
+        public string FriendlyName() {
             // -- Return the friendly name for the item we represent
 
             return ((Block.blockitemid)itemID).ToString();
         }
 
-        public static void writeSlot(ref Minecraft mc, Item item) {
+        public static void WriteSlot(ref Minecraft mc, Item item) {
             if (item == null) {
                 mc.nh.wSock.writeShort(-1);
                 return;

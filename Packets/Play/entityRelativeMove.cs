@@ -4,8 +4,8 @@ using System.Linq;
 using System.Text;
 
 namespace libMC.NET.Packets.Play {
-    class entityRelativeMove : Packet {
-        public entityRelativeMove(ref Minecraft mc) {
+    class EntityRelativeMove : Packet {
+        public EntityRelativeMove(ref Minecraft mc) {
             int Entity_ID = mc.nh.wSock.readInt();
 
             byte Diff_X = mc.nh.wSock.readByte(); // -- As fixed-point
@@ -13,7 +13,7 @@ namespace libMC.NET.Packets.Play {
             byte Diff_Z = mc.nh.wSock.readByte();
 
             if (mc.MinecraftWorld != null) {
-                int eIndex = mc.MinecraftWorld.getEntityById(Entity_ID);
+                int eIndex = mc.MinecraftWorld.GetEntityById(Entity_ID);
 
                 if (eIndex != -1) {
                     mc.MinecraftWorld.Entities[eIndex].Location.x += (Diff_X * 32);
@@ -23,7 +23,7 @@ namespace libMC.NET.Packets.Play {
 
             }
 
-            mc.raiseEntityRelMove(Entity_ID, (Diff_X * 32), (Diff_Y * 32), (Diff_Z * 32));
+            mc.RaiseEntityRelMove(Entity_ID, (Diff_X * 32), (Diff_Y * 32), (Diff_Z * 32));
         }
     }
 }

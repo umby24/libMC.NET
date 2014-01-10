@@ -5,8 +5,8 @@ using System.Text;
 using libMC.NET.Entities;
 
 namespace libMC.NET.Packets.Play {
-    class setExperience : Packet {
-        public setExperience(ref Minecraft mc) {
+    class SetExperience : Packet {
+        public SetExperience(ref Minecraft mc) {
             float ExpBar = mc.nh.wSock.readFloat();
             short level = mc.nh.wSock.readShort();
             short totalExp = mc.nh.wSock.readShort();
@@ -18,7 +18,7 @@ namespace libMC.NET.Packets.Play {
             mc.ThisPlayer.level = level;
             mc.ThisPlayer.totalExp = totalExp;
 
-            mc.raiseExperienceUpdate(ExpBar, level, totalExp);
+            mc.RaiseExperienceUpdate(ExpBar, level, totalExp);
         }
     }
 }

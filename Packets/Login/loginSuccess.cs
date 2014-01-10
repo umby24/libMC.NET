@@ -5,8 +5,8 @@ using System.Text;
 using libMC.NET.Entities;
 
 namespace libMC.NET.Packets.Login {
-    class loginSuccess : Packet {
-        public loginSuccess(ref Minecraft mc) {
+    class LoginSuccess : Packet {
+        public LoginSuccess(ref Minecraft mc) {
             string UUID = mc.nh.wSock.readString();
             string Username = mc.nh.wSock.readString();
 

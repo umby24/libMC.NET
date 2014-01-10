@@ -28,7 +28,7 @@ namespace libMC.NET.Packets.Play {
 
             mc.ThisPlayer.gameMode = gameMode;
 
-            mc.raisePlayerRespawn();
+            mc.RaisePlayerRespawn();
         }
     }
 }

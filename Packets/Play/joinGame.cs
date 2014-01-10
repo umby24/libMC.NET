@@ -7,13 +7,13 @@ using libMC.NET.Entities;
 using libMC.NET.World;
 
 namespace libMC.NET.Packets.Play {
-    class joinGame : Packet {
+    class JoinGame : Packet {
         public int Entity_ID;
         public byte gameMode, difficulty, maxPlayers;
         public sbyte dimension;
         public string levelType;
 
-        public joinGame(ref Minecraft mc) {
+        public JoinGame(ref Minecraft mc) {
             Entity_ID = mc.nh.wSock.readInt();
             gameMode = mc.nh.wSock.readByte();
             dimension = mc.nh.wSock.readSByte();
@@ -41,7 +41,7 @@ namespace libMC.NET.Packets.Play {
             // -- Vanilla client at this point sends client settings, and plugin message designating the 
             // -- modpack that the client is using.
 
-            ServerBound.clientSettings b = new ServerBound.clientSettings(ref mc);
+            ServerBound.ClientSettings b = new ServerBound.ClientSettings(ref mc);
             ServerBound.PluginMessage c = new ServerBound.PluginMessage(ref mc, "MC|Brand", Encoding.UTF8.GetBytes(mc.ClientBrand));
         }
     }

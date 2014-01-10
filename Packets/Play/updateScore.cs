@@ -4,12 +4,12 @@ using System.Linq;
 using System.Text;
 
 namespace libMC.NET.Packets.Play {
-    class updateScore : Packet {
+    class UpdateScore : Packet {
         public string itemName, scoreName;
         public byte update;
         public int value;
 
-        public updateScore(ref Minecraft mc) {
+        public UpdateScore(ref Minecraft mc) {
             itemName = mc.nh.wSock.readString();
             update = mc.nh.wSock.readByte();
             scoreName = mc.nh.wSock.readString();

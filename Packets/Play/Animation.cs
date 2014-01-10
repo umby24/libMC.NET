@@ -16,7 +16,7 @@ namespace libMC.NET.Packets.Play {
                 mc.ThisPlayer.Animation = Ani;
 
             if (mc.MinecraftWorld != null) {
-                int eIndex = mc.MinecraftWorld.getEntityById(Entity_ID);
+                int eIndex = mc.MinecraftWorld.GetEntityById(Entity_ID);
 
                 if (eIndex != -1)
                     mc.MinecraftWorld.Entities[eIndex].animation = Ani;

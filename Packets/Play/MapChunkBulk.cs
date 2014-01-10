@@ -20,7 +20,7 @@ namespace libMC.NET.Packets.Play {
 
             Array.Copy(CompressedData, 2, trim, 0, trim.Length);
 
-            DecompressedData = Decompressor.decompress(trim);
+            DecompressedData = Decompressor.Decompress(trim);
 
             for (int i = 0; chunkColumnCount > i; i++) {
                 int x = mc.nh.wSock.readInt();
@@ -30,7 +30,7 @@ namespace libMC.NET.Packets.Play {
 
                 chunks[i] = new Chunk(x, z, pbitmap, abitmap, skylight, true); // -- Assume true for Ground Up Continuous
 
-                DecompressedData = chunks[i].getData(DecompressedData); // -- Calls the chunk class to take all of the bytes it needs, and return whats left.
+                DecompressedData = chunks[i].GetData(DecompressedData); // -- Calls the chunk class to take all of the bytes it needs, and return whats left.
 
                 if (mc.MinecraftWorld == null)
                     mc.MinecraftWorld = new WorldClass();

@@ -4,14 +4,14 @@ using System.Linq;
 using System.Text;
 
 namespace libMC.NET.Packets.Play {
-    class closeWindow : Packet {
+    class CloseWindow : Packet {
         public byte windowID;
 
-        public closeWindow(ref Minecraft mc) {
+        public CloseWindow(ref Minecraft mc) {
             windowID = mc.nh.wSock.readByte();
 
             mc.RaiseDebug(this, "Window forcably closed");
-            mc.raiseWindowClosed(windowID);
+            mc.RaiseWindowClosed(windowID);
         }
     }
 }

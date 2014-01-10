@@ -5,12 +5,12 @@ using System.Text;
 
 using libMC.NET.Entities;
 namespace libMC.NET.Packets.Play {
-    class playerPositionandLook : Packet {
+    class PlayerPositionandLook : Packet {
         public double x, y, z;
         public float yaw, pitch;
         public bool onGround;
 
-        public playerPositionandLook(ref Minecraft mc) {
+        public PlayerPositionandLook(ref Minecraft mc) {
             x = mc.nh.wSock.readDouble();
             y = mc.nh.wSock.readDouble();
             z = mc.nh.wSock.readDouble();
@@ -27,9 +27,9 @@ namespace libMC.NET.Packets.Play {
                 mc.ThisPlayer.look[0] = yaw; mc.ThisPlayer.look[1] = pitch;
                 mc.ThisPlayer.onGround = onGround;
 
-                mc.raiseLocationChanged();
+                mc.RaiseLocationChanged();
 
-                Packets.Play.ServerBound.playerPositionAndLook c = new Packets.Play.ServerBound.playerPositionAndLook(ref mc);
+                Packets.Play.ServerBound.PlayerPositionAndLook c = new Packets.Play.ServerBound.PlayerPositionAndLook(ref mc);
                 mc.First = true;
                 
         }

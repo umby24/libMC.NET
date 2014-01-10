@@ -5,10 +5,10 @@ using System.Text;
 using libMC.NET.Common;
 
 namespace libMC.NET.Packets.Play {
-    class spawnExpOrb : Packet {
+    class SpawnExpOrb : Packet {
         Entities.Entity expOrb;
 
-        public spawnExpOrb(ref Minecraft mc) {
+        public SpawnExpOrb(ref Minecraft mc) {
             int Entity_ID = mc.nh.wSock.readVarInt();
             int X = mc.nh.wSock.readInt();
             int Y = mc.nh.wSock.readInt();

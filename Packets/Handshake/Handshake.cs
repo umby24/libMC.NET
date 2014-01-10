@@ -19,7 +19,7 @@ namespace libMC.NET.Packets.Handshake {
 
                 mineCraft.ServerState = 2;
 
-                Login.loginStart ls = new Login.loginStart(ref mineCraft);
+                Login.LoginStart ls = new Login.LoginStart(ref mineCraft);
             } else {
                 mineCraft.nh.wSock.writeVarInt(0); // -- Packet ID
                 mineCraft.nh.wSock.writeVarInt(4); // -- protocol version

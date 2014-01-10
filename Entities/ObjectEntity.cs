@@ -24,7 +24,7 @@ namespace libMC.NET.Entities {
             type = Type;
         }
 
-        public void readObjectData(ref Minecraft mc) {
+        public void ReadObjectData(ref Minecraft mc) {
             int metadataID = mc.nh.wSock.readInt();
             ObjectID = metadataID;
 

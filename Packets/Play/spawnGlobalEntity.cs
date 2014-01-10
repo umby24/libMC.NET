@@ -5,10 +5,10 @@ using System.Text;
 using libMC.NET.Common;
 
 namespace libMC.NET.Packets.Play {
-    class spawnGlobalEntity : Packet { // -- Thunderbolt
+    class SpawnGlobalEntity : Packet { // -- Thunderbolt
         Vector location;
 
-        public spawnGlobalEntity(ref Minecraft mc) {
+        public SpawnGlobalEntity(ref Minecraft mc) {
             mc.nh.wSock.readVarInt(); // -- Entity ID
             mc.nh.wSock.readByte(); // -- Type (Currently always 1, thunderbolt)
             location = new Vector(mc.nh.wSock.readInt(), mc.nh.wSock.readInt(), mc.nh.wSock.readInt());

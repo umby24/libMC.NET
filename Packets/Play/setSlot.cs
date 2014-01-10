@@ -5,23 +5,23 @@ using System.Text;
 using libMC.NET.Entities;
 
 namespace libMC.NET.Packets.Play {
-    class setSlot : Packet {
+    class SetSlot : Packet {
         byte windowID;
         short slot;
         Item slotData;
 
-        public setSlot(ref Minecraft mc) {
+        public SetSlot(ref Minecraft mc) {
             windowID = mc.nh.wSock.readByte();
             slot = mc.nh.wSock.readShort();
 
             slotData = new Item();
-            slotData.readSlot(ref mc);
+            slotData.ReadSlot(ref mc);
 
             if (windowID == 0) {
-                mc.ThisPlayer.setInventory(slotData, slot);
-                mc.raiseInventoryItem(slot, slotData);
+                mc.ThisPlayer.SetInventory(slotData, slot);
+                mc.RaiseInventoryItem(slot, slotData);
             } else
-                mc.raiseSetWindowSlot(windowID, slot, slotData);
+                mc.RaiseSetWindowSlot(windowID, slot, slotData);
 
             
         }

@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 
 namespace libMC.NET.Packets.Play {
-    class entityProperties : Packet {
+    class EntityProperties : Packet {
 
-        public entityProperties(ref Minecraft mc) {
+        public EntityProperties(ref Minecraft mc) {
             int Entity_ID = mc.nh.wSock.readInt();
             int Count = mc.nh.wSock.readInt();
 
@@ -15,7 +15,7 @@ namespace libMC.NET.Packets.Play {
                 double d = mc.nh.wSock.readDouble();
 
                 if (mc.MinecraftWorld != null) {
-                    int b = mc.MinecraftWorld.getEntityById(Entity_ID);
+                    int b = mc.MinecraftWorld.GetEntityById(Entity_ID);
                         if (b != -1) {
                             if (s == "horse.jumpStrength")
                                 mc.MinecraftWorld.Entities[b].jumpStrength = d;

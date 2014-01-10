@@ -4,15 +4,15 @@ using System.Linq;
 using System.Text;
 
 namespace libMC.NET.Packets.Play {
-    class collectItem : Packet {
+    class CollectItem : Packet {
         public int collectedEID, collectorEID;
 
-        public collectItem(ref Minecraft mc) {
+        public CollectItem(ref Minecraft mc) {
             collectedEID = mc.nh.wSock.readInt();
             collectorEID = mc.nh.wSock.readInt();
 
             mc.RaiseDebug(this, "Item collected by " + collectorEID);
-            mc.raiseItemCollected(collectedEID, collectorEID);
+            mc.RaiseItemCollected(collectedEID, collectorEID);
         }
     }
 }

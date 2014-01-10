@@ -4,8 +4,8 @@ using System.Linq;
 using System.Text;
 
 namespace libMC.NET.Packets.Play.ServerBound {
-    public class playerPositionAndLook {
-        public playerPositionAndLook(ref Minecraft mc) {
+    public class PlayerPositionAndLook {
+        public PlayerPositionAndLook(ref Minecraft mc) {
             mc.nh.wSock.writeVarInt(6);
             mc.nh.wSock.writeDouble(mc.ThisPlayer.location.x);
             mc.nh.wSock.writeDouble(mc.ThisPlayer.location.y - 1.620);

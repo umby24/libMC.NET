@@ -4,13 +4,13 @@ using System.Linq;
 using System.Text;
 
 namespace libMC.NET.Packets.Play {
-    class updateBlockEntity : Packet {
+    class UpdateBlockEntity : Packet {
         public int X, Z;
         public short Y, DataLength;
         public byte action;
         public byte[] NBT;
 
-        public updateBlockEntity(ref Minecraft mc) {
+        public UpdateBlockEntity(ref Minecraft mc) {
             X = mc.nh.wSock.readInt();
             Y = mc.nh.wSock.readShort();
             Z = mc.nh.wSock.readInt();

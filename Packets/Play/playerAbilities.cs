@@ -5,12 +5,12 @@ using System.Text;
 using libMC.NET.Entities;
 
 namespace libMC.NET.Packets.Play {
-    class playerAbilities : Packet {
+    class PlayerAbilities : Packet {
         byte flags;
         float flyingSpeed;
         float walkingSpeed;
 
-        public playerAbilities(ref Minecraft mc) {
+        public PlayerAbilities(ref Minecraft mc) {
             flags = mc.nh.wSock.readByte();
             flyingSpeed = mc.nh.wSock.readFloat();
             walkingSpeed = mc.nh.wSock.readFloat();

@@ -5,10 +5,10 @@ using System.Text;
 using libMC.NET.Entities;
 
 namespace libMC.NET.Packets.Play {
-    class heldItemChange : Packet {
+    class HeldItemChange : Packet {
         public byte slot;
 
-        public heldItemChange(ref Minecraft mc) {
+        public HeldItemChange(ref Minecraft mc) {
             slot = mc.nh.wSock.readByte();
 
             if (mc.ThisPlayer == null)
@@ -17,7 +17,7 @@ namespace libMC.NET.Packets.Play {
             mc.ThisPlayer.selectedSlot = slot;
             ServerBound.HeldItemChange hic = new ServerBound.HeldItemChange(ref mc);
 
-            mc.raiseHeldSlotChanged(slot);
+            mc.RaiseHeldSlotChanged(slot);
         }
     }
 }

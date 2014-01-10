@@ -5,9 +5,9 @@ using System.Text;
 using libMC.NET.World;
 
 namespace libMC.NET.Packets.Play {
-    class timeUpdate : Packet {
+    class TimeUpdate : Packet {
 
-        public timeUpdate(ref Minecraft mc) {
+        public TimeUpdate(ref Minecraft mc) {
             long worldAge = mc.nh.wSock.readLong();
             long worldTime = mc.nh.wSock.readLong();
 

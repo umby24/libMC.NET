@@ -5,11 +5,11 @@ using System.Text;
 using libMC.NET.World;
 
 namespace libMC.NET.Packets.Play {
-    class blockChange : Packet {
+    class BlockChange : Packet {
         public int x, z, type;
         public byte y, data;
 
-        public blockChange(ref Minecraft mc) {
+        public BlockChange(ref Minecraft mc) {
             x = mc.nh.wSock.readInt();
             y = mc.nh.wSock.readByte();
             z = mc.nh.wSock.readInt();
@@ -22,11 +22,11 @@ namespace libMC.NET.Packets.Play {
             ChunkX = Math.Floor(ChunkX);
             ChunkZ = Math.Floor(ChunkZ);
 
-            Chunk thisChunk = mc.MinecraftWorld.worldChunks[mc.MinecraftWorld.getChunk(int.Parse(ChunkX.ToString()), int.Parse(ChunkZ.ToString()))];
-            thisChunk.updateBlock(x, y, z, type);
-            thisChunk.setBlockData(x, y, z, data);
+            Chunk thisChunk = mc.MinecraftWorld.worldChunks[mc.MinecraftWorld.GetChunk(int.Parse(ChunkX.ToString()), int.Parse(ChunkZ.ToString()))];
+            thisChunk.UpdateBlock(x, y, z, type);
+            thisChunk.SetBlockData(x, y, z, data);
 
-            mc.raiseBlockChangedEvent(x, y, z, type, data);
+            mc.RaiseBlockChangedEvent(x, y, z, type, data);
         }
     }
 }

@@ -4,12 +4,12 @@ using System.Linq;
 using System.Text;
 
 namespace libMC.NET.Packets.Play {
-    class blockAction : Packet {
+    class BlockAction : Packet {
         public int x, z, type;
         public short y; // -- This being a short is a waste of a byte..
         public byte byte1, byte2;
 
-        public blockAction(ref Minecraft mc) {
+        public BlockAction(ref Minecraft mc) {
             x = mc.nh.wSock.readInt();
             y = mc.nh.wSock.readShort();
             z = mc.nh.wSock.readInt();
@@ -17,25 +17,25 @@ namespace libMC.NET.Packets.Play {
             byte2 = mc.nh.wSock.readByte();
             type = mc.nh.wSock.readVarInt();
 
-            handleAction(ref mc);
+            HandleAction(ref mc);
         }
 
-        void handleAction(ref Minecraft mc) {
+        void HandleAction(ref Minecraft mc) {
             switch (type) {
                 case 25: // -- Note block
-                    mc.raiseNoteBlockSound(byte1, byte2, x, y, z);
+                    mc.RaiseNoteBlockSound(byte1, byte2, x, y, z);
                     break;
                 case 29: // -- Sticky piston
-                    mc.raisePistonMoved(byte1, byte2, x, y, z);
+                    mc.RaisePistonMoved(byte1, byte2, x, y, z);
                     break;
                 case 33: // -- Piston
-                    mc.raisePistonMoved(byte1, byte2, x, y, z);
+                    mc.RaisePistonMoved(byte1, byte2, x, y, z);
                     break;
                 case 54: // -- Chest
-                    mc.raiseChestStateChange(byte2, x, y, z);
+                    mc.RaiseChestStateChange(byte2, x, y, z);
                     break;
                 case 146: // -- Trapped chest
-                    mc.raiseChestStateChange(byte2, x, y, z);
+                    mc.RaiseChestStateChange(byte2, x, y, z);
                     break;
                 default:
                     mc.RaiseError(this, "Unknown block action received.");

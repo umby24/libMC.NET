@@ -24,7 +24,7 @@ namespace libMC.NET.Entities {
 
         public Dictionary<int, Item> Inventory = new Dictionary<int,Item>();
 
-        public void setInventory(Item newItem, short slotID) {
+        public void SetInventory(Item newItem, short slotID) {
             //TODO: Maybe change this to Player.Inventory.SetItem(Item, SlotID)
             if (Inventory.ContainsKey(slotID)) {
                 Inventory.Remove(slotID);

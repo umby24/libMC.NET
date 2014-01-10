@@ -8,7 +8,7 @@ using System.IO.Compression;
 namespace libMC.NET.Common {
     class Decompressor {
         // ZLib Decompressor.
-        public static byte[] decompress(byte[] data) {
+        public static byte[] Decompress(byte[] data) {
             using (var compressedStream = new MemoryStream(data))
             using (var zipStream = new DeflateStream(compressedStream, CompressionMode.Decompress))
             using (var resultStream = new MemoryStream()) {

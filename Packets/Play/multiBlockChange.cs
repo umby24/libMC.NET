@@ -6,15 +6,15 @@ using libMC.NET.Common;
 using libMC.NET.World;
 
 namespace libMC.NET.Packets.Play {
-    public class multiBlockChange : Packet {
-        public multiBlockChange(ref Minecraft mc) {
+    public class MultiBlockChange : Packet {
+        public MultiBlockChange(ref Minecraft mc) {
             int X = mc.nh.wSock.readInt();
             int Z = mc.nh.wSock.readInt();
             short recordCount = mc.nh.wSock.readShort();
             int dataSize = mc.nh.wSock.readInt();
 
             byte[] data = mc.nh.wSock.readByteArray(dataSize);
-            int chunkID = mc.MinecraftWorld.getChunk(X, Z);
+            int chunkID = mc.MinecraftWorld.GetChunk(X, Z);
 
             if (chunkID == -1) {
                 mc.RaiseError(this, "Attempted to access uninitilized chunk");
@@ -36,11 +36,11 @@ namespace libMC.NET.Packets.Play {
                 x = (X * 16) + x;
                 Z = (Z * 16) + z;
 
-                thisChunk.updateBlock(x, y, z, block_id);
-                thisChunk.setBlockData(x, y, z, (byte)metadata);
+                thisChunk.UpdateBlock(x, y, z, block_id);
+                thisChunk.SetBlockData(x, y, z, (byte)metadata);
             }
 
-            mc.raiseMultiBlockChange(X, Z);
+            mc.RaiseMultiBlockChange(X, Z);
         }
     }
 }

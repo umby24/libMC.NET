@@ -16,26 +16,26 @@ namespace libMC.NET.World {
             metadata = new byte[4096];
         }
 
-        public void setBlock(int x, int y, int z, int id) {
+        public void SetBlock(int x, int y, int z, int id) {
             int index = x + (z * 16) + (y * 16 * 16);
             blocks[index] = (byte)id;
         }
 
-        public Block getBlock(int x, int y, int z) {
+        public Block GetBlock(int x, int y, int z) {
             int index = x + (z * 16) + (y * 16 * 16);
-            Block thisBlock = new Block((int)blocks[index], x, y, z, (int)Math.Floor(decimal.Divide(x, 16)), (int)Math.Floor(decimal.Divide(z, 16)));
+            var thisBlock = new Block((int)blocks[index], x, y, z, (int)Math.Floor(decimal.Divide(x, 16)), (int)Math.Floor(decimal.Divide(z, 16)));
 
             return thisBlock;
         }
 
-        public int getBlockMetadata(int x, int y, int z) {
+        public int GetBlockMetadata(int x, int y, int z) {
             int index = (x + (z * 16) + (y * 16 * 16));
             byte value = metadata[index];
 
             return value;
         }
 
-        public void setBlockData(int x, int y, int z, byte data) {
+        public void SetBlockData(int x, int y, int z, byte data) {
             int index = (x + (z * 16) + (y * 16 * 16));
             metadata[index] = data;
         }

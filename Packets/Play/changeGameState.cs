@@ -4,20 +4,20 @@ using System.Linq;
 using System.Text;
 
 namespace libMC.NET.Packets.Play {
-    class changeGameState : Packet {
+    class ChangeGameState : Packet {
         public byte reason;
         public float value;
         public string eventName;
 
-        public changeGameState(ref Minecraft mc) {
+        public ChangeGameState(ref Minecraft mc) {
             reason = mc.nh.wSock.readByte();
             value = mc.nh.wSock.readFloat();
 
-            handleReason();
+            HandleReason();
 
-            mc.raiseGameStateChanged(eventName, value);
+            mc.RaiseGameStateChanged(eventName, value);
         }
-        void handleReason() {
+        void HandleReason() {
             switch (reason) {
                 case 0:
                     eventName = "Invalid bed";

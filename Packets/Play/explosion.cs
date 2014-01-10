@@ -4,12 +4,12 @@ using System.Linq;
 using System.Text;
 
 namespace libMC.NET.Packets.Play {
-    class explosion : Packet {
+    class Explosion : Packet {
         public float X, Y, Z, Radius, Motion_X, Motion_Y, Motion_Z;
         public int recordCount;
         public byte[] records;
 
-        public explosion(ref Minecraft mc) {
+        public Explosion(ref Minecraft mc) {
             X = mc.nh.wSock.readFloat();
             Y = mc.nh.wSock.readFloat();
             Z = mc.nh.wSock.readFloat();
@@ -21,7 +21,7 @@ namespace libMC.NET.Packets.Play {
             Motion_Y = mc.nh.wSock.readFloat();
             Motion_Z = mc.nh.wSock.readFloat();
 
-            mc.raiseExplosion(X, Y, Z);
+            mc.RaiseExplosion(X, Y, Z);
         }
     }
 }

@@ -4,11 +4,11 @@ using System.Linq;
 using System.Text;
 
 namespace libMC.NET.Packets.Play {
-    class useBed : Packet {
+    class UseBed : Packet {
         public int Entity_ID, X, Z;
         public byte Y;
 
-        public useBed(ref Minecraft mc) {
+        public UseBed(ref Minecraft mc) {
             Entity_ID = mc.nh.wSock.readInt();
             X = mc.nh.wSock.readInt();
             Y = mc.nh.wSock.readByte();

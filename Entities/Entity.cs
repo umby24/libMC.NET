@@ -28,7 +28,7 @@ namespace libMC.NET.Entities {
             Inventory = new Dictionary<int, Item>();
         }
 
-        public void readEntityMetadata(ref Minecraft mc) {
+        public void ReadEntityMetadata(ref Minecraft mc) {
 
             do {
 
@@ -41,25 +41,25 @@ namespace libMC.NET.Entities {
 
                 switch (type) {
                     case 0:
-                        handleMetadata(index, mc.nh.wSock.readByte());
+                        HandleMetadata(index, mc.nh.wSock.readByte());
                         break;
                     case 1:
-                        handleMetadata(index, mc.nh.wSock.readShort());
+                        HandleMetadata(index, mc.nh.wSock.readShort());
                         break;
                     case 2:
-                        handleMetadata(index, mc.nh.wSock.readInt());
+                        HandleMetadata(index, mc.nh.wSock.readInt());
                         break;
                     case 3:
-                        handleMetadata(index, mc.nh.wSock.readFloat());
+                        HandleMetadata(index, mc.nh.wSock.readFloat());
                         break;
                     case 4:
-                        handleMetadata(index, mc.nh.wSock.readString());
+                        HandleMetadata(index, mc.nh.wSock.readString());
                         break;
                     case 5:
                         Item temp = new Item();
-                        temp.readSlot(ref mc);
+                        temp.ReadSlot(ref mc);
 
-                        handleMetadata(index, temp);
+                        HandleMetadata(index, temp);
                         break;
                     case 6:
                         Vector v = new Vector();
@@ -68,7 +68,7 @@ namespace libMC.NET.Entities {
                         v.y = mc.nh.wSock.readInt();
                         v.z = mc.nh.wSock.readInt();
 
-                        handleMetadata(index, v);
+                        HandleMetadata(index, v);
                         break;
 
                 }
@@ -82,7 +82,7 @@ namespace libMC.NET.Entities {
         /// </summary>
         /// <param name="index"></param>
         /// <param name="data"></param>
-        void handleMetadata(int index, dynamic data) {
+        void HandleMetadata(int index, dynamic data) {
             switch (index) { // -- Parsing this is pretty much impossible without making things 300x more complicated than need-be. As such, this is as much as im parsing :).
                 case 0:
                     byte bitmask = (byte)data;
@@ -107,7 +107,7 @@ namespace libMC.NET.Entities {
             }
         }
         
-        public void handleInventory(int slot, Item slotItem) {
+        public void HandleInventory(int slot, Item slotItem) {
             if (Inventory.ContainsKey(slot)) {
                 Inventory.Remove(slot);
             }
@@ -115,7 +115,7 @@ namespace libMC.NET.Entities {
             Inventory.Add(slot, slotItem);
         }
 
-        public enum entityId {
+        public enum EntityId {
             Creeper = 50,
             Skeleton,
             Spider,

@@ -11,7 +11,7 @@ namespace libMC.NET.Packets.Play {
             bool leash = mc.nh.wSock.readBool();
 
             if (mc.MinecraftWorld != null) {
-                int eIndex = mc.MinecraftWorld.getEntityById(Entity_ID);
+                int eIndex = mc.MinecraftWorld.GetEntityById(Entity_ID);
 
                 if (eIndex != -1) {
                     mc.MinecraftWorld.Entities[eIndex].attached = true;
@@ -20,7 +20,7 @@ namespace libMC.NET.Packets.Play {
                 }
             }
 
-            mc.raiseEntityAttached(Entity_ID, Vechile_ID, leash);
+            mc.RaiseEntityAttached(Entity_ID, Vechile_ID, leash);
         }
     }
 }

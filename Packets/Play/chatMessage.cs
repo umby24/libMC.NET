@@ -5,18 +5,18 @@ using System.Text;
 using Newtonsoft.Json.Linq;
 
 namespace libMC.NET.Packets.Play {
-    public class chatMessage : Packet {
+    public class ChatMessage : Packet {
 
         public string rawMessage, parsedMessage, sender = "";
 
-        public chatMessage(ref Minecraft mc) {
+        public ChatMessage(ref Minecraft mc) {
             rawMessage = mc.nh.wSock.readString();
-            parsedMessage = parseJsonChat(rawMessage);
+            parsedMessage = ParseJsonChat(rawMessage);
 
             mc.RaiseMC(this, parsedMessage, sender);
         }
 
-        string parseJsonChat(string raw) {
+        string ParseJsonChat(string raw) {
             bool bold = false, italic = false, underlined = false, strikethrough = false, obfs = false;
             string text = "", translate = "", color = "", name = "";//, final = "";
             //dynamic clickEvent, hoverEvent;
