@@ -10,6 +10,11 @@ namespace libMC.NET.World {
         public short pbitmap, abitmap;
         public byte[] blocks;
         public byte[] Metadata;
+        public byte[] Blocklight;
+        public byte[] Skylight;
+        public byte[] AddArray;
+        public byte[] BiomeArray;
+
         public bool lighting, groundup = false;
         // public List<Section> sections;
         public Section[] sections;
@@ -100,24 +105,43 @@ namespace libMC.NET.World {
             // -- Loading chunks, network handler hands off the decompressed bytes
             // -- This function takes its portion, and returns what's left.
 
+            byte[] temp;
+            int offset = 0;
+
             blocks = new byte[numBlocks];
             Metadata = new byte[numBlocks / 2]; // -- Contains block light and block metadata.
+            Blocklight = new byte[numBlocks / 2];
 
-            byte[] temp;
-            int removeable = numBlocks;
+            if (lighting)
+                Skylight = new byte[numBlocks / 2];
 
-            if (lighting == true)
-                removeable += (numBlocks / 2);
+            AddArray = new byte[numBlocks / 2];
 
             if (groundup)
-                removeable += 256;
+                BiomeArray = new byte[256];
 
-            Array.Copy(deCompressed, 0, blocks, 0, numBlocks);
-            Array.Copy(deCompressed, numBlocks, Metadata, 0, numBlocks / 2); // -- Copy in Metadata
+            Buffer.BlockCopy(deCompressed, 0, blocks, 0, numBlocks);
+            offset += numBlocks;
+            Buffer.BlockCopy(deCompressed, offset, Metadata, 0, numBlocks / 2); // -- Copy in Metadata
+            offset += numBlocks / 2;
+            Buffer.BlockCopy(deCompressed, offset, Blocklight, 0, numBlocks / 2);
+            offset += numBlocks / 2;
 
-            temp = new byte[deCompressed.Length - (numBlocks + removeable)];
+            if (lighting) {
+                Buffer.BlockCopy(deCompressed, offset, Skylight, 0, numBlocks / 2);
+                offset += numBlocks / 2;
+            }
 
-            Array.Copy(deCompressed, (numBlocks + removeable), temp, 0, temp.Length);
+            Buffer.BlockCopy(deCompressed, offset, AddArray, 0, aBlocks / 2);
+            offset += aBlocks / 2;
+
+            if (groundup) {
+                Buffer.BlockCopy(deCompressed, offset, BiomeArray, 0, 256);
+                offset += 256;
+            }
+
+            temp = new byte[deCompressed.Length - offset];
+            Buffer.BlockCopy(deCompressed, offset, temp, 0, temp.Length);
 
             Populate(); // -- Populate all of our sections with the bytes we just aquired.
 

@@ -170,7 +170,7 @@ namespace libMC.NET {
         #region Simple Actions
         public void SendChat(string Message) {
             if (nh != null) {
-                Packets.Play.ServerBound.ChatMessage.sendChat(this, Message);
+                Packets.Play.ServerBound.ChatMessage.SendChat(this, Message);
             }
         }
         #endregion
