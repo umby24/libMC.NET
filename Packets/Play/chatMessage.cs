@@ -72,7 +72,7 @@ namespace libMC.NET.Packets.Play {
                 case "chat.type.announcement":
                     name = "Server";
                     sender = name;
-                    text = string.Join("", jsonObj["with"][1]["extra"].Value<string>());
+                    text = string.Join("", jsonObj["with"][1]["extra"][0].Value<string>());
                     break;
             }
 
