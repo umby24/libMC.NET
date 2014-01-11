@@ -78,7 +78,7 @@ namespace libMC.NET.Entities {
         }
         
         /// <summary>
-        /// Places metadata in its correct place as determined by the index, to keep the metadata reader clean.
+        /// Places Metadata in its correct place as determined by the index, to keep the Metadata reader clean.
         /// </summary>
         /// <param name="index"></param>
         /// <param name="data"></param>

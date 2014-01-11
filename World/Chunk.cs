@@ -16,7 +16,6 @@ namespace libMC.NET.World {
         public byte[] BiomeArray;
 
         public bool lighting, groundup = false;
-        // public List<Section> sections;
         public Section[] sections;
 
         public Chunk(int X, int Z, short PBitmap, short ABitmap, bool Lighting, bool Groundup) {
@@ -35,6 +34,9 @@ namespace libMC.NET.World {
             CreateSections();
         }
 
+        /// <summary>
+        /// Creates the chunk sections for this column based on the primary and add bitmasks.
+        /// </summary>
         void CreateSections() {
             for (int i = 0; i < 16; i++) {
                 if ((pbitmap & (1 << i)) != 0) {
@@ -49,29 +51,36 @@ namespace libMC.NET.World {
                 }
             }
 
-            // -- Number of sections * blocks per section = blocks in this "Chunk"
+            // -- Number of sections * Blocks per section = Blocks in this "Chunk"
             numBlocks = numBlocks * 4096;
         }
 
+        /// <summary>
+        /// Populates the chunk sections contained in this chunk column with their information.
+        /// </summary>
         void Populate() {
-            int offset = 0, current = 0, metaOff = 0;
+            int offset = 0, current = 0, metaOff = 0, Lightoff = 0;
 
             for (int i = 0; i < 16; i++) {
                 if ((pbitmap & (1 << i)) != 0) {
 
                     byte[] temp = new byte[4096];
                     byte[] temp2 = new byte[2048];
+                    byte[] temp3 = new byte[2048];
 
-                    Array.Copy(blocks, offset, temp, 0, 4096); // -- Block IDs
-                    Array.Copy(Metadata, metaOff, temp2, 0, 2048); // -- Metadata and lighting.
+                    Buffer.BlockCopy(blocks, offset, temp, 0, 4096); // -- Block IDs
+                    Buffer.BlockCopy(Metadata, metaOff, temp2, 0, 2048); // -- Metadata.
+                    Buffer.BlockCopy(Skylight, Lightoff, temp3, 0, 2048); // -- Block lighting.
 
                     Section mySection = sections[current];
 
-                    mySection.blocks = temp;
-                    mySection.metadata = CreateMetadataBytes(temp2);
+                    mySection.Blocks = temp;
+                    mySection.Metadata = CreateMetadataBytes(temp2);
+                    mySection.BlockLight = CreateMetadataBytes(temp3);
 
                     offset += 4096;
                     metaOff += 2048;
+                    Lightoff += 2048;
 
                     current += 1;
                 }
@@ -83,10 +92,10 @@ namespace libMC.NET.World {
         }
 
         /// <summary>
-        /// Expand the compressed metadata (half-byte per block) into single-byte per block for easier reading.
+        /// Expand the compressed Metadata (half-byte per block) into single-byte per block for easier reading.
         /// </summary>
         /// <param name="oldMeta">Old (2048-byte) Metadata</param>
-        /// <returns>4096 uncompressed metadata</returns>
+        /// <returns>4096 uncompressed Metadata</returns>
         public byte[] CreateMetadataBytes(byte[] oldMeta) {
             byte[] newMeta = new byte[4096];
 
@@ -101,6 +110,11 @@ namespace libMC.NET.World {
             return newMeta;
         }
 
+        /// <summary>
+        /// Takes this chunk's portion of data from a byte array.
+        /// </summary>
+        /// <param name="deCompressed">The byte array containing this chunk's data at the front.</param>
+        /// <returns>The byte array with this chunk's bytes removed.</returns>
         public byte[] GetData(byte[] deCompressed) {
             // -- Loading chunks, network handler hands off the decompressed bytes
             // -- This function takes its portion, and returns what's left.
@@ -109,7 +123,7 @@ namespace libMC.NET.World {
             int offset = 0;
 
             blocks = new byte[numBlocks];
-            Metadata = new byte[numBlocks / 2]; // -- Contains block light and block metadata.
+            Metadata = new byte[numBlocks / 2]; // -- Contains block light and block Metadata.
             Blocklight = new byte[numBlocks / 2];
 
             if (lighting)
@@ -122,8 +136,10 @@ namespace libMC.NET.World {
 
             Buffer.BlockCopy(deCompressed, 0, blocks, 0, numBlocks);
             offset += numBlocks;
+
             Buffer.BlockCopy(deCompressed, offset, Metadata, 0, numBlocks / 2); // -- Copy in Metadata
             offset += numBlocks / 2;
+
             Buffer.BlockCopy(deCompressed, offset, Blocklight, 0, numBlocks / 2);
             offset += numBlocks / 2;
 
@@ -181,9 +197,9 @@ namespace libMC.NET.World {
         }
 
         public void SetBlockData(int Bx, int By, int Bz, byte data) {
-            // -- Update the skylight and metadata on this block.
+            // -- Update the Skylight and Metadata on this block.
             Section thisSection = GetSectionByNumber(By);
-            thisSection.SetBlockData(GetXinSection(Bx), GetPositionInSection(By), GetZinSection(Bz), data);
+            thisSection.SetBlockMetadata(GetXinSection(Bx), GetPositionInSection(By), GetZinSection(Bz), data);
         }
 
         #region Helping Methods

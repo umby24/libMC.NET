@@ -25,7 +25,7 @@ namespace libMC.NET.Packets.Play {
 
             for (int i = 0; i < recordCount - 1; i++) {
                 byte[] blockData = new byte[4];
-                Array.Copy(data, (i * 4), blockData, 0, 4);
+                Buffer.BlockCopy(data, (i * 4), blockData, 0, 4);
 
                 int z = (blockData[0] & 0x0f);
                 int x = (blockData[0] >> 4) & 0x0f;

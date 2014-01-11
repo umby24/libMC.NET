@@ -18,7 +18,7 @@ namespace libMC.NET.Packets.Play {
 
             Chunk[] chunks = new Chunk[chunkColumnCount];
 
-            Array.Copy(CompressedData, 2, trim, 0, trim.Length);
+            Buffer.BlockCopy(CompressedData, 2, trim, 0, trim.Length);
 
             DecompressedData = Decompressor.Decompress(trim);
 

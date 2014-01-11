@@ -36,7 +36,7 @@ namespace libMC.NET.Packets.Play {
             }
 
             // -- Remove GZip Header
-            Array.Copy(compressedData, 2, trim, 0, trim.Length);
+            Buffer.BlockCopy(compressedData, 2, trim, 0, trim.Length);
 
             // -- Decompress the data
             decompressedData = Decompressor.Decompress(trim);
