@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Wrapped;
+using CWrapped;
 using System.Net.Sockets;
 using System.Threading;
 using libMC.NET.Packets.Handshake;
@@ -17,7 +17,7 @@ namespace libMC.NET {
         Minecraft mainMC;
         TcpClient baseSock;
         NetworkStream baseStream;
-        public Wrapped.Wrapped wSock;
+        public Wrapped wSock;
         public TickHandler worldTick;
 
         #region Packet Dictionaries
@@ -65,7 +65,7 @@ namespace libMC.NET {
 
             // -- Create our Wrapped socket.
             baseStream = baseSock.GetStream();
-            wSock = new Wrapped.Wrapped(baseStream);
+            wSock = new Wrapped(baseStream);
 
             RaiseSocketDebug(this, "Socket Created");
 

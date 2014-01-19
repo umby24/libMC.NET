@@ -34,6 +34,9 @@
     <Reference Include="Cryptography">
       <HintPath>..\..\Visual Studio 2012\Projects\Cryptography\Cryptography\bin\Debug\Cryptography.dll</HintPath>
     </Reference>
+    <Reference Include="CWrapped">
+      <HintPath>..\CWrapped\bin\Release\CWrapped.dll</HintPath>
+    </Reference>
     <Reference Include="Newtonsoft.Json">
       <HintPath>..\..\programming\Newtonsoft.Json.dll</HintPath>
     </Reference>
@@ -46,13 +49,11 @@
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
-    <Reference Include="Wrapped">
-      <HintPath>..\Wrapped\Wrapped\bin\Debug\Wrapped.dll</HintPath>
-    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Common\DoubleVector.cs" />
     <Compile Include="Entities\Block.cs" />
+    <Compile Include="Packets\IPacket.cs" />
     <Compile Include="World\Chunk.cs" />
     <Compile Include="Common\Decompressor.cs" />
     <Compile Include="Entities\Entity.cs" />
