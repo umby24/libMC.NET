@@ -59,7 +59,7 @@ namespace libMC.NET.World {
         /// Populates the chunk sections contained in this chunk column with their information.
         /// </summary>
         void Populate() {
-            int offset = 0, current = 0, metaOff = 0, Lightoff = 0;
+            int offset = 0, current = 0, metaOff = 0, Lightoff = 0, Skylightoff = 0;
 
             for (int i = 0; i < 16; i++) {
                 if ((pbitmap & (1 << i)) != 0) {
@@ -67,20 +67,24 @@ namespace libMC.NET.World {
                     byte[] temp = new byte[4096];
                     byte[] temp2 = new byte[2048];
                     byte[] temp3 = new byte[2048];
+                    byte[] temp4 = new byte[2048];
 
                     Buffer.BlockCopy(blocks, offset, temp, 0, 4096); // -- Block IDs
                     Buffer.BlockCopy(Metadata, metaOff, temp2, 0, 2048); // -- Metadata.
-                    Buffer.BlockCopy(Skylight, Lightoff, temp3, 0, 2048); // -- Block lighting.
+                    Buffer.BlockCopy(Blocklight, Lightoff, temp3, 0, 2048); // -- Block lighting.
+                    Buffer.BlockCopy(Skylight, Skylightoff, temp4, 0, 2048);
 
                     Section mySection = sections[current];
 
                     mySection.Blocks = temp;
                     mySection.Metadata = CreateMetadataBytes(temp2);
                     mySection.BlockLight = CreateMetadataBytes(temp3);
+                    mySection.Skylight = CreateMetadataBytes(temp4);
 
                     offset += 4096;
                     metaOff += 2048;
                     Lightoff += 2048;
+                    Skylightoff += 2048;
 
                     current += 1;
                 }
@@ -123,7 +127,7 @@ namespace libMC.NET.World {
             int offset = 0;
 
             blocks = new byte[numBlocks];
-            Metadata = new byte[numBlocks / 2]; // -- Contains block light and block Metadata.
+            Metadata = new byte[numBlocks / 2]; // -- Contains block Metadata.
             Blocklight = new byte[numBlocks / 2];
 
             if (lighting)
@@ -200,6 +204,34 @@ namespace libMC.NET.World {
             // -- Update the Skylight and Metadata on this block.
             Section thisSection = GetSectionByNumber(By);
             thisSection.SetBlockMetadata(GetXinSection(Bx), GetPositionInSection(By), GetZinSection(Bz), data);
+        }
+
+        public byte GetBlockLight(int x, int y, int z) {
+            var thisSection = GetSectionByNumber(y);
+            return thisSection.GetBlockLighting(GetXinSection(x), GetPositionInSection(y), GetZinSection(z));
+        }
+
+        public void SetBlockLight(int x, int y, int z, byte light) {
+            var thisSection = GetSectionByNumber(y);
+            thisSection.SetBlockLighting(GetXinSection(x), GetPositionInSection(y), GetZinSection(z), light);
+        }
+
+        public byte GetBlockSkylight(int x, int y, int z) {
+            var thisSection = GetSectionByNumber(y);
+            return thisSection.GetBlockSkylight(GetXinSection(x), GetPositionInSection(y), GetZinSection(z));
+        }
+
+        public void SetBlockSkylight(int x, int y, int z, byte light) {
+            var thisSection = GetSectionByNumber(y);
+            thisSection.SetBlockSkylight(GetXinSection(x), GetPositionInSection(y), GetZinSection(z), light);
+        }
+
+        public byte GetBlockBiome(int x, int z) {
+            return BiomeArray[(z * 16) + x];
+        }
+
+        public void SetBlockBiome(int x, int z, byte biome) {
+            BiomeArray[(z * 16) + x] = biome;
         }
 
         #region Helping Methods

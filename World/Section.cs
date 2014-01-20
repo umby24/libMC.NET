@@ -11,7 +11,6 @@ namespace libMC.NET.World {
         public byte[] Metadata;
         public byte[] BlockLight;
         public byte[] Skylight;
-        public byte[] BiomeArray;
         public byte y;
 
         public Section(byte Y) {
@@ -19,6 +18,7 @@ namespace libMC.NET.World {
             Blocks = new byte[4096];
             Metadata = new byte[4096];
             BlockLight = new byte[4096];
+            Skylight = new byte[4096];
         }
 
         public void SetBlock(int x, int y, int z, int id) {
@@ -53,6 +53,16 @@ namespace libMC.NET.World {
         public void SetBlockLighting(int x, int y, int z, byte data) {
             int index = (x + (z * 16) + (y * 16 * 16));
             BlockLight[index] = data;
+        }
+
+        public byte GetBlockSkylight(int x, int y, int z) {
+            int index = (x + (z * 16) + (y * 16 * 16));
+            return Skylight[index];
+        }
+
+        public void SetBlockSkylight(int x, int y, int z, byte data) {
+            int index = (x + (z * 16) + (y * 16 * 16));
+            Skylight[index] = data;
         }
     }
 }
