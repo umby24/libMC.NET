@@ -7,7 +7,7 @@ using System.Threading;
 using System.Net;
 using System.Net.Sockets;
 
-using Wrapped;
+using CWrapped;
 
 namespace libMC.NET {
     public class Proxy {
@@ -22,8 +22,8 @@ namespace libMC.NET {
         TcpClient sbaseSock;
         NetworkStream sbaseStream;
 
-        public Wrapped.Wrapped sSock;
-        public Wrapped.Wrapped cSock;
+        public Wrapped sSock;
+        public Wrapped cSock;
         StreamWriter Logger;
 
         Thread ServerThread;
@@ -50,8 +50,8 @@ namespace libMC.NET {
 
             cbaseStream = cbaseSock.GetStream(); // -- Client accepted successfully, woo.
 
-            sSock = new Wrapped.Wrapped(sbaseStream);
-            cSock = new Wrapped.Wrapped(cbaseStream);
+            sSock = new Wrapped(sbaseStream);
+            cSock = new Wrapped(cbaseStream);
 
             ServerThread = new Thread(ServerNetworkHandler);
             ClientThread = new Thread(ClientNetworkHandler);

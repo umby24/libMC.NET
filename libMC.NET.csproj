@@ -31,14 +31,17 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Cryptography">
-      <HintPath>..\..\Visual Studio 2012\Projects\Cryptography\Cryptography\bin\Debug\Cryptography.dll</HintPath>
+    <Reference Include="Cryptography, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>Depdendencies\Cryptography.dll</HintPath>
     </Reference>
-    <Reference Include="CWrapped">
-      <HintPath>..\CWrapped\bin\Release\CWrapped.dll</HintPath>
+    <Reference Include="CWrapped, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>Depdendencies\CWrapped.dll</HintPath>
     </Reference>
-    <Reference Include="Newtonsoft.Json">
-      <HintPath>..\..\programming\Newtonsoft.Json.dll</HintPath>
+    <Reference Include="Newtonsoft.Json, Version=4.5.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>Depdendencies\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -53,7 +56,6 @@
   <ItemGroup>
     <Compile Include="Common\DoubleVector.cs" />
     <Compile Include="Entities\Block.cs" />
-    <Compile Include="Packets\IPacket.cs" />
     <Compile Include="World\Chunk.cs" />
     <Compile Include="Common\Decompressor.cs" />
     <Compile Include="Entities\Entity.cs" />
