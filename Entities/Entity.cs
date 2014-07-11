@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using libMC.NET.Common;
+using CWrapped;
 
 namespace libMC.NET.Entities {
     /// <summary>
@@ -14,7 +15,8 @@ namespace libMC.NET.Entities {
         public dynamic[] Metadata;
         public string Type, UUID, playerName;
         public Vector Location;
-        public byte mobType, pitch, headPitch, yaw, status, amplifier, animation, rotation, ambient, arrows, nametag; // -- mobType is optional, only for mobs.
+        public byte mobType;
+        public sbyte pitch, headPitch, yaw, status, amplifier, animation, rotation, ambient, arrows, nametag; // -- mobType is optional, only for mobs.
         public short Velocity_X, Velocity_Y, Velocity_Z, heldItem, count, duration, air;
         public Item itemFrame;
         public float health;
@@ -23,58 +25,9 @@ namespace libMC.NET.Entities {
 
         public Dictionary<int, Item> Inventory;
 
-        public Entity(ref Minecraft mc, string type) {
+        public Entity(string type) {
             Type = type;
             Inventory = new Dictionary<int, Item>();
-        }
-
-        public void ReadEntityMetadata(ref Minecraft mc) {
-
-            do {
-
-                byte item = mc.nh.wSock.readByte();
-
-                if (item == 127) break;
-
-                int index = item & 0x1F;
-                int type = item >> 5;
-
-                switch (type) {
-                    case 0:
-                        HandleMetadata(index, mc.nh.wSock.readByte());
-                        break;
-                    case 1:
-                        HandleMetadata(index, mc.nh.wSock.readShort());
-                        break;
-                    case 2:
-                        HandleMetadata(index, mc.nh.wSock.readInt());
-                        break;
-                    case 3:
-                        HandleMetadata(index, mc.nh.wSock.readFloat());
-                        break;
-                    case 4:
-                        HandleMetadata(index, mc.nh.wSock.readString());
-                        break;
-                    case 5:
-                        Item temp = new Item();
-                        temp.ReadSlot(ref mc);
-
-                        HandleMetadata(index, temp);
-                        break;
-                    case 6:
-                        Vector v = new Vector();
-
-                        v.x = mc.nh.wSock.readInt();
-                        v.y = mc.nh.wSock.readInt();
-                        v.z = mc.nh.wSock.readInt();
-
-                        HandleMetadata(index, v);
-                        break;
-
-                }
-            } while (true);
-           
-
         }
         
         /// <summary>
@@ -100,7 +53,7 @@ namespace libMC.NET.Entities {
                     itemFrame = (Item)data;
                     break;
                 case 3:
-                    rotation = (byte)data;
+                    rotation = (sbyte)data;
                     break;
                     
 

@@ -3,6 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
+using CWrapped;
+using libMC.NET.Network;
+
 namespace libMC.NET.Entities {
     public class Item {
         public int itemID;
@@ -10,44 +13,20 @@ namespace libMC.NET.Entities {
         public short itemDamage;
         public byte[] nbtData;
 
-        public void ReadSlot(ref Minecraft mc) {
-            int blockID = mc.nh.wSock.readShort();
-
-            if (blockID == -1) {
-                itemID = 0;
-                itemCount = 0;
-                itemDamage = 0;
-                return;
-            }
-
-            itemCount = mc.nh.wSock.readByte();
-            itemDamage = mc.nh.wSock.readShort();
-            int NBTLength = mc.nh.wSock.readShort();
-
-            if (NBTLength == -1) {
-                return;
-            }
-
-            nbtData = mc.nh.wSock.readByteArray(NBTLength);
-
-            return;
-        }
         public string FriendlyName() {
             // -- Return the friendly name for the item we represent
 
             return ((Block.blockitemid)itemID).ToString();
         }
 
-        public static void WriteSlot(ref Minecraft mc, Item item) {
-            if (item == null) {
-                mc.nh.wSock.writeShort(-1);
-                return;
-            }
+        public static Item ItemFromSlot(SlotData Item) {
+            var newItem = new Item();
+            newItem.itemID = Item.ID;
+            newItem.itemCount = Item.ItemCount;
+            newItem.itemDamage = Item.ItemDamage;
+            newItem.nbtData = Item.NbtData;
 
-            mc.nh.wSock.writeShort((short)item.itemID);
-            mc.nh.wSock.writeByte(item.itemCount);
-            mc.nh.wSock.writeShort(item.itemDamage);
-            mc.nh.wSock.writeShort(-1);
+            return newItem;
         }
     }
 }

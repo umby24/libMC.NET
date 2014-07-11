@@ -7,7 +7,7 @@ namespace libMC.NET.Entities {
     public class ObjectEntity {
         public int ObjectID;
         public string ObjectFriendlyName;
-        public byte type;
+        public sbyte type;
         #region Optional Variables
         // -- These are specific to each individual type of object.
         string style; // -- Minecart style, I.E. Chest, Furnace, ect.
@@ -15,18 +15,16 @@ namespace libMC.NET.Entities {
         int blockType; // BlockID | (Metadata << 0xC)
         int EntityID; // Fishing float, Splash potion, Projectiles.
 
-        short Speed_X;
-        short Speed_Y;
-        short Speed_Z;
+        public short Speed_X;
+        public short Speed_Y;
+        public short Speed_Z;
         #endregion
 
-        public ObjectEntity(byte Type) {
+        public ObjectEntity(sbyte Type) {
             type = Type;
         }
 
-        public void ReadObjectData(ref Minecraft mc) {
-            int metadataID = mc.nh.wSock.readInt();
-            ObjectID = metadataID;
+        public void GetFriendlyName(int metadataID) {
 
             switch (type) {
                 case 0:
@@ -100,12 +98,6 @@ namespace libMC.NET.Entities {
                     ObjectFriendlyName = "Fishing Float";
                     EntityID = metadataID;
                     break;
-            }
-
-            if (type != 0) {
-                Speed_X = mc.nh.wSock.readShort();
-                Speed_Y = mc.nh.wSock.readShort();
-                Speed_Z = mc.nh.wSock.readShort();
             }
         }
     }

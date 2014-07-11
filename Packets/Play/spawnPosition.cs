@@ -6,7 +6,7 @@ using libMC.NET.World;
 
 namespace libMC.NET.Packets.Play {
     class SpawnPosition : Packet {
-        // -- Not providing public accessors to this due to it being stored already in the World class for this Minecraft instance.
+        // -- Not providing public accessors to this due to it being stored already in the World class for this MinecraftClient instance.
         public SpawnPosition(ref Minecraft mc) {
             int x = mc.nh.wSock.readInt();
             int y = mc.nh.wSock.readInt();

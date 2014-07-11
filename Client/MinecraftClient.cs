@@ -8,16 +8,15 @@ using System.Drawing;
 using libMC.NET.Common;
 using libMC.NET.World;
 using libMC.NET.Entities;
+using libMC.NET.Network;
 
-// TODO: Comment more things
-// TODO: Speed things up, optimize code.
-
-// [Low]: Refactor packets to be universal for Server/Client, and be usable with proxies
-namespace libMC.NET {
+// TODO: [Low] Comment more things
+// TODO: [Medium] Speed things up, optimize code.
+namespace libMC.NET.Client {
     /// <summary>
-    /// Main class for libMC.Net, a Minecraft interaction library for .net languages.
+    /// Main class for libMC.Net.Client, the Client portion of a MinecraftClient interaction library for .NET.
     /// </summary>
-    public class Minecraft {
+    public class MinecraftClient {
         #region Variables
         public string ServerIP, ClientName, ClientPassword, AccessToken, ClientToken, SelectedProfile, ClientBrand;
         public int ServerPort, ServerState;
@@ -32,14 +31,14 @@ namespace libMC.NET {
         #endregion
 
         /// <summary>
-        /// Create a new Minecraft Instance
+        /// Create a new MinecraftClient Client Instance
         /// </summary>
         /// <param name="ip">The IP of the server to connect to</param>
         /// <param name="port">The port of the server to connect to</param>
-        /// <param name="username">The username to use when connecting to Minecraft</param>
-        /// <param name="password">The password to use when connecting to Minecraft (Ignore if you are providing credentials)</param>
+        /// <param name="username">The username to use when connecting to MinecraftClient</param>
+        /// <param name="password">The password to use when connecting to MinecraftClient (Ignore if you are providing credentials)</param>
         /// <param name="nameVerification">To connect using Name Verification or not</param>
-        public Minecraft(string ip, int port, string username, string password, bool nameVerification) {
+        public MinecraftClient(string ip, int port, string username, string password, bool nameVerification) {
             ServerIP = ip;
             ServerPort = port;
             ClientName = username;
@@ -53,7 +52,7 @@ namespace libMC.NET {
         /// </summary>
         public void Login() {
             if (VerifyNames) {
-                Minecraft_Net_Interaction loginHandler = new Minecraft_Net_Interaction();
+                var loginHandler = new Minecraft_Net_Interaction();
                 string[] credentials = loginHandler.Login(ClientName, ClientPassword);
 
                 if (credentials[0] == "") {  // -- Fall back to no auth.
@@ -68,13 +67,13 @@ namespace libMC.NET {
                     AccessToken = credentials[0];
                     SelectedProfile = credentials[1];
                     ClientToken = credentials[2];
+                    ClientName = credentials[3];
                 }
-
             } else {
                 AccessToken = "None";
                 SelectedProfile = "None";
             }
-        
+
         }
         /// <summary>
         /// Uses a client's stored credentials to verify with Minecraft.net
@@ -100,6 +99,7 @@ namespace libMC.NET {
 
             return true;
         }
+
         /// <summary>
         /// Uses a client's stored credentials to verify with Minecraft.net
         /// </summary>
@@ -124,8 +124,9 @@ namespace libMC.NET {
 
             return true;
         }
+
         /// <summary>
-        /// Connects to the Minecraft Server.
+        /// Connects to the MinecraftClient Server.
         /// </summary>
         public void Connect() {
             if (nh != null)
@@ -168,10 +169,34 @@ namespace libMC.NET {
         }
 
         #region Simple Actions
+        /// <summary>
+        /// Sends a chat message to the server.
+        /// </summary>
+        /// <param name="Message">The message to send.</param>
         public void SendChat(string Message) {
             if (nh != null) {
-                Packets.Play.ServerBound.ChatMessage.SendChat(this, Message);
+                var ChatPacket = new SBChatMessage();
+                ChatPacket.Message = Message;
+                ChatPacket.Write(nh.wSock);
             }
+        }
+        /// <summary>
+        /// Respawns the client.
+        /// </summary>
+        public void Respawn() {
+            var RespawnPacket = new SBClientStatus();
+            RespawnPacket.ActionID = 0;
+            RespawnPacket.Write(nh.wSock);
+        }
+        /// <summary>
+        /// Receives a list of completion words from the server
+        /// Note: Hook the TabComplete event to receive results!!
+        /// </summary>
+        /// <param name="Message">The message to receive completion items for.</param>
+        public void TabComplete(string Message) {
+            var CompletePacket = new SBTabComplete();
+            CompletePacket.Text = Message;
+            CompletePacket.Write(nh.wSock);
         }
         #endregion
         #region Event Messengers
@@ -237,6 +262,10 @@ namespace libMC.NET {
             if (MsPingReceived != null)
                 MsPingReceived(MsPing);
         }
+        public void RaiseTabComplete(string[] results) {
+            if (TabCompleteReceived != null)
+                TabCompleteReceived(results);
+        }
         #endregion
         #region Base Events
         void NetworkInfo(object Sender, string Message) {
@@ -267,9 +296,9 @@ namespace libMC.NET {
             if (DebugMessage != null)
                 DebugMessage(Sender, Message);
         }
-        public void RaiseMC(object Sender, string McMessage, string Name) {
+        public void RaiseMC(object Sender, string McMessage, string Raw) {
             if (Message != null)
-                Message(Sender, McMessage, Name);
+                Message(Sender, McMessage, Raw);
         }
         #endregion
         #region Block Events
@@ -278,7 +307,7 @@ namespace libMC.NET {
                 ChestStateChanged(state, x, y, z);
         }
 
-        public void RaiseBlockBreakingEvent(Vector Location, int Entity_ID, byte Stage) {
+        public void RaiseBlockBreakingEvent(Vector Location, int Entity_ID, sbyte Stage) {
             if (BlockBreaking != null)
                 BlockBreaking(Location, Entity_ID, Stage);
         }
@@ -343,12 +372,12 @@ namespace libMC.NET {
                 EntityEquipmentChanged(Entity_ID, slot, newItem);
         }
 
-        public void RaiseEntityHeadLookChanged(int Entity_ID, byte head_yaw) {
+        public void RaiseEntityHeadLookChanged(int Entity_ID, sbyte head_yaw) {
             if (EntityHeadLookChanged != null)
                 EntityHeadLookChanged(Entity_ID, head_yaw);
         }
 
-        public void RaiseEntityLookChanged(int Entity_ID, byte yaw, byte pitch) {
+        public void RaiseEntityLookChanged(int Entity_ID, sbyte yaw, sbyte pitch) {
             if (EntityLookChanged != null)
                 EntityLookChanged(Entity_ID, yaw, pitch);
         }
@@ -398,7 +427,7 @@ namespace libMC.NET {
                 experienceSet(expBar, level, totalExp);
         }
 
-        public void RaiseSetWindowSlot(byte windowid, short slot, Item item) {
+        public void RaiseSetWindowSlot(sbyte windowid, short slot, Item item) {
             if (SetWindowItem != null)
                 SetWindowItem(windowid, slot, item);
         }
@@ -414,7 +443,7 @@ namespace libMC.NET {
         }
         #endregion
         #region Scoreboard Events
-        public void RaiseScoreBoard(byte position, string name) {
+        public void RaiseScoreBoard(sbyte position, string name) {
             if (DisplayScoreboard != null)
                 DisplayScoreboard(position, name);
         }
@@ -446,7 +475,7 @@ namespace libMC.NET {
         public delegate void InfoMessageHandler(object sender, string message);
         public event InfoMessageHandler InfoMessage;
 
-        public delegate void MessageHandler(object sender, string message, string name);
+        public delegate void MessageHandler(object sender, string message, string raw);
         public event MessageHandler Message;
 
         public delegate void PacketHandler(object sender, object packet, int id);
@@ -456,7 +485,7 @@ namespace libMC.NET {
         public delegate void BlockChangedEventHandler(int x, byte y, int z, int newType, byte data);
         public event BlockChangedEventHandler BlockChanged;
 
-        public delegate void BlockBreakAnimationHandler(Vector Location, int Entity_ID, byte Stage);
+        public delegate void BlockBreakAnimationHandler(Vector Location, int Entity_ID, sbyte Stage);
         public event BlockBreakAnimationHandler BlockBreaking;
 
         public delegate void PistonMoveHandler(byte state, byte direction, int x, short y, int z);
@@ -494,10 +523,10 @@ namespace libMC.NET {
         public delegate void EntityRelMoveHandler(int Entity_ID, int Change_X, int Change_Y, int Change_Z);
         public event EntityRelMoveHandler EntityRelMove;
 
-        public delegate void EntityLookChangedHandler(int Entity_ID, byte yaw, byte pitch);
+        public delegate void EntityLookChangedHandler(int Entity_ID, sbyte yaw, sbyte pitch);
         public event EntityLookChangedHandler EntityLookChanged;
 
-        public delegate void EntityHeadLookChangedHandler(int Entity_ID, byte head_yaw);
+        public delegate void EntityHeadLookChangedHandler(int Entity_ID, sbyte head_yaw);
         public event EntityHeadLookChangedHandler EntityHeadLookChanged;
 
         public delegate void EntityEquipmentChangedHandler(int Entity_ID, int slot, Item newItem);
@@ -537,7 +566,7 @@ namespace libMC.NET {
         public delegate void HeldSlotChangedHandler(byte slot);
         public event HeldSlotChangedHandler HeldSlotChanged;
 
-        public delegate void SetWindowItemHandler(byte window_ID, short slot, Item item);
+        public delegate void SetWindowItemHandler(sbyte window_ID, short slot, Item item);
         public event SetWindowItemHandler SetWindowItem;
 
         public delegate void SetInventoryItemHandler(short slot, Item item);
@@ -557,7 +586,7 @@ namespace libMC.NET {
         public delegate void ScoreboardObjectiveRemoveHandler(string name);
         public event ScoreboardObjectiveRemoveHandler ScoreboardObjectiveRemove;
 
-        public delegate void DisplayScoreboardHandler(byte position, string scoreName);
+        public delegate void DisplayScoreboardHandler(sbyte position, string scoreName);
         public event DisplayScoreboardHandler DisplayScoreboard;
         #endregion
         #region Server Events
@@ -597,6 +626,8 @@ namespace libMC.NET {
         public delegate void PingResponseReceivedHandler(string VersionName, int ProtocolVersion, int MaxPlayers, int OnlinePlayers, string[] PlayersSample, string MOTD, Image Favicon);
         public event PingResponseReceivedHandler PingResponseReceived;
 
+        public delegate void TabCompleteReceivedHandler(string[] results);
+        public event TabCompleteReceivedHandler TabCompleteReceived;
         #endregion
         #endregion
     }

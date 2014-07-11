@@ -24,9 +24,9 @@ namespace libMC.NET.Packets.Login {
 
 
             if (serverID == "" && mc.VerifyNames) {
-                // -- Verify with Minecraft.net
+                // -- Verify with MinecraftClient.net
                 // -- At this point, the server requires a hash containing the server id,
-                // -- shared key, and original public key. So we make this, and then pass to Minecraft.net
+                // -- shared key, and original public key. So we make this, and then pass to MinecraftClient.net
 
                 List<byte> hashlist = new List<byte>();
                 hashlist.AddRange(System.Text.Encoding.ASCII.GetBytes(serverID));
@@ -40,7 +40,7 @@ namespace libMC.NET.Packets.Login {
                 Minecraft_Net_Interaction verify = new Minecraft_Net_Interaction();
 
                 if (!verify.VerifyName(mc.ClientName, mc.AccessToken, mc.SelectedProfile, hash)) {
-                    mc.RaiseLoginFailure(this, "Failed to verify name with Minecraft session server.");
+                    mc.RaiseLoginFailure(this, "Failed to verify name with MinecraftClient session server.");
                     mc.Disconnect();
                     return;
                 }

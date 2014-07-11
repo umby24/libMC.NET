@@ -2,9 +2,7 @@
 
 .NET Library for Minecraft
 
-libMC.NET is currently a Client-only library for interacting with Minecraft servers using the .NET Framework.
-
-The currently supported Minecraft version is Minecraft **1.7.4**.
+The currently supported Minecraft version is Minecraft **1.7.9**.
 
 For an example of very basic usage, see the TestClient.
 

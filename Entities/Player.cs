@@ -11,8 +11,8 @@ namespace libMC.NET.Entities {
     public class Player {
         public int Entity_ID; // -- The client's Entity ID on the server.
         public string playerName;
-        public byte gameMode, selectedSlot, Animation;
-
+        public byte gameMode, Animation;
+        public sbyte selectedSlot;
         public float playerHealth, foodSaturation, ExpBar, flyingSpeed, WalkingSpeed;
         public short playerHunger, level, totalExp;
         public bool inBed, onGround;

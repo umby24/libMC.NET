@@ -23,8 +23,8 @@ namespace libMC.NET.Packets.Play {
 
             JToken jsonObj = JToken.Parse(raw);
 
-            if (jsonObj["text"] != null) // -- Raw text, just let the clients parse it from here.
-                return jsonObj["text"].Value<string>();
+            if (jsonObj["text"] != null) 
+                text += jsonObj["text"].Value<string>();
 
             if (jsonObj["translate"] != null)
                 translate = jsonObj["translate"].Value<string>();

@@ -6,16 +6,18 @@ using System.Threading.Tasks;
 using System.Net;
 using System.Web;
 using System.IO;
+using System.Text.RegularExpressions;
+
 using Newtonsoft.Json.Linq;
 
-namespace libMC.NET
+namespace libMC.NET.Common
 {
     public class Minecraft_Net_Interaction
     {
 
         public string[] Login(string username, string password) {
             string json = "{\"agent\": {\"name\": \"minecraft\",\"version\": 1},\"username\": \"" + username + "\",\"password\": \"" + password + "\"}";
-            string accessToken = "", profileID = "", clientToken = "";
+            string accessToken = "", profileID = "", clientToken = "", clientName = "";
 
             HttpWebRequest wreq = (HttpWebRequest)WebRequest.Create("https://authserver.mojang.com/authenticate");
 
@@ -31,11 +33,11 @@ namespace libMC.NET
             String code;
 
             try {
-                 response = (HttpWebResponse)wreq.GetResponse();
-                 code = new StreamReader(response.GetResponseStream()).ReadToEnd();
+                response = (HttpWebResponse)wreq.GetResponse();
+                code = new StreamReader(response.GetResponseStream()).ReadToEnd();
             } catch {
                 // -- Error occured possible incorrect password.
-                return new[] { "", "", "" };
+                return new[] { "", "", "", "" };
             }
 
             var root = JObject.Parse(code);
@@ -53,10 +55,21 @@ namespace libMC.NET
                     case "selectedProfile":
                         profileID = app.Value.First.First.ToString();
                         break;
+                    case "availableProfiles":
+                        string input = app.ToString();
+                        string name = Parser(input);
+                        clientName = name;
+                        break;
                 }
             }
 
-            return new string[] { accessToken, profileID, clientToken };
+            return new string[] { accessToken, profileID, clientToken, clientName };
+        }
+
+        static string Parser(string str) {
+            Regex regex = new Regex("\"name\": \"(.*)\"");
+            var v = regex.Match(str);
+            return v.Groups[1].ToString();
         }
 
         public bool VerifyName(string username, string accessToken, string selectedProfile, string ServerHash) {

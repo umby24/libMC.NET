@@ -17,7 +17,7 @@ namespace libMC.NET.Packets.Play {
             int chunkID = mc.MinecraftWorld.GetChunk(X, Z);
 
             if (chunkID == -1) {
-                mc.RaiseError(this, "Attempted to access uninitilized chunk");
+                mc.RaiseError(this, "Attempted to access uninitialized chunk");
                 return;
             }
 
