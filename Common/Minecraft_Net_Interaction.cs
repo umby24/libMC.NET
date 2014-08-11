@@ -17,7 +17,7 @@ namespace libMC.NET.Common
 
         public string[] Login(string username, string password) {
             string json = "{\"agent\": {\"name\": \"minecraft\",\"version\": 1},\"username\": \"" + username + "\",\"password\": \"" + password + "\"}";
-            string accessToken = "", profileID = "", clientToken = "", clientName = "";
+            string accessToken = "", profileID = "", profileName = "", clientToken = "", clientName = "";
 
             HttpWebRequest wreq = (HttpWebRequest)WebRequest.Create("https://authserver.mojang.com/authenticate");
 
@@ -54,6 +54,7 @@ namespace libMC.NET.Common
                         break;
                     case "selectedProfile":
                         profileID = app.Value.First.First.ToString();
+                        profileName = (string)app.Value["name"];
                         break;
                     case "availableProfiles":
                         string input = app.ToString();
@@ -63,7 +64,7 @@ namespace libMC.NET.Common
                 }
             }
 
-            return new string[] { accessToken, profileID, clientToken, clientName };
+            return new string[] { accessToken, profileID, profileName, clientToken, clientName };
         }
 
         static string Parser(string str) {

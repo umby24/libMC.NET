@@ -96,6 +96,7 @@ namespace libMC.NET.Client {
 
             AccessToken = Response[0];
             ClientToken = Response[1];
+            SelectedProfile = "Potato";
 
             return true;
         }
