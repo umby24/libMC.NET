@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 using System.Drawing;
 
 using libMC.NET.Common;
@@ -18,7 +14,7 @@ namespace libMC.NET.Client {
     /// </summary>
     public class MinecraftClient {
         #region Variables
-        public string ServerIP, ClientName, ClientPassword, AccessToken, ClientToken, SelectedProfile, ClientBrand;
+        public string ServerIp, ClientName, ClientPassword, AccessToken, ClientToken, SelectedProfile, ClientBrand;
         public int ServerPort, ServerState;
         public bool VerifyNames, Running, First = false;
         public NetworkHandler nh;
@@ -39,7 +35,7 @@ namespace libMC.NET.Client {
         /// <param name="password">The password to use when connecting to MinecraftClient (Ignore if you are providing credentials)</param>
         /// <param name="nameVerification">To connect using Name Verification or not</param>
         public MinecraftClient(string ip, int port, string username, string password, bool nameVerification) {
-            ServerIP = ip;
+            ServerIp = ip;
             ServerPort = port;
             ClientName = username;
             ClientPassword = password;
@@ -84,18 +80,18 @@ namespace libMC.NET.Client {
                 return false;
             }
 
-            var SessionVerifier = new Minecraft_Net_Interaction();
-            string[] Response = SessionVerifier.SessionRefresh(AccessToken, ClientToken);
+            var sessionVerifier = new Minecraft_Net_Interaction();
+            string[] response = sessionVerifier.SessionRefresh(AccessToken, ClientToken);
 
-            if (Response[0] == "") {
+            if (response[0] == "") {
                 RaiseError(this, "Unable to Verify Session!");
                 return false;
             }
 
             RaiseInfo(this, "Credentials verified and refreshed!");
 
-            AccessToken = Response[0];
-            ClientToken = Response[1];
+            AccessToken = response[0];
+            ClientToken = response[1];
             SelectedProfile = "Potato";
 
             return true;
@@ -110,18 +106,18 @@ namespace libMC.NET.Client {
             AccessToken = accessToken;
             ClientToken = clientToken;
 
-            var SessionVerifier = new Minecraft_Net_Interaction();
-            string[] Response = SessionVerifier.SessionRefresh(AccessToken, ClientToken);
+            var sessionVerifier = new Minecraft_Net_Interaction();
+            string[] response = sessionVerifier.SessionRefresh(AccessToken, ClientToken);
 
-            if (Response[0] == "") {
+            if (response[0] == "") {
                 RaiseError(this, "Unable to Verify Session!");
                 return false;
             }
 
             RaiseInfo(this, "Credentials verified and refreshed!");
 
-            AccessToken = Response[0];
-            ClientToken = Response[1];
+            AccessToken = response[0];
+            ClientToken = response[1];
 
             return true;
         }
@@ -173,31 +169,29 @@ namespace libMC.NET.Client {
         /// <summary>
         /// Sends a chat message to the server.
         /// </summary>
-        /// <param name="Message">The message to send.</param>
-        public void SendChat(string Message) {
-            if (nh != null) {
-                var ChatPacket = new SBChatMessage();
-                ChatPacket.Message = Message;
-                ChatPacket.Write(nh.wSock);
-            }
+        /// <param name="message">The message to send.</param>
+        public void SendChat(string message) {
+            if (nh == null) return;
+
+            var chatPacket = new SBChatMessage {Message = message};
+            chatPacket.Write(nh.wSock);
         }
         /// <summary>
         /// Respawns the client.
         /// </summary>
         public void Respawn() {
-            var RespawnPacket = new SBClientStatus();
-            RespawnPacket.ActionID = 0;
-            RespawnPacket.Write(nh.wSock);
+            var respawnPacket = new SBClientStatus {ActionID = 0};
+            respawnPacket.Write(nh.wSock);
         }
         /// <summary>
         /// Receives a list of completion words from the server
         /// Note: Hook the TabComplete event to receive results!!
         /// </summary>
-        /// <param name="Message">The message to receive completion items for.</param>
-        public void TabComplete(string Message) {
-            var CompletePacket = new SBTabComplete();
-            CompletePacket.Text = Message;
-            CompletePacket.Write(nh.wSock);
+        /// <param name="message">The message to receive completion items for.</param>
+        public void TabComplete(string message) {
+            var completePacket = new SBTabComplete();
+            completePacket.Text = message;
+            completePacket.Write(nh.wSock);
         }
         #endregion
         #region Event Messengers
@@ -221,14 +215,14 @@ namespace libMC.NET.Client {
             if (PluginMessage != null)
                 PluginMessage(channel, data);
         }
-        public void RaiseLoginSuccess(object Sender) {
+        public void RaiseLoginSuccess(object sender) {
             if (LoginSuccess != null)
-                LoginSuccess(Sender);
+                LoginSuccess(sender);
         }
 
-        public void RaiseLoginFailure(object Sender, string Reason) {
+        public void RaiseLoginFailure(object sender, string reason) {
             if (LoginFailure != null)
-                LoginFailure(Sender, Reason);
+                LoginFailure(sender, reason);
         }
 
         public void RaiseGameJoined() {
@@ -236,14 +230,14 @@ namespace libMC.NET.Client {
                 JoinedGame();
         }
 
-        public void RaiseTransactionRejected(byte Window_ID, short Action_ID) {
+        public void RaiseTransactionRejected(byte windowId, short actionId) {
             if (TransactionRejected != null)
-                TransactionRejected(Window_ID, Action_ID);
+                TransactionRejected(windowId, actionId);
         }
 
-        public void RaiseTransactionAccepted(byte Window_ID, short Action_ID) {
+        public void RaiseTransactionAccepted(byte windowId, short actionId) {
             if (TransactionAccepted != null)
-                TransactionAccepted(Window_ID, Action_ID);
+                TransactionAccepted(windowId, actionId);
         }
 
         public void RaiseKicked(string reason) {
@@ -251,17 +245,17 @@ namespace libMC.NET.Client {
                 PlayerKicked(reason);
         }
 
-        public void RaiseExplosion(float X, float Y, float Z) {
+        public void RaiseExplosion(float x, float y, float z) {
             if (Explosion != null)
-                Explosion(X, Y, Z);
+                Explosion(x, y, z);
         }
-        public void RaisePingResponse(string VersionName, int ProtocolVersion, int MaxPlayers, int OnlinePlayers, string[] PlayersSample, string MOTD, Image Favicon) {
+        public void RaisePingResponse(string versionName, int protocolVersion, int maxPlayers, int onlinePlayers, string[] playersSample, string motd, Image favicon) {
             if (PingResponseReceived != null)
-                PingResponseReceived(VersionName, ProtocolVersion, MaxPlayers, OnlinePlayers, PlayersSample, MOTD, Favicon);
+                PingResponseReceived(versionName, protocolVersion, maxPlayers, onlinePlayers, playersSample, motd, favicon);
         }
-        public void RaisePingMs(int MsPing) {
+        public void RaisePingMs(int msPing) {
             if (MsPingReceived != null)
-                MsPingReceived(MsPing);
+                MsPingReceived(msPing);
         }
         public void RaiseTabComplete(string[] results) {
             if (TabCompleteReceived != null)
@@ -269,37 +263,37 @@ namespace libMC.NET.Client {
         }
         #endregion
         #region Base Events
-        void NetworkInfo(object Sender, string Message) {
+        void NetworkInfo(object sender, string message) {
             if (InfoMessage != null)
-                InfoMessage(Sender, "(NETWORK): " + Message);
+                InfoMessage(sender, "(NETWORK): " + message);
         }
-        void NetworkDebug(object Sender, string Message) {
+        void NetworkDebug(object sender, string message) {
             if (DebugMessage != null)
-                DebugMessage(Sender, "(NETWORK): " + Message);
+                DebugMessage(sender, "(NETWORK): " + message);
         }
-        void NetworkError(object Sender, string Message) {
+        void NetworkError(object sender, string message) {
             if (ErrorMessage != null)
-                ErrorMessage(Sender, "(NETWORK): " + Message);
+                ErrorMessage(sender, "(NETWORK): " + message);
         }
-        void RaisePacketHandled(object Sender, object Packet, int id) {
+        void RaisePacketHandled(object sender, object packet, int id) {
             if (PacketHandled != null)
-                PacketHandled(Sender, Packet, id);
+                PacketHandled(sender, packet, id);
         }
-        public void RaiseError(object Sender, string Message) {
+        public void RaiseError(object sender, string message) {
             if (ErrorMessage != null)
-                ErrorMessage(Sender, Message);
+                ErrorMessage(sender, message);
         }
-        public void RaiseInfo(object Sender, string Message) {
+        public void RaiseInfo(object sender, string message) {
             if (InfoMessage != null)
-                InfoMessage(Sender, Message);
+                InfoMessage(sender, message);
         }
-        public void RaiseDebug(object Sender, string Message) {
+        public void RaiseDebug(object sender, string message) {
             if (DebugMessage != null)
-                DebugMessage(Sender, Message);
+                DebugMessage(sender, message);
         }
-        public void RaiseMC(object Sender, string McMessage, string Raw) {
+        public void RaiseMC(object sender, string mcMessage, string raw) {
             if (Message != null)
-                Message(Sender, McMessage, Raw);
+                Message(sender, mcMessage, raw);
         }
         #endregion
         #region Block Events
@@ -307,10 +301,10 @@ namespace libMC.NET.Client {
             if (ChestStateChanged != null)
                 ChestStateChanged(state, x, y, z);
         }
-
-        public void RaiseBlockBreakingEvent(Vector Location, int Entity_ID, sbyte Stage) {
+         
+        public void RaiseBlockBreakingEvent(Vector location, int entityId, sbyte stage) {
             if (BlockBreaking != null)
-                BlockBreaking(Location, Entity_ID, Stage);
+                BlockBreaking(location, entityId, stage);
         }
 
         public void RaiseBlockChangedEvent(int x, byte y, int z, int type, byte data) {
@@ -351,65 +345,65 @@ namespace libMC.NET.Client {
         }
         #endregion
         #region Entity Events
-        public void RaiseEntityAnimationChanged(object Sender, int Entity_ID, byte Animation) {
+        public void RaiseEntityAnimationChanged(object sender, int entityId, byte animation) {
             if (EntityAnimationChanged != null)
-                EntityAnimationChanged(Sender, Entity_ID, Animation);
+                EntityAnimationChanged(sender, entityId, animation);
         }
-        public void RaiseEntityAttached(int Entity_ID, int Vehicle_ID, bool Leashed) {
+        public void RaiseEntityAttached(int entityId, int vehicleId, bool leashed) {
             if (EntityAttached != null)
-                EntityAttached(Entity_ID, Vehicle_ID, Leashed);
+                EntityAttached(entityId, vehicleId, leashed);
         }
-        public void RaiseEntityDestruction(int Entity_ID) {
+        public void RaiseEntityDestruction(int entityId) {
             if (EntityDestroyed != null)
-                EntityDestroyed(Entity_ID);
+                EntityDestroyed(entityId);
         }
-        public void RaiseEntityStatus(int Entity_ID) {
+        public void RaiseEntityStatus(int entityId) {
             if (EntityStatusChanged != null)
-                EntityStatusChanged(Entity_ID);
+                EntityStatusChanged(entityId);
         }
 
-        public void RaiseEntityEquipment(int Entity_ID, int slot, Item newItem) {
+        public void RaiseEntityEquipment(int entityId, int slot, Item newItem) {
             if (EntityEquipmentChanged != null)
-                EntityEquipmentChanged(Entity_ID, slot, newItem);
+                EntityEquipmentChanged(entityId, slot, newItem);
         }
 
-        public void RaiseEntityHeadLookChanged(int Entity_ID, sbyte head_yaw) {
+        public void RaiseEntityHeadLookChanged(int entityId, sbyte headYaw) {
             if (EntityHeadLookChanged != null)
-                EntityHeadLookChanged(Entity_ID, head_yaw);
+                EntityHeadLookChanged(entityId, headYaw);
         }
 
-        public void RaiseEntityLookChanged(int Entity_ID, sbyte yaw, sbyte pitch) {
+        public void RaiseEntityLookChanged(int entityId, sbyte yaw, sbyte pitch) {
             if (EntityLookChanged != null)
-                EntityLookChanged(Entity_ID, yaw, pitch);
+                EntityLookChanged(entityId, yaw, pitch);
         }
 
-        public void RaiseEntityRelMove(int Entity_ID, int Change_X, int Change_Y, int Change_Z) {
+        public void RaiseEntityRelMove(int entityId, int changeX, int changeY, int changeZ) {
             if (EntityRelMove != null)
-                EntityRelMove(Entity_ID, Change_X, Change_Y, Change_Z);
+                EntityRelMove(entityId, changeX, changeY, changeZ);
         }
 
-        public void RaiseEntityTeleport(int Entity_ID, int X, int Y, int Z) {
+        public void RaiseEntityTeleport(int entityId, int x, int y, int z) {
             if (EntityTeleport != null)
-                EntityTeleport(Entity_ID, X, Y, Z);
+                EntityTeleport(entityId, x, y, z);
         }
 
-        public void RaiseEntityVelocityChanged(int Entity_ID, int X, int Y, int Z) {
+        public void RaiseEntityVelocityChanged(int entityId, int x, int y, int z) {
             if (EntityVelocityChanged != null)
-                EntityVelocityChanged(Entity_ID, X, Y, Z);
+                EntityVelocityChanged(entityId, x, y, z);
         }
         #endregion
-        #region Player Events
-        public void RaiseWindowClosed(byte window_ID) {
+        #region Player Events 
+        public void RaiseWindowClosed(byte windowId) {
             if (CloseWindow != null)
-                CloseWindow(window_ID);
+                CloseWindow(windowId);
         }
-        public void RaiseOpenWindow(byte Window_ID, byte Type, string Title, byte slots, bool useTitle) {
+        public void RaiseOpenWindow(byte windowId, byte type, string title, byte slots, bool useTitle) {
             if (OpenWindow != null)
-                OpenWindow(Window_ID, Type, Title, slots, useTitle);
+                OpenWindow(windowId, type, title, slots, useTitle);
         }
-        public void RaiseItemCollected(int item_EID, int collector_eid) {
+        public void RaiseItemCollected(int itemEid, int collectorEid) {
             if (ItemCollected != null)
-                ItemCollected(item_EID, collector_eid);
+                ItemCollected(itemEid, collectorEid);
         }
         public void RaiseHeldSlotChanged(byte slot) {
             if (HeldSlotChanged != null)
@@ -486,7 +480,7 @@ namespace libMC.NET.Client {
         public delegate void BlockChangedEventHandler(int x, byte y, int z, int newType, byte data);
         public event BlockChangedEventHandler BlockChanged;
 
-        public delegate void BlockBreakAnimationHandler(Vector Location, int Entity_ID, sbyte Stage);
+        public delegate void BlockBreakAnimationHandler(Vector location, int entityId, sbyte stage);
         public event BlockBreakAnimationHandler BlockBreaking;
 
         public delegate void PistonMoveHandler(byte state, byte direction, int x, short y, int z);
@@ -502,16 +496,16 @@ namespace libMC.NET.Client {
         public delegate void GameStateChangedHandler(string eventName, float value);
         public event GameStateChangedHandler GameStateChanged;
 
-        public delegate void ChunkUnloadedHandler(int X, int Z);
+        public delegate void ChunkUnloadedHandler(int x, int z);
         public event ChunkUnloadedHandler ChunkUnloaded;
 
-        public delegate void ChunkLoadedHandler(int X, int Z);
+        public delegate void ChunkLoadedHandler(int x, int z);
         public event ChunkLoadedHandler ChunkLoaded;
 
-        public delegate void ExplosionHandler(float X, float Y, float Z);
+        public delegate void ExplosionHandler(float x, float y, float z);
         public event ExplosionHandler Explosion;
 
-        public delegate void MultiBlockChangeHandler(int Chunk_X, int Chunk_Z);
+        public delegate void MultiBlockChangeHandler(int chunkX, int chunkZ);
         public event MultiBlockChangeHandler MultiBlockChange;
         #endregion
         #region Entity Events

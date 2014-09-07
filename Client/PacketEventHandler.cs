@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text;
 using System.IO;
 using System.Drawing;
@@ -16,88 +15,88 @@ using SMProxy;
 
 namespace libMC.NET.Client {
     public struct ChatObject {
-        public string translate, color, text, unknown;
-        public bool italic, bold, strikethrough, obfs;
-        public JArray with;
+        public string Translate, Color, Text, Unknown;
+        public bool Italic, Bold, Strikethrough, Obfs;
+        public JArray With;
         public List<string> Names;
-    }
+    } 
 
     class PacketEventHandler {
         public PacketEventHandler(NetworkHandler nh) {
-            // -- Login packets
-            nh.RegisterLoginHandler(0, new NetworkHandler.PacketHandler(HandleLoginDisconnect));
-            nh.RegisterLoginHandler(1, new NetworkHandler.PacketHandler(HandleEncryptionRequest));
-            nh.RegisterLoginHandler(2, new NetworkHandler.PacketHandler(HandleLoginSuccess));
+            // -- Login packets 
+            nh.RegisterLoginHandler(0, HandleLoginDisconnect);
+            nh.RegisterLoginHandler(1, HandleEncryptionRequest);
+            nh.RegisterLoginHandler(2, HandleLoginSuccess);
 
             // -- Status Packets
-            nh.RegisterStatusHandler(0, new NetworkHandler.PacketHandler(HandleStatusResponse));
-            nh.RegisterStatusHandler(1, new NetworkHandler.PacketHandler(HandleStatusPing));
+            nh.RegisterStatusHandler(0, HandleStatusResponse);
+            nh.RegisterStatusHandler(1, HandleStatusPing);
 
             // -- Play packets
-            nh.RegisterPlayHandler(0, new NetworkHandler.PacketHandler(HandleKeepAlive));
-            nh.RegisterPlayHandler(0x01, new NetworkHandler.PacketHandler(HandleJoinGame));
-            nh.RegisterPlayHandler(0x02, new NetworkHandler.PacketHandler(HandleChat));
-            nh.RegisterPlayHandler(0x04, new NetworkHandler.PacketHandler(HandleEntityEquipment));
-            nh.RegisterPlayHandler(0x07, new NetworkHandler.PacketHandler(HandleRespawn));
-            nh.RegisterPlayHandler(0x09, new NetworkHandler.PacketHandler(HandleHeldItemChange));
-            nh.RegisterPlayHandler(0x0B, new NetworkHandler.PacketHandler(HandleAnimation));
-            nh.RegisterPlayHandler(0x0D, new NetworkHandler.PacketHandler(HandleCollectItem));
-            nh.RegisterPlayHandler(0x12, new NetworkHandler.PacketHandler(HandleEntityVelocity));
-            nh.RegisterPlayHandler(0x13, new NetworkHandler.PacketHandler(HandleDestroyEntities));
-            nh.RegisterPlayHandler(0x15, new NetworkHandler.PacketHandler(HandleEntityRelMove));
-            nh.RegisterPlayHandler(0x16, new NetworkHandler.PacketHandler(HandleEntityLook));
-            nh.RegisterPlayHandler(0x17, new NetworkHandler.PacketHandler(HandleLookEntityRelMove));
-            nh.RegisterPlayHandler(0x18, new NetworkHandler.PacketHandler(HandleEntityTeleport));
-            nh.RegisterPlayHandler(0x19, new NetworkHandler.PacketHandler(HandleEntityHeadLook));
-            nh.RegisterPlayHandler(0x1A, new NetworkHandler.PacketHandler(HandleEntityStatus));
-            nh.RegisterPlayHandler(0x1B, new NetworkHandler.PacketHandler(AttachEntity));
-            nh.RegisterPlayHandler(0x1D, new NetworkHandler.PacketHandler(HandleEntityEffect));
-            nh.RegisterPlayHandler(0x21, new NetworkHandler.PacketHandler(HandleChunkData));
-            nh.RegisterPlayHandler(0x23, new NetworkHandler.PacketHandler(BlockChange));
-            nh.RegisterPlayHandler(0x24, new NetworkHandler.PacketHandler(BlockAction));
-            nh.RegisterPlayHandler(0x25, new NetworkHandler.PacketHandler(BlockBreakAnimation));
-            nh.RegisterPlayHandler(0x26, new NetworkHandler.PacketHandler(HandleMapChunkBulk));
-            nh.RegisterPlayHandler(0x27, new NetworkHandler.PacketHandler(HandleExplosion));
-            nh.RegisterPlayHandler(0x28, new NetworkHandler.PacketHandler(HandleEffects));
-            nh.RegisterPlayHandler(0x2B, new NetworkHandler.PacketHandler(ChangeGameState));
-            nh.RegisterPlayHandler(0x2E, new NetworkHandler.PacketHandler(HandleCloseWindow));
-            nh.RegisterPlayHandler(0x32, new NetworkHandler.PacketHandler(HandleConfirmTransaction));
-            nh.RegisterPlayHandler(0x3D, new NetworkHandler.PacketHandler(HandleDisplayScoreboard));
-            nh.RegisterPlayHandler(0x40, new NetworkHandler.PacketHandler(HandleDisconnect));
+            nh.RegisterPlayHandler(0, HandleKeepAlive);
+            nh.RegisterPlayHandler(0x01, HandleJoinGame);
+            nh.RegisterPlayHandler(0x02, HandleChat);
+            nh.RegisterPlayHandler(0x04, HandleEntityEquipment);
+            nh.RegisterPlayHandler(0x07, HandleRespawn);
+            nh.RegisterPlayHandler(0x09, HandleHeldItemChange);
+            nh.RegisterPlayHandler(0x0B, HandleAnimation);
+            nh.RegisterPlayHandler(0x0D, HandleCollectItem);
+            nh.RegisterPlayHandler(0x12, HandleEntityVelocity);
+            nh.RegisterPlayHandler(0x13, HandleDestroyEntities);
+            nh.RegisterPlayHandler(0x15, HandleEntityRelMove);
+            nh.RegisterPlayHandler(0x16, HandleEntityLook);
+            nh.RegisterPlayHandler(0x17, HandleLookEntityRelMove);
+            nh.RegisterPlayHandler(0x18, HandleEntityTeleport);
+            nh.RegisterPlayHandler(0x19, HandleEntityHeadLook);
+            nh.RegisterPlayHandler(0x1A, HandleEntityStatus);
+            nh.RegisterPlayHandler(0x1B, AttachEntity);
+            nh.RegisterPlayHandler(0x1D, HandleEntityEffect);
+            nh.RegisterPlayHandler(0x21, HandleChunkData);
+            nh.RegisterPlayHandler(0x23, BlockChange);
+            nh.RegisterPlayHandler(0x24, BlockAction);
+            nh.RegisterPlayHandler(0x25, BlockBreakAnimation);
+            nh.RegisterPlayHandler(0x26, HandleMapChunkBulk);
+            nh.RegisterPlayHandler(0x27, HandleExplosion);
+            nh.RegisterPlayHandler(0x28, HandleEffects);
+            nh.RegisterPlayHandler(0x2B, ChangeGameState);
+            nh.RegisterPlayHandler(0x2E, HandleCloseWindow);
+            nh.RegisterPlayHandler(0x32, HandleConfirmTransaction);
+            nh.RegisterPlayHandler(0x3D, HandleDisplayScoreboard);
+            nh.RegisterPlayHandler(0x40, HandleDisconnect);
             
         }
 
         #region Login Packets
         public void HandleLoginDisconnect(MinecraftClient client, IPacket packet) {
-            var Disconnect = (CBLoginDisconnect)packet;
+            var disconnect = (CBLoginDisconnect)packet;
 
-            client.RaiseLoginFailure(this, Disconnect.JSONData);
+            client.RaiseLoginFailure(this, disconnect.JSONData);
             client.Disconnect();
         }
 
         public void HandleEncryptionRequest(MinecraftClient client, IPacket packet) {
-            var ER = (CBEncryptionRequest)packet;
-            var SharedKey = new byte[16];
+            var er = (CBEncryptionRequest)packet;
+            var sharedKey = new byte[16];
 
-            var Random = RandomNumberGenerator.Create(); // -- Generate a random shared key.
-            Random.GetBytes(SharedKey);
+            var random = RandomNumberGenerator.Create(); // -- Generate a random shared key.
+            random.GetBytes(sharedKey);
 
-            if (ER.ServerID == "" && client.VerifyNames) {
+            if (er.ServerID == "" && client.VerifyNames) {
                 // -- Verify with Minecraft.net.
                 // -- At this point, the server requires a hash containing the server id,
                 // -- shared key, and original public key. So we make this, and then pass to Minecraft.net
 
-                List<byte> HashList = new List<byte>();
-                HashList.AddRange(Encoding.ASCII.GetBytes(ER.ServerID));
-                HashList.AddRange(SharedKey);
-                HashList.AddRange(ER.PublicKey);
+                var hashList = new List<byte>();
+                hashList.AddRange(Encoding.ASCII.GetBytes(er.ServerID));
+                hashList.AddRange(sharedKey);
+                hashList.AddRange(er.PublicKey);
 
-                var HashData = HashList.ToArray();
-                var Hash = JavaHexDigest(HashData);
+                var hashData = hashList.ToArray();
+                var hash = JavaHexDigest(hashData);
 
-                var Verify = new Minecraft_Net_Interaction();
+                var verify = new Minecraft_Net_Interaction();
 
-                if (!Verify.VerifyName(client.ClientName, client.AccessToken, client.SelectedProfile, Hash)) {
+                if (!verify.VerifyName(client.ClientName, client.AccessToken, client.SelectedProfile, hash)) {
                     client.RaiseLoginFailure(this, "Failed to verify name with Minecraft session server.");
                     client.Disconnect();
                     return;
@@ -110,29 +109,30 @@ namespace libMC.NET.Client {
             // -- You pass it the key data and ask it to parse, and it will 
             // -- Extract the server's public key, then parse that into RSA for us.
 
-            var KeyParser = new AsnKeyParser(ER.PublicKey);
-            var Dekey = KeyParser.ParseRSAPublicKey();
+            var keyParser = new AsnKeyParser(er.PublicKey);
+            var dekey = keyParser.ParseRSAPublicKey();
 
             // -- Now we create an encrypter, and encrypt the token sent to us by the server
             // -- as well as our newly made shared key (Which can then only be decrypted with the server's private key)
             // -- and we send it to the server.
 
             var cryptoService = new RSACryptoServiceProvider(); // -- RSA Encryption class
-            cryptoService.ImportParameters(Dekey); // -- Import the Server's public key to use as the RSA encryption key.
+            cryptoService.ImportParameters(dekey); // -- Import the Server's public key to use as the RSA encryption key.
 
-            byte[] EncryptedSecret = cryptoService.Encrypt(SharedKey, false); // -- Encrypt the Secret key and verification token.
-            byte[] EncryptedVerify = cryptoService.Encrypt(ER.VerifyToken, false);
+            byte[] encryptedSecret = cryptoService.Encrypt(sharedKey, false); // -- Encrypt the Secret key and verification token.
+            byte[] encryptedVerify = cryptoService.Encrypt(er.VerifyToken, false);
 
-            client.nh.wSock.InitEncryption(SharedKey); // -- Give the shared secret key to the socket
+            client.nh.wSock.InitEncryption(sharedKey); // -- Give the shared secret key to the socket
 
-            var Response = new SBEncryptionResponse(); // -- Respond to the server
+            var response = new SBEncryptionResponse
+            {
+                SharedLength = (short) encryptedSecret.Length,
+                SharedSecret = encryptedSecret,
+                VerifyLength = (short) encryptedVerify.Length,
+                VerifyToken = encryptedVerify
+            }; // -- Respond to the server
 
-            Response.SharedLength = (short)EncryptedSecret.Length;
-            Response.SharedSecret = EncryptedSecret;
-            Response.VerifyLength = (short)EncryptedVerify.Length;
-            Response.VerifyToken = EncryptedVerify;
-
-            Response.Write(client.nh.wSock);
+            response.Write(client.nh.wSock);
 
             client.nh.wSock.EncEnabled = true;
             client.nh.RaiseSocketInfo(this, "Encryption Enabled.");
@@ -141,10 +141,11 @@ namespace libMC.NET.Client {
         #region Encryption Helping Functions
         private static string GetHexString(byte[] p) {
             string result = "";
-            for (int i = 0; i < p.Length; i++) {
-                if (p[i] < 0x10)
+            foreach (byte t in p)
+            {
+                if (t < 0x10)
                     result += "0";
-                result += p[i].ToString("x"); // Converts to hex string
+                result += t.ToString("x"); // Converts to hex string
             }
             return result;
         }
@@ -178,46 +179,45 @@ namespace libMC.NET.Client {
         #endregion
 
         public void HandleLoginSuccess(MinecraftClient client, IPacket packet) {
-            var Success = (CBLoginSuccess)packet;
+            var success = (CBLoginSuccess)packet;
             client.RaiseLoginSuccess(this);
-            client.RaiseDebug(this, "UUID: " + Success.UUID + " Username: " + Success.Username);
+            client.RaiseDebug(this, "UUID: " + success.UUID + " Username: " + success.Username);
 
             if (client.ThisPlayer == null)
                 client.ThisPlayer = new Player();
 
-            client.ThisPlayer.playerName = Success.Username;
+            client.ThisPlayer.playerName = success.Username;
             client.ServerState = 3;
             client.RaiseDebug(this, "The server state is now 3 (Play)");
         }
         #endregion
         #region Status Packets
         public void HandleStatusResponse(MinecraftClient client, IPacket packet) {
-            string versionName, MOTD; // -- Variables that are enclosed in json.
-            int ProtocolVersion, MaxPlayers, OnlinePlayers;
-            List<string> Players = null;
+            List<string> players = null;
             Image favicon = null;
 
-            var Response = (CBResponse)packet;
-            var jsonObj = JToken.Parse(Response.JSONResponse);
+            var response = (CBResponse)packet;
+            var jsonObj = JToken.Parse(response.JSONResponse);
 
-            versionName = jsonObj["version"]["name"].Value<string>();
-            ProtocolVersion = jsonObj["version"]["protocol"].Value<int>();
+            var versionName = jsonObj["version"]["name"].Value<string>();
+            var protocolVersion = jsonObj["version"]["protocol"].Value<int>();
 
-            MaxPlayers = jsonObj["players"]["max"].Value<int>(); ;
-            OnlinePlayers = jsonObj["players"]["online"].Value<int>();
+            var maxPlayers = jsonObj["players"]["max"].Value<int>();
+            var onlinePlayers = jsonObj["players"]["online"].Value<int>();
 
             var tempPlayers = jsonObj["players"]["sample"];
 
             if (tempPlayers != null) {
-                Players = new List<string>();
+                players = new List<string>();
 
-                foreach (JObject b in tempPlayers) {
-                    Players.Add(b.Last.First.ToString());
+                foreach (var jToken in tempPlayers) {
+                    var b = (JObject) jToken;
+                    players.Add(b.Last.First.ToString());
                 }
             }
 
-            MOTD = jsonObj["description"].Value<string>();
-            string imageString = jsonObj["favicon"].Value<string>();
+            var motd = jsonObj["description"].Value<string>();
+            var imageString = jsonObj["favicon"].Value<string>();
 
             if (imageString != null) {
                 try {
@@ -231,106 +231,106 @@ namespace libMC.NET.Client {
                 }
             }
 
-            client.RaisePingResponse(versionName, ProtocolVersion, MaxPlayers, OnlinePlayers, Players.ToArray(), MOTD, favicon);
+            if (players != null)
+                client.RaisePingResponse(versionName, protocolVersion, maxPlayers, onlinePlayers, players.ToArray(), motd, favicon);
 
-            var Ping = new SBPing();
-            Ping.Time = DateTime.UtcNow.Ticks;
-            Ping.Write(client.nh.wSock);
+            var ping = new SBPing {Time = DateTime.UtcNow.Ticks};
+            ping.Write(client.nh.wSock);
         }
         public void HandleStatusPing(MinecraftClient client, IPacket packet) {
-            var Ping = (CBPing)packet;
-            client.RaisePingMs((int)(DateTime.UtcNow.Ticks - Ping.Time) / 10000); // -- 10,000 ticks per millisecond.
+            var ping = (CBPing)packet;
+            client.RaisePingMs((int)(DateTime.UtcNow.Ticks - ping.Time) / 10000); // -- 10,000 ticks per millisecond.
             client.nh.RaiseSocketDebug(this, "Server ping complete.");
         }
         #endregion
         #region Play Packets
         public void HandleAnimation(MinecraftClient client, IPacket packet) {
-            var Animation = (CBAnimation)packet;
+            var animation = (CBAnimation)packet;
 
-            if (client.ThisPlayer != null && Animation.EntityID == client.ThisPlayer.Entity_ID)
-                client.ThisPlayer.Animation = Animation.Animation;
+            if (client.ThisPlayer != null && animation.EntityID == client.ThisPlayer.Entity_ID)
+                client.ThisPlayer.Animation = animation.Animation;
 
             if (client.MinecraftWorld != null) {
-                var index = client.MinecraftWorld.GetEntityById(Animation.EntityID);
+                var index = client.MinecraftWorld.GetEntityById(animation.EntityID);
                 if (index != -1)
-                    client.MinecraftWorld.Entities[index].animation = (sbyte)Animation.Animation;
+                    client.MinecraftWorld.Entities[index].animation = (sbyte)animation.Animation;
             }
 
-            client.RaiseEntityAnimationChanged(this, Animation.EntityID, Animation.Animation);
+            client.RaiseEntityAnimationChanged(this, animation.EntityID, animation.Animation);
         }
 
         public void AttachEntity(MinecraftClient client, IPacket packet) {
-            var Attach = (CBAttachEntity)packet;
+            var attach = (CBAttachEntity)packet;
 
             if (client.MinecraftWorld != null) {
-                int eIndex = client.MinecraftWorld.GetEntityById(Attach.EntityID);
+                int eIndex = client.MinecraftWorld.GetEntityById(attach.EntityID);
 
                 if (eIndex != -1) {
                     client.MinecraftWorld.Entities[eIndex].attached = true;
-                    client.MinecraftWorld.Entities[eIndex].Vehicle_ID = Attach.VehicleID;
-                    client.MinecraftWorld.Entities[eIndex].leashed = Attach.Leash;
+                    client.MinecraftWorld.Entities[eIndex].Vehicle_ID = attach.VehicleID;
+                    client.MinecraftWorld.Entities[eIndex].leashed = attach.Leash;
                 }
             }
 
-            client.RaiseEntityAttached(Attach.EntityID, Attach.VehicleID, Attach.Leash);
+            client.RaiseEntityAttached(attach.EntityID, attach.VehicleID, attach.Leash);
         }
 
         public void BlockAction(MinecraftClient client, IPacket packet) {
-            var BlockPacket = (CBBlockAction)packet;
+            var blockPacket = (CBBlockAction)packet;
 
-            switch (BlockPacket.BlockType) {
+            switch (blockPacket.BlockType) {
                 case 25: // -- Note block
-                    client.RaiseNoteBlockSound(BlockPacket.Byte1, BlockPacket.Byte2, BlockPacket.X, BlockPacket.Y, BlockPacket.Z);
+                    client.RaiseNoteBlockSound(blockPacket.Byte1, blockPacket.Byte2, blockPacket.X, blockPacket.Y, blockPacket.Z);
                     break;
                 case 29: // -- Sticky Piston
-                    client.RaisePistonMoved(BlockPacket.Byte1, BlockPacket.Byte2, BlockPacket.X, BlockPacket.Y, BlockPacket.Z);
+                    client.RaisePistonMoved(blockPacket.Byte1, blockPacket.Byte2, blockPacket.X, blockPacket.Y, blockPacket.Z);
                     break;
                 case 33: // -- Piston
-                    client.RaisePistonMoved(BlockPacket.Byte1, BlockPacket.Byte2, BlockPacket.X, BlockPacket.Y, BlockPacket.Z);
+                    client.RaisePistonMoved(blockPacket.Byte1, blockPacket.Byte2, blockPacket.X, blockPacket.Y, blockPacket.Z);
                     break;
                 case 54: // -- Chest
-                    client.RaiseChestStateChange(BlockPacket.Byte2, BlockPacket.X, BlockPacket.Y, BlockPacket.Z);
+                    client.RaiseChestStateChange(blockPacket.Byte2, blockPacket.X, blockPacket.Y, blockPacket.Z);
                     break;
                 case 146: // -- Trapped chest
-                    client.RaiseChestStateChange(BlockPacket.Byte2, BlockPacket.X, BlockPacket.Y, BlockPacket.Z);
+                    client.RaiseChestStateChange(blockPacket.Byte2, blockPacket.X, blockPacket.Y, blockPacket.Z);
                     break;
                 default:
-                    client.RaiseError(this, "Unknown block action received: " + BlockPacket.BlockType.ToString());
+                    client.RaiseError(this, "Unknown block action received: " + blockPacket.BlockType);
                     break;
             }
         }
 
         public void BlockBreakAnimation(MinecraftClient client, IPacket packet) {
-            var BlockPacket = (CBBlockBreakAnimation)packet;
-            client.RaiseBlockBreakingEvent(new Vector(BlockPacket.X, BlockPacket.Y, BlockPacket.Z), BlockPacket.EntityID, BlockPacket.Stage);
+            var blockPacket = (CBBlockBreakAnimation)packet;
+            client.RaiseBlockBreakingEvent(new Vector(blockPacket.X, blockPacket.Y, blockPacket.Z), blockPacket.EntityID, blockPacket.Stage);
         }
 
         public void BlockChange(MinecraftClient client, IPacket packet) {
-            var BlockPacket = (CBBlockChange)packet;
+            var blockPacket = (CBBlockChange)packet;
 
-            var ChunkX = decimal.Divide(BlockPacket.X, 16);
-            var ChunkZ = decimal.Divide(BlockPacket.Z, 16);
+            var chunkX = decimal.Divide(blockPacket.X, 16);
+            var chunkZ = decimal.Divide(blockPacket.Z, 16);
 
-            ChunkX = Math.Floor(ChunkX);
-            ChunkZ = Math.Floor(ChunkZ);
+            chunkX = Math.Floor(chunkX);
+            chunkZ = Math.Floor(chunkZ);
 
-            int myIndex = client.MinecraftWorld.GetChunk(int.Parse(ChunkX.ToString()), int.Parse(ChunkZ.ToString()));
+            int myIndex = client.MinecraftWorld.GetChunk(int.Parse(chunkX.ToString()), int.Parse(chunkZ.ToString()));
 
             if (myIndex == -1)
                 return;
 
             var myChunk = client.MinecraftWorld.worldChunks[myIndex];
-            myChunk.UpdateBlock(BlockPacket.X, BlockPacket.Y, BlockPacket.Z, BlockPacket.BlockID);
-            myChunk.SetBlockData(BlockPacket.X, BlockPacket.Y, BlockPacket.Z, BlockPacket.BlockMetadata);
+            myChunk.UpdateBlock(blockPacket.X, blockPacket.Y, blockPacket.Z, blockPacket.BlockID);
+            myChunk.SetBlockData(blockPacket.X, blockPacket.Y, blockPacket.Z, blockPacket.BlockMetadata);
 
-            client.RaiseBlockChangedEvent(BlockPacket.X, BlockPacket.Y, BlockPacket.Z, BlockPacket.BlockID, BlockPacket.BlockMetadata);
+            client.RaiseBlockChangedEvent(blockPacket.X, blockPacket.Y, blockPacket.Z, blockPacket.BlockID, blockPacket.BlockMetadata);
         }
 
         public void ChangeGameState(MinecraftClient client, IPacket packet) {
-            var GamePacket = (CBChangeGameState)packet;
+            var gamePacket = (CBChangeGameState)packet;
             string eventName = "";
 
-            switch (GamePacket.Reason) {
+            switch (gamePacket.Reason) {
                 case 0:
                     eventName = "Invalid bed";
                     break;
@@ -360,15 +360,15 @@ namespace libMC.NET.Client {
                     break;
             }
 
-            client.RaiseGameStateChanged(eventName, GamePacket.Value);
+            client.RaiseGameStateChanged(eventName, gamePacket.Value);
         }
 
         public void HandleChat(MinecraftClient client, IPacket packet) {
-            var Chat = (CBChatMessage)packet;
+            var chat = (CBChatMessage)packet;
 
             //string parsedMessage = ParseJsonChat(Chat.JSONData);//ParseJsonChat(Chat.JSONData, ref sender);
 
-            client.RaiseMC(this, Chat.JSONData, Chat.JSONData);
+            client.RaiseMC(this, chat.JSONData, chat.JSONData);
         }
         #region Chat Message Helping Functions
         ChatObject ParseElement(JObject jsonObj) {
@@ -377,22 +377,22 @@ namespace libMC.NET.Client {
             foreach (JProperty prop in jsonObj.Properties()) {
                 switch (prop.Name) {
                     case "translate":
-                        chat.translate = (string)prop.Value;
+                        chat.Translate = (string)prop.Value;
                         break;
                     case "italic":
-                        chat.italic = (bool)prop.Value;
+                        chat.Italic = (bool)prop.Value;
                         break;
                     case "color":
-                        chat.color = (string)prop.Value;
+                        chat.Color = (string)prop.Value;
                         break;
                     case "text":
-                        chat.text = (string)prop.Value;
+                        chat.Text = (string)prop.Value;
                         break;
                     case "with":
-                        chat.with = (JArray)prop.Value;
+                        chat.With = (JArray)prop.Value;
                         break;
                     default:
-                        chat.unknown = prop.Name;
+                        chat.Unknown = prop.Name;
                         break;
                 }
             }
@@ -404,18 +404,19 @@ namespace libMC.NET.Client {
             foreach (JProperty prop in jsonObj.Properties()) {
                 switch (prop.Name) {
                     case "translate":
-                        chatObj.translate = (string)((JValue)prop.Value);
+                        chatObj.Translate = (string)prop.Value;
                         break;
                     case "with":
                         chatObj.Names.Add((string)((JValue)((JArray)prop.Value)[0]).Value);
                         break;
                     case "text":
-                        chatObj.Names.Add((string)((JValue)prop.Value));
+                        chatObj.Names.Add((string)prop.Value);
                         break;
                     case "extra":
-                        foreach (JValue b in (JArray)prop.Value) {
+                        foreach (var jToken in (JArray)prop.Value) {
+                            var b = (JValue) jToken;
                             if (b.Type == JTokenType.String)
-                                chatObj.text += (string)b.Value + " ";
+                                chatObj.Text += (string)b.Value + " ";
                         }
                         break;
                 }
@@ -424,31 +425,31 @@ namespace libMC.NET.Client {
             return chatObj;
         }
 
-        string ParseModifiers(ChatObject MainObj, string Text) {
-            if (MainObj.italic)
-                Text += "§o";
+        string ParseModifiers(ChatObject mainObj, string text) {
+            if (mainObj.Italic)
+                text += "§o";
 
-            if (MainObj.bold)
-                Text += "§l";
+            if (mainObj.Bold)
+                text += "§l";
 
-            if (MainObj.strikethrough)
-                Text += "§m";
+            if (mainObj.Strikethrough)
+                text += "§m";
 
-            if (MainObj.obfs)
-                Text += "§k";
+            if (mainObj.Obfs)
+                text += "§k";
 
-            if (MainObj.color != null)
-                Text += Color_To_Code(MainObj.color);
+            if (mainObj.Color != null)
+                text += Color_To_Code(mainObj.Color);
 
-            return Text;
+            return text;
         }
 
         ChatObject ParseWith(JArray with, ChatObject chatObj) {
             for (int x = 0; x < with.Count; x++) {
                 switch (with[x].Type) {
                     case JTokenType.String: // -- Add a name
-                        if (chatObj.translate == "chat.type.text")
-                            chatObj.text += (string)((JValue)with[x]).Value;
+                        if (chatObj.Translate == "chat.type.text")
+                            chatObj.Text += (string)((JValue)with[x]).Value;
                         else
                             chatObj.Names.Add((string)((JValue)with[x]).Value);
                             
@@ -463,8 +464,8 @@ namespace libMC.NET.Client {
             return chatObj;
         }
 
-        string ParseBaseMessage(string Type) {
-            switch (Type) {
+        string ParseBaseMessage(string type) {
+            switch (type) {
                 case "death.attack.player":
                     return "{0} was killed by {1}";
                 case "multiplayer.player.joined":
@@ -483,13 +484,14 @@ namespace libMC.NET.Client {
         }
 
         ChatObject DoExtra(ChatObject chatObj, JObject myObj) {
-            foreach (JProperty prop in myObj.Children()) {
+            foreach (var jToken in myObj.Children()) {
+                var prop = (JProperty) jToken;
                 switch (prop.Name) {
                     case "color":
-                        chatObj.text += Color_To_Code((string)prop.Value);
+                        chatObj.Text += Color_To_Code((string)prop.Value);
                         break;
                     case "text":
-                        chatObj.text += (string)prop.Value;
+                        chatObj.Text += (string)prop.Value;
                         break;
                 }
             }
@@ -498,29 +500,28 @@ namespace libMC.NET.Client {
         }
 
         string ParseJsonChat(string raw) {
-            string Final = "";
-            var MainObj = ParseElement(JObject.Parse(raw));
-            MainObj.Names = new List<string>();
+            string final = "";
+            var mainObj = ParseElement(JObject.Parse(raw));
+            mainObj.Names = new List<string>();
 
-            Final = ParseModifiers(MainObj, Final);
-            MainObj = ParseWith(MainObj.with, MainObj);
+            final = ParseModifiers(mainObj, final);
+            mainObj = ParseWith(mainObj.With, mainObj);
 
             if (JObject.Parse(raw)["extra"] != null) {
-                foreach (JObject c in (JArray)JObject.Parse(raw)["extra"])
-                    MainObj = DoExtra(MainObj, c);
+                foreach (var jToken in (JArray)JObject.Parse(raw)["extra"]) {
+                    var c = (JObject) jToken;
+                    mainObj = DoExtra(mainObj, c);
+                }
             }
 
-            MainObj.Names.RemoveAll(string.IsNullOrWhiteSpace);
-            Final += string.Format(ParseBaseMessage(MainObj.translate), MainObj.Names.ToArray());
-            Final += MainObj.text;
-
-            return Final;
+            mainObj.Names.RemoveAll(string.IsNullOrWhiteSpace);
+            return final += string.Format(ParseBaseMessage(mainObj.Translate), mainObj.Names.ToArray());
         }
 
-        public string Color_To_Code(string Color) {
+        public string Color_To_Code(string color) {
             string code = "";
 
-            switch (Color) {
+            switch (color) {
                 case "black":
                     code = "§0";
                     break;
@@ -575,33 +576,33 @@ namespace libMC.NET.Client {
         }
         #endregion
         public void HandleChunkData(MinecraftClient client, IPacket packet) {
-            var ChunkData = (CBChunkData)packet;
+            var chunkData = (CBChunkData)packet;
 
-            byte[] trim = new byte[ChunkData.Compressedsize - 2];
+            byte[] trim = new byte[chunkData.Compressedsize - 2];
             byte[] decompressedData;
 
-            if (ChunkData.Primarybitmap == 0) {
+            if (chunkData.Primarybitmap == 0) {
                 // -- Unload chunk.
                 int cIndex = -1;
 
                 if (client.MinecraftWorld != null)
-                    cIndex = client.MinecraftWorld.GetChunk(ChunkData.ChunkX, ChunkData.ChunkZ);
+                    cIndex = client.MinecraftWorld.GetChunk(chunkData.ChunkX, chunkData.ChunkZ);
 
                 if (cIndex != -1)
                     client.MinecraftWorld.worldChunks.RemoveAt(cIndex);
 
-                client.RaiseChunkUnload(ChunkData.ChunkX, ChunkData.ChunkZ);
+                client.RaiseChunkUnload(chunkData.ChunkX, chunkData.ChunkZ);
                 return;
             }
 
             // -- Remove GZip Header
-            Buffer.BlockCopy(ChunkData.Compresseddata, 2, trim, 0, trim.Length);
+            Buffer.BlockCopy(chunkData.Compresseddata, 2, trim, 0, trim.Length);
 
             // -- Decompress the data
             decompressedData = Decompressor.Decompress(trim);
 
             // -- Create new chunk
-            Chunk newChunk = new Chunk(ChunkData.ChunkX, ChunkData.ChunkZ, (short)ChunkData.Primarybitmap, (short)ChunkData.Addbitmap, true, ChunkData.GroundUpcontinuous); // -- Skylight assumed true
+            Chunk newChunk = new Chunk(chunkData.ChunkX, chunkData.ChunkZ, (short)chunkData.Primarybitmap, (short)chunkData.Addbitmap, true, chunkData.GroundUpcontinuous); // -- Skylight assumed true
             newChunk.GetData(decompressedData);
 
             if (client.MinecraftWorld == null)
@@ -610,7 +611,7 @@ namespace libMC.NET.Client {
             // -- Add the chunk to the world
             client.MinecraftWorld.worldChunks.Add(newChunk);
 
-            client.RaiseChunkLoad(ChunkData.ChunkX, ChunkData.ChunkZ);
+            client.RaiseChunkLoad(chunkData.ChunkX, chunkData.ChunkZ);
         }
         public void HandleCloseWindow(MinecraftClient client, IPacket packet) {
             var myWindow = (CBCloseWindow)packet;

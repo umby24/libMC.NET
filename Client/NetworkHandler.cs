@@ -12,7 +12,7 @@ using libMC.NET.MinecraftWorld;
 namespace libMC.NET.Client {
     public class NetworkHandler {
         #region Variables
-        Thread handler;
+        Thread _handler;
         MinecraftClient MainMC;
         TcpClient baseSock;
         NetworkStream baseStream;
@@ -49,7 +49,7 @@ namespace libMC.NET.Client {
         public void Start() {
             try {
                 baseSock = new TcpClient();
-                var AR = baseSock.BeginConnect(MainMC.ServerIP, MainMC.ServerPort, null, null);
+                var AR = baseSock.BeginConnect(MainMC.ServerIp, MainMC.ServerPort, null, null);
 
                 using (var wh = AR.AsyncWaitHandle) {
                     if (!AR.AsyncWaitHandle.WaitOne(TimeSpan.FromSeconds(5), false)) {
@@ -69,7 +69,7 @@ namespace libMC.NET.Client {
             MainMC.Running = true;
 
             RaiseSocketInfo(this, "Connected to server.");
-            RaiseSocketDebug(this, string.Format("IP: {0} Port: {1}", MainMC.ServerIP, MainMC.ServerPort.ToString()));
+            RaiseSocketDebug(this, string.Format("IP: {0} Port: {1}", MainMC.ServerIp, MainMC.ServerPort.ToString()));
 
             // -- Create our Wrapped socket.
             baseStream = baseSock.GetStream();
@@ -81,8 +81,8 @@ namespace libMC.NET.Client {
             PacketHandlers = new PacketEventHandler(this);
 
             // -- Start network parsing.
-            handler = new Thread(NetworkPacketHandler);
-            handler.Start();
+            _handler = new Thread(NetworkPacketHandler);
+            _handler.Start();
             RaiseSocketDebug(this, "Handler thread started");
         }
        
@@ -91,7 +91,7 @@ namespace libMC.NET.Client {
         /// </summary>
         public void Stop() {
             DebugMessage(this, "Stopping network handler...");
-            handler.Abort();
+            _handler.Abort();
 
             wSock = null;
             baseStream = null;
@@ -107,7 +107,7 @@ namespace libMC.NET.Client {
         public void DoHandshake() {
             var hs = new SBHandshake();
             hs.ProtocolVersion = 5;
-            hs.ServerAddress = MainMC.ServerIP;
+            hs.ServerAddress = MainMC.ServerIp;
             hs.ServerPort = (short)MainMC.ServerPort;
             hs.NextState = 2;
 
