@@ -1,9 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using libMC.NET.Common;
-using CWrapped;
 
 namespace libMC.NET.Entities {
     /// <summary>
@@ -38,7 +35,7 @@ namespace libMC.NET.Entities {
         void HandleMetadata(int index, dynamic data) {
             switch (index) { // -- Parsing this is pretty much impossible without making things 300x more complicated than need-be. As such, this is as much as im parsing :).
                 case 0:
-                    byte bitmask = (byte)data;
+                    var bitmask = (byte)data;
                     onFire = Convert.ToBoolean(bitmask & 0x01);
                     crouched = Convert.ToBoolean(bitmask & 0x02);
                     sprinting = Convert.ToBoolean(bitmask & 0x08);

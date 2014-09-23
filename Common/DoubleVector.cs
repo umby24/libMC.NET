@@ -1,16 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-namespace libMC.NET.Common {
+﻿namespace libMC.NET.Common {
     public class DoubleVector {
-        public double x, y, z;
+        public double X;
+        public double Y;
+        public double Z;
 
-        public DoubleVector(double X = 0, double Y = 0, double Z = 0 ) {
-            x = X;
-            y = Y;
-            z = Z;
+        public DoubleVector(double x = 0, double y = 0, double z = 0 ) {
+            X = x;
+            Y = y;
+            Z = z;
         }
     }
 }

@@ -1,10 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using System.Net;
-using System.Web;
 using System.IO;
 using System.Text.RegularExpressions;
 
@@ -16,16 +12,16 @@ namespace libMC.NET.Common
     {
 
         public string[] Login(string username, string password) {
-            string json = "{\"agent\": {\"name\": \"minecraft\",\"version\": 1},\"username\": \"" + username + "\",\"password\": \"" + password + "\"}";
+            var json = "{\"agent\": {\"name\": \"minecraft\",\"version\": 1},\"username\": \"" + username + "\",\"password\": \"" + password + "\"}";
             string accessToken = "", profileID = "", profileName = "", clientToken = "", clientName = "";
 
-            HttpWebRequest wreq = (HttpWebRequest)WebRequest.Create("https://authserver.mojang.com/authenticate");
+            var wreq = (HttpWebRequest)WebRequest.Create("https://authserver.mojang.com/authenticate");
 
             wreq.Method = "POST";
             wreq.ContentType = "application/json";
             wreq.ContentLength = json.Length;
 
-            using (Stream stream = wreq.GetRequestStream()) {
+            using (var stream = wreq.GetRequestStream()) {
                 stream.Write(Encoding.ASCII.GetBytes(json), 0, json.Length);
             }
 
@@ -42,7 +38,7 @@ namespace libMC.NET.Common
 
             var root = JObject.Parse(code);
 
-            foreach (KeyValuePair<string, JToken> app in root) {
+            foreach (var app in root) {
                 var appName = app.Key;
 
                 switch (appName) {
@@ -57,8 +53,8 @@ namespace libMC.NET.Common
                         profileName = (string)app.Value["name"];
                         break;
                     case "availableProfiles":
-                        string input = app.ToString();
-                        string name = Parser(input);
+                        var input = app.ToString();
+                        var name = Parser(input);
                         clientName = name;
                         break;
                 }
@@ -68,27 +64,27 @@ namespace libMC.NET.Common
         }
 
         static string Parser(string str) {
-            Regex regex = new Regex("\"name\": \"(.*)\"");
+            var regex = new Regex("\"name\": \"(.*)\"");
             var v = regex.Match(str);
             return v.Groups[1].ToString();
         }
 
         public bool VerifyName(string username, string accessToken, string selectedProfile, string ServerHash) {
-            string json = "{\"accessToken\": \"" + accessToken + "\",\"selectedProfile\": \"" + selectedProfile + "\",\"serverId\": \"" + ServerHash + "\"}";
+            var json = "{\"accessToken\": \"" + accessToken + "\",\"selectedProfile\": \"" + selectedProfile + "\",\"serverId\": \"" + ServerHash + "\"}";
 
-            HttpWebRequest wreq = (HttpWebRequest)WebRequest.Create("https://sessionserver.mojang.com/session/minecraft/join");
+            var wreq = (HttpWebRequest)WebRequest.Create("https://sessionserver.mojang.com/session/minecraft/join");
 
             wreq.Method = "POST";
             wreq.ContentType = "application/json";
             wreq.ContentLength = json.Length;
 
-            using (Stream stream = wreq.GetRequestStream()) {
+            using (var stream = wreq.GetRequestStream()) {
                 stream.Write(Encoding.ASCII.GetBytes(json), 0, json.Length);
             }
 
             try {
-                HttpWebResponse response = (HttpWebResponse)wreq.GetResponse();
-                string code = new StreamReader(response.GetResponseStream()).ReadToEnd();
+                var response = (HttpWebResponse)wreq.GetResponse();
+                var code = new StreamReader(response.GetResponseStream()).ReadToEnd();
             } catch {
                 return false;
             }
@@ -97,16 +93,16 @@ namespace libMC.NET.Common
         }
 
         public string[] SessionRefresh(string accessToken, string clientToken) {
-            string json = "{\"accessToken\": \"" + accessToken + "\",\"clientToken\": \"" + clientToken + "\"}";
+            var json = "{\"accessToken\": \"" + accessToken + "\",\"clientToken\": \"" + clientToken + "\"}";
             string accessTokenIn = "", clientTokenIn = "";
 
-            HttpWebRequest wreq = (HttpWebRequest)WebRequest.Create("https://authserver.mojang.com/refresh");
+            var wreq = (HttpWebRequest)WebRequest.Create("https://authserver.mojang.com/refresh");
 
             wreq.Method = "POST";
             wreq.ContentType = "application/json";
             wreq.ContentLength = json.Length;
 
-            using (Stream stream = wreq.GetRequestStream()) {
+            using (var stream = wreq.GetRequestStream()) {
                 stream.Write(Encoding.ASCII.GetBytes(json), 0, json.Length);
             }
 
@@ -123,7 +119,7 @@ namespace libMC.NET.Common
 
             var root = JObject.Parse(code);
 
-            foreach (KeyValuePair<string, JToken> app in root) {
+            foreach (var app in root) {
                 var appName = app.Key;
 
                 switch (appName) {
@@ -140,21 +136,21 @@ namespace libMC.NET.Common
         }
 
         public bool ValidateSession(string accessToken) {
-            string json = "{\"accessToken\": \"" + accessToken + "\"}";
+            var json = "{\"accessToken\": \"" + accessToken + "\"}";
 
-            HttpWebRequest wreq = (HttpWebRequest)WebRequest.Create("https://authserver.mojang.com/validate");
+            var wreq = (HttpWebRequest)WebRequest.Create("https://authserver.mojang.com/validate");
 
             wreq.Method = "POST";
             wreq.ContentType = "application/json";
             wreq.ContentLength = json.Length;
 
-            using (Stream stream = wreq.GetRequestStream()) {
+            using (var stream = wreq.GetRequestStream()) {
                 stream.Write(Encoding.ASCII.GetBytes(json), 0, json.Length);
             }
 
             try {
-                HttpWebResponse response = (HttpWebResponse)wreq.GetResponse();
-                string code = new StreamReader(response.GetResponseStream()).ReadToEnd();
+                var response = (HttpWebResponse)wreq.GetResponse();
+                var code = new StreamReader(response.GetResponseStream()).ReadToEnd();
 
                 if (code == "")
                     return true;

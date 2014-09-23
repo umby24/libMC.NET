@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.IO;
 using System.Threading;
 using System.Net;
@@ -12,28 +9,28 @@ using CWrapped;
 namespace libMC.NET {
     public class Proxy {
         #region Variables
-        public string IP, Outfile;
+        public string Ip, Outfile;
         public int SPort, CPort;
 
-        TcpListener cbaseListener;
-        TcpClient cbaseSock;
-        NetworkStream cbaseStream;
+        TcpListener _cbaseListener;
+        TcpClient _cbaseSock;
+        NetworkStream _cbaseStream;
 
-        TcpClient sbaseSock;
-        NetworkStream sbaseStream;
+        TcpClient _sbaseSock;
+        NetworkStream _sbaseStream;
 
-        public Wrapped sSock;
-        public Wrapped cSock;
-        StreamWriter Logger;
+        public Wrapped SSock;
+        public Wrapped CSock;
+        StreamWriter _logger;
 
-        Thread ServerThread;
-        Thread ClientThread;
+        Thread _serverThread;
+        Thread _clientThread;
         #endregion
 
-        public Proxy(string ServerIP, int ServerPort, int ClientPort) {
-            IP = ServerIP;
-            SPort = ServerPort;
-            CPort = ClientPort;
+        public Proxy(string serverIp, int serverPort, int clientPort) {
+            Ip = serverIp;
+            SPort = serverPort;
+            CPort = clientPort;
             Outfile = "OUTPUT.LOG";
         }
 
@@ -41,22 +38,22 @@ namespace libMC.NET {
         /// Starts the transparent proxy
         /// </summary>
         public void Start() {
-            cbaseListener = new TcpListener(IPAddress.Any, CPort);
-            cbaseListener.Start();
-            cbaseSock = cbaseListener.AcceptTcpClient();
+            _cbaseListener = new TcpListener(IPAddress.Any, CPort);
+            _cbaseListener.Start();
+            _cbaseSock = _cbaseListener.AcceptTcpClient();
 
-            sbaseSock = new TcpClient(IP, SPort);
-            sbaseStream = sbaseSock.GetStream();
+            _sbaseSock = new TcpClient(Ip, SPort);
+            _sbaseStream = _sbaseSock.GetStream();
 
-            cbaseStream = cbaseSock.GetStream(); // -- Client accepted successfully, woo.
+            _cbaseStream = _cbaseSock.GetStream(); // -- Client accepted successfully, woo.
 
-            sSock = new Wrapped(sbaseStream);
-            cSock = new Wrapped(cbaseStream);
+            SSock = new Wrapped(_sbaseStream);
+            CSock = new Wrapped(_cbaseStream);
 
-            ServerThread = new Thread(ServerNetworkHandler);
-            ClientThread = new Thread(ClientNetworkHandler);
-            ServerThread.Start();
-            ClientThread.Start();
+            _serverThread = new Thread(ServerNetworkHandler);
+            _clientThread = new Thread(ClientNetworkHandler);
+            _serverThread.Start();
+            _clientThread.Start();
         }
 
         //public void ClientConnected(IAsyncResult b) {
@@ -78,48 +75,48 @@ namespace libMC.NET {
         //}
 
         public void Stop() {
-            ClientThread.Abort();
-            ServerThread.Abort();
+            _clientThread.Abort();
+            _serverThread.Abort();
 
-            if (Logger != null)
-                Logger.Close();
+            if (_logger != null)
+                _logger.Close();
         }
 
         void ClientNetworkHandler() {
             try {
-                int length = 0;
+                int length;
 
-                while ((length = cSock.readVarInt()) != 0) {
-                    if (cbaseSock.Connected) {
-                        int packetID = cSock.readVarInt();
-                        Log(false, "PACKET " + packetID.ToString());
+                while ((length = CSock.readVarInt()) != 0) {
+                    if (_cbaseSock.Connected) {
+                        var packetId = CSock.readVarInt();
+                        Log(false, "PACKET " + packetId.ToString());
 
-                        if (packetID == 6) {
-                            double x = cSock.readDouble();
-                            double y = cSock.readDouble();
-                            double Stance = cSock.readDouble();
-                            double z = cSock.readDouble();
+                        if (packetId == 6) {
+                            var x = CSock.readDouble();
+                            var y = CSock.readDouble();
+                            var stance = CSock.readDouble();
+                            var z = CSock.readDouble();
 
-                            float yaw = cSock.readFloat();
-                            float pitch = cSock.readFloat();
+                            var yaw = CSock.readFloat();
+                            var pitch = CSock.readFloat();
 
-                            bool onGround = cSock.readBool();
+                            var onGround = CSock.readBool();
 
-                            Log(false, "X: " + x.ToString() + " Y: " + y.ToString() + " Stance: " + Stance.ToString() + " Z: " + z.ToString() + " yaw: " + yaw.ToString() + " pitch " + pitch.ToString() + " OnGround: " + onGround.ToString());
-                            sSock.writeVarInt(packetID);
-                            sSock.writeDouble(x);
-                            sSock.writeDouble(y);
-                            sSock.writeDouble(Stance);
-                            sSock.writeDouble(z);
+                            Log(false, "X: " + x.ToString() + " Y: " + y.ToString() + " Stance: " + stance.ToString() + " Z: " + z.ToString() + " yaw: " + yaw.ToString() + " pitch " + pitch.ToString() + " OnGround: " + onGround.ToString());
+                            SSock.writeVarInt(packetId);
+                            SSock.writeDouble(x);
+                            SSock.writeDouble(y);
+                            SSock.writeDouble(stance);
+                            SSock.writeDouble(z);
 
-                            sSock.writeFloat(yaw);
-                            sSock.writeFloat(pitch);
-                            sSock.writeBool(onGround);
-                            sSock.Purge();
+                            SSock.writeFloat(yaw);
+                            SSock.writeFloat(pitch);
+                            SSock.writeBool(onGround);
+                            SSock.Purge();
                         } else {
-                            sSock.writeVarInt(packetID);
-                            sSock.Send(cSock.readByteArray(length - 1));
-                            sSock.Purge();
+                            SSock.writeVarInt(packetId);
+                            SSock.Send(CSock.readByteArray(length - 1));
+                            SSock.Purge();
                         }
                     }
                 }
@@ -133,38 +130,38 @@ namespace libMC.NET {
 
         void ServerNetworkHandler() {
             try {
-                int length = 0;
+                int length;
 
-                while ((length = sSock.readVarInt()) != 0) {
-                    if (sbaseSock.Connected) {
-                        int packetID = sSock.readVarInt();
-                        Log(true, "PACKET " + packetID.ToString());
+                while ((length = SSock.readVarInt()) != 0) {
+                    if (_sbaseSock.Connected) {
+                        var packetId = SSock.readVarInt();
+                        Log(true, "PACKET " + packetId.ToString());
 
-                        if (packetID == 8) {
-                            double x = sSock.readDouble();
-                            double y = sSock.readDouble();
-                            double z = sSock.readDouble();
+                        if (packetId == 8) {
+                            var x = SSock.readDouble();
+                            var y = SSock.readDouble();
+                            var z = SSock.readDouble();
 
-                            float yaw = sSock.readFloat();
-                            float pitch = sSock.readFloat();
+                            var yaw = SSock.readFloat();
+                            var pitch = SSock.readFloat();
 
-                            bool onGround = sSock.readBool();
+                            var onGround = SSock.readBool();
 
                             Log(true, "X: " + x.ToString() + " Y: " + y.ToString() + " Z: " + z.ToString() + " yaw: " + yaw.ToString() + " pitch " + pitch.ToString() + " OnGround: " + onGround.ToString());
 
-                            cSock.writeVarInt(packetID);
-                            cSock.writeDouble(x);
-                            cSock.writeDouble(y);
-                            cSock.writeDouble(z);
+                            CSock.writeVarInt(packetId);
+                            CSock.writeDouble(x);
+                            CSock.writeDouble(y);
+                            CSock.writeDouble(z);
 
-                            cSock.writeFloat(yaw);
-                            cSock.writeFloat(pitch);
-                            cSock.writeBool(onGround);
-                            cSock.Purge();
+                            CSock.writeFloat(yaw);
+                            CSock.writeFloat(pitch);
+                            CSock.writeBool(onGround);
+                            CSock.Purge();
                         } else {
-                            cSock.writeVarInt(packetID);
-                            cSock.Send(sSock.readByteArray(length - 1));
-                            cSock.Purge();
+                            CSock.writeVarInt(packetId);
+                            CSock.Send(SSock.readByteArray(length - 1));
+                            CSock.Purge();
                         }
                     }
                 }
@@ -176,15 +173,15 @@ namespace libMC.NET {
             }
         }
 
-        public delegate void T_LogHandler(string Message);
-        public void Log(bool Server, string Message) {
-            if (Logger == null)
-                Logger = new StreamWriter(Outfile);
+        public delegate void LogHandler(string message);
+        public void Log(bool server, string message) {
+            if (_logger == null)
+                _logger = new StreamWriter(Outfile);
 
-            if (Server)
-                Logger.WriteLine(DateTime.Now.Hour + ":" + DateTime.Now.Minute + ":" + DateTime.Now.Second + "> [SERVER] " + Message);
+            if (server)
+                _logger.WriteLine(DateTime.Now.Hour + ":" + DateTime.Now.Minute + ":" + DateTime.Now.Second + "> [SERVER] " + message);
             else
-                Logger.WriteLine(DateTime.Now.Hour + ":" + DateTime.Now.Minute + ":" + DateTime.Now.Second + "> [CLIENT] " + Message);
+                _logger.WriteLine(DateTime.Now.Hour + ":" + DateTime.Now.Minute + ":" + DateTime.Now.Second + "> [CLIENT] " + message);
         }
     }
 }

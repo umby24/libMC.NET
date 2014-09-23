@@ -1,32 +1,29 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.Collections.Generic;
 using libMC.NET.Entities;
 
 namespace libMC.NET.World {
     public class WorldClass {
-        public long currentTime;
-        public long worldAge;
-        public sbyte dimension;
-        public byte difficulty;
-        public byte maxPlayers;
-        public string levelType;
+        public long CurrentTime;
+        public long WorldAge;
+        public sbyte Dimension;
+        public byte Difficulty;
+        public byte MaxPlayers;
+        public string LevelType;
 
         //---------------------
-        public int Spawn_X;
-        public int Spawn_Y;
-        public int Spawn_Z;
+        public int SpawnX;
+        public int SpawnY;
+        public int SpawnZ;
         //---------------------
 
         public List<Entity> Entities;
-        public List<ObjectEntity> worldObjects;
-        public List<Chunk> worldChunks;
+        public List<ObjectEntity> WorldObjects;
+        public List<Chunk> WorldChunks;
         //--------------------
 
         public WorldClass() {
-            worldObjects = new List<ObjectEntity>();
-            worldChunks = new List<Chunk>();
+            WorldObjects = new List<ObjectEntity>();
+            WorldChunks = new List<Chunk>();
             Entities = new List<Entity>();
         }
 
@@ -34,14 +31,14 @@ namespace libMC.NET.World {
         /// <summary>
         /// Returns the index of which the entity resides in for the Entities list
         /// </summary>
-        /// <param name="Entity_ID"></param>
+        /// <param name="entityId"></param>
         /// <returns></returns>
-        public int GetEntityById(int Entity_ID) {
-            int thisEntity = -1;
+        public int GetEntityById(int entityId) {
+            var thisEntity = -1;
 
             try {
-                foreach (Entity b in Entities) {
-                    if (b.Entity_ID == Entity_ID) {
+                foreach (var b in Entities) {
+                    if (b.Entity_ID == entityId) {
                         thisEntity = Entities.IndexOf(b);
                         break;
                     }
@@ -60,12 +57,12 @@ namespace libMC.NET.World {
         /// <param name="z">Z location of chunk</param>
         /// <returns>Index of Chunk in worldChunks</returns>
         public int GetChunk(int x, int z) {
-            int chunkIndex = -1;
+            var chunkIndex = -1;
 
             try {
-                foreach (Chunk c in worldChunks) {
-                    if (c.x == x && c.z == z) {
-                        chunkIndex = worldChunks.IndexOf(c);
+                foreach (var c in WorldChunks) {
+                    if (c.X == x && c.Z == z) {
+                        chunkIndex = WorldChunks.IndexOf(c);
                     }
                 }
             } catch {

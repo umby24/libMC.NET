@@ -1,32 +1,27 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-namespace libMC.NET.Entities {
+﻿namespace libMC.NET.Entities {
     public class ObjectEntity {
-        public int ObjectID;
+        public int ObjectId;
         public string ObjectFriendlyName;
-        public sbyte type;
+        public sbyte Type;
         #region Optional Variables
         // -- These are specific to each individual type of object.
-        string style; // -- Minecart style, I.E. Chest, Furnace, ect.
-        int orientation; // -- 0-3: south, west, north, east.
-        int blockType; // BlockID | (Metadata << 0xC)
-        int EntityID; // Fishing float, Splash potion, Projectiles.
+        string _style; // -- Minecart style, I.E. Chest, Furnace, ect.
+        int _orientation; // -- 0-3: south, west, north, east.
+        int _blockType; // BlockID | (Metadata << 0xC)
+        int _entityId; // Fishing float, Splash potion, Projectiles.
 
-        public short Speed_X;
-        public short Speed_Y;
-        public short Speed_Z;
+        public short SpeedX;
+        public short SpeedY;
+        public short SpeedZ;
         #endregion
 
-        public ObjectEntity(sbyte Type) {
-            type = Type;
+        public ObjectEntity(sbyte type) {
+            Type = type;
         }
 
-        public void GetFriendlyName(int metadataID) {
+        public void GetFriendlyName(int metadataId) {
 
-            switch (type) {
+            switch (Type) {
                 case 0:
                     return;
                 case 1:
@@ -44,59 +39,59 @@ namespace libMC.NET.Entities {
                     break;
                 case 51:
                     ObjectFriendlyName = "EnderCrystal";
-                    EntityID = metadataID;
+                    _entityId = metadataId;
                     break;
                 case 61:
                     ObjectFriendlyName = "Arrow (projectile)";
-                    EntityID = metadataID;
+                    _entityId = metadataId;
                     break;
                 case 62:
                     ObjectFriendlyName = "Snowball (projectile)";
-                    EntityID = metadataID;
+                    _entityId = metadataId;
                     break;
                 case 63:
                     ObjectFriendlyName = "Fireball (Ghast projectile)";
-                    EntityID = metadataID;
+                    _entityId = metadataId;
                     break;
                 case 64:
                     ObjectFriendlyName = "FireCharge (Blaze projectile)";
-                    EntityID = metadataID;
+                    _entityId = metadataId;
                     break;
                 case 65:
                     ObjectFriendlyName = "Thrown Enderpearl";
-                    EntityID = metadataID;
+                    _entityId = metadataId;
                     break;
                 case 66:
                     ObjectFriendlyName = "Wither Skull (projectile)";
-                    EntityID = metadataID;
+                    _entityId = metadataId;
                     break;
                 case 70:
                     ObjectFriendlyName = "Falling Objects";
-                    blockType = metadataID;
+                    _blockType = metadataId;
                     break;
                 case 71:
                     ObjectFriendlyName = "Item frames";
-                    orientation = metadataID;
+                    _orientation = metadataId;
                     break;
                 case 72:
                     ObjectFriendlyName = "Eye of Ender";
-                    EntityID = metadataID;
+                    _entityId = metadataId;
                     break;
                 case 73:
                     ObjectFriendlyName = "Thrown Potion";
-                    EntityID = metadataID;
+                    _entityId = metadataId;
                     break;
                 case 74:
                     ObjectFriendlyName = "Falling Dragon Egg";
-                    EntityID = metadataID;
+                    _entityId = metadataId;
                     break;
                 case 75:
                     ObjectFriendlyName = "Thrown Exp Bottle";
-                    EntityID = metadataID;
+                    _entityId = metadataId;
                     break;
                 case 90:
                     ObjectFriendlyName = "Fishing Float";
-                    EntityID = metadataID;
+                    _entityId = metadataId;
                     break;
             }
         }

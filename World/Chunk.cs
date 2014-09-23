@@ -1,114 +1,109 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using libMC.NET.Entities;
 
 namespace libMC.NET.World {
     public class Chunk {
-        public int x, z, numBlocks, aBlocks;
-        public short pbitmap, abitmap;
-        public byte[] blocks;
+        public int X, Z, Numlocks, Alocks;
+        public short Pitmap, Aitmap;
+        public byte[] Locks;
         public byte[] Metadata;
-        public byte[] Blocklight;
+        public byte[] Locklight;
         public byte[] Skylight;
         public byte[] AddArray;
         public byte[] BiomeArray;
 
-        public bool lighting, groundup = false;
-        public Section[] sections;
+        public bool Lighting, Groundup = false;
+        public Section[] Sections;
 
-        public Chunk(int X, int Z, short PBitmap, short ABitmap, bool Lighting, bool Groundup) {
-            x = X;
-            z = Z;
-            pbitmap = PBitmap;
-            abitmap = ABitmap;
-            lighting = Lighting;
-            groundup = Groundup;
+        public Chunk(int x, int z, short pitmap, short aitmap, bool lighting, bool groundup) {
+            X = x;
+            Z = z;
+            Pitmap = pitmap;
+            Aitmap = aitmap;
+            Lighting = lighting;
+            Groundup = groundup;
 
-            sections = new Section[16];
+            Sections = new Section[16];
 
-            numBlocks = 0;
-            aBlocks = 0;
+            Numlocks = 0;
+            Alocks = 0;
 
             CreateSections();
         }
 
         /// <summary>
-        /// Creates the chunk sections for this column based on the primary and add bitmasks.
+        /// Creates the chunk sections for this column ased on the primary and add itmasks.
         /// </summary>
         void CreateSections() {
-            for (int i = 0; i < 16; i++) {
-                if ((pbitmap & (1 << i)) != 0) {
-                    numBlocks++;
-                    sections[i] = new Section((byte)i);
-                }
+            for (var i = 0; i < 16; i++) {
+                if ((Pitmap & (1 << i)) == 0) 
+                    continue;
+                Numlocks++;
+                Sections[i] = new Section((byte)i);
             }
 
-            for (int i = 0; i < 16; i++) {
-                if ((abitmap & (1 << i)) != 0) {
-                    aBlocks++;
-                }
+            for (var i = 0; i < 16; i++) {
+                if ((Aitmap & (1 << i)) != 0) 
+                    Alocks++;
             }
 
-            // -- Number of sections * Blocks per section = Blocks in this "Chunk"
-            numBlocks = numBlocks * 4096;
+            // -- Numer of sections * locks per section = locks in this "Chunk"
+            Numlocks = Numlocks * 4096;
         }
 
         /// <summary>
         /// Populates the chunk sections contained in this chunk column with their information.
         /// </summary>
         void Populate() {
-            int offset = 0, current = 0, metaOff = 0, Lightoff = 0, Skylightoff = 0;
+            int offset = 0, current = 0, metaOff = 0, lightoff = 0, skylightoff = 0;
 
-            for (int i = 0; i < 16; i++) {
-                if ((pbitmap & (1 << i)) != 0) {
+            for (var i = 0; i < 16; i++) {
+                if ((Pitmap & (1 << i)) == 0) 
+                    continue;
+                var temp = new byte[4096];
+                var temp2 = new byte[2048];
+                var temp3 = new byte[2048];
+                var temp4 = new byte[2048];
 
-                    byte[] temp = new byte[4096];
-                    byte[] temp2 = new byte[2048];
-                    byte[] temp3 = new byte[2048];
-                    byte[] temp4 = new byte[2048];
+                Buffer.BlockCopy(Locks, offset, temp, 0, 4096); // -- lock IDs
+                Buffer.BlockCopy(Metadata, metaOff, temp2, 0, 2048); // -- Metadata.
+                Buffer.BlockCopy(Locklight, lightoff, temp3, 0, 2048); // -- lock lighting.
+                Buffer.BlockCopy(Skylight, skylightoff, temp4, 0, 2048);
 
-                    Buffer.BlockCopy(blocks, offset, temp, 0, 4096); // -- Block IDs
-                    Buffer.BlockCopy(Metadata, metaOff, temp2, 0, 2048); // -- Metadata.
-                    Buffer.BlockCopy(Blocklight, Lightoff, temp3, 0, 2048); // -- Block lighting.
-                    Buffer.BlockCopy(Skylight, Skylightoff, temp4, 0, 2048);
+                var mySection = Sections[current];
 
-                    Section mySection = sections[current];
+                mySection.Blocks = temp;
+                mySection.Metadata = CreateMetadatabytes(temp2);
+                mySection.BlockLight = CreateMetadatabytes(temp3);
+                mySection.Skylight = CreateMetadatabytes(temp4);
 
-                    mySection.Blocks = temp;
-                    mySection.Metadata = CreateMetadataBytes(temp2);
-                    mySection.BlockLight = CreateMetadataBytes(temp3);
-                    mySection.Skylight = CreateMetadataBytes(temp4);
+                offset += 4096;
+                metaOff += 2048;
+                lightoff += 2048;
+                skylightoff += 2048;
 
-                    offset += 4096;
-                    metaOff += 2048;
-                    Lightoff += 2048;
-                    Skylightoff += 2048;
-
-                    current += 1;
-                }
+                current += 1;
             }
 
             // -- Free the memory, everything is now stored in sections.
-            blocks = null;
+            Locks = null;
             Metadata = null;
         }
 
         /// <summary>
-        /// Expand the compressed Metadata (half-byte per block) into single-byte per block for easier reading.
+        /// Expand the compressed Metadata (half-byte per lock) into single-byte per lock for easier reading.
         /// </summary>
         /// <param name="oldMeta">Old (2048-byte) Metadata</param>
         /// <returns>4096 uncompressed Metadata</returns>
-        public byte[] CreateMetadataBytes(byte[] oldMeta) {
-            byte[] newMeta = new byte[4096];
+        public byte[] CreateMetadatabytes(byte[] oldMeta) {
+            var newMeta = new byte[4096];
 
-            for (int i = 0; i < oldMeta.Length; i++) {
-                byte block2 = (byte)((oldMeta[i] >> 4) & 15);
-                byte block1 = (byte)(oldMeta[i] & 15);
+            for (var i = 0; i < oldMeta.Length; i++) {
+                var lock2 = (byte)((oldMeta[i] >> 4) & 15);
+                var lock1 = (byte)(oldMeta[i] & 15);
 
-                newMeta[(i * 2)] = block1;
-                newMeta[(i * 2) + 1] = block2;
+                newMeta[(i * 2)] = lock1;
+                newMeta[(i * 2) + 1] = lock2;
             }
 
             return newMeta;
@@ -123,44 +118,43 @@ namespace libMC.NET.World {
             // -- Loading chunks, network handler hands off the decompressed bytes
             // -- This function takes its portion, and returns what's left.
 
-            byte[] temp;
-            int offset = 0;
+            var offset = 0;
 
-            blocks = new byte[numBlocks];
-            Metadata = new byte[numBlocks / 2]; // -- Contains block Metadata.
-            Blocklight = new byte[numBlocks / 2];
+            Locks = new byte[Numlocks];
+            Metadata = new byte[Numlocks / 2]; // -- Contains lock Metadata.
+            Locklight = new byte[Numlocks / 2];
 
-            if (lighting)
-                Skylight = new byte[numBlocks / 2];
+            if (Lighting)
+                Skylight = new byte[Numlocks / 2];
 
-            AddArray = new byte[numBlocks / 2];
+            AddArray = new byte[Numlocks / 2];
 
-            if (groundup)
+            if (Groundup)
                 BiomeArray = new byte[256];
 
-            Buffer.BlockCopy(deCompressed, 0, blocks, 0, numBlocks);
-            offset += numBlocks;
+            Buffer.BlockCopy(deCompressed, 0, Locks, 0, Numlocks);
+            offset += Numlocks;
 
-            Buffer.BlockCopy(deCompressed, offset, Metadata, 0, numBlocks / 2); // -- Copy in Metadata
-            offset += numBlocks / 2;
+            Buffer.BlockCopy(deCompressed, offset, Metadata, 0, Numlocks / 2); // -- Copy in Metadata
+            offset += Numlocks / 2;
 
-            Buffer.BlockCopy(deCompressed, offset, Blocklight, 0, numBlocks / 2);
-            offset += numBlocks / 2;
+            Buffer.BlockCopy(deCompressed, offset, Locklight, 0, Numlocks / 2);
+            offset += Numlocks / 2;
 
-            if (lighting) {
-                Buffer.BlockCopy(deCompressed, offset, Skylight, 0, numBlocks / 2);
-                offset += numBlocks / 2;
+            if (Lighting) {
+                Buffer.BlockCopy(deCompressed, offset, Skylight, 0, Numlocks / 2);
+                offset += Numlocks / 2;
             }
 
-            Buffer.BlockCopy(deCompressed, offset, AddArray, 0, aBlocks / 2);
-            offset += aBlocks / 2;
+            Buffer.BlockCopy(deCompressed, offset, AddArray, 0, Alocks / 2);
+            offset += Alocks / 2;
 
-            if (groundup) {
+            if (Groundup) {
                 Buffer.BlockCopy(deCompressed, offset, BiomeArray, 0, 256);
                 offset += 256;
             }
 
-            temp = new byte[deCompressed.Length - offset];
+            var temp = new byte[deCompressed.Length - offset];
             Buffer.BlockCopy(deCompressed, offset, temp, 0, temp.Length);
 
             Populate(); // -- Populate all of our sections with the bytes we just aquired.
@@ -168,87 +162,87 @@ namespace libMC.NET.World {
             return temp;
         }
 
-        public void UpdateBlock(int Bx, int By, int Bz, int id) {
-            // -- Updates the block in this chunk.
+        public void UpdateBlock(int x, int y, int z, int id) {
+            // -- Updates the lock in this chunk.
 
-            decimal ChunkX = decimal.Divide(Bx, 16);
-            decimal ChunkZ = decimal.Divide(By, 16);
+            var chunkX = decimal.Divide(x, 16);
+            var chunkZ = decimal.Divide(y, 16);
 
-            ChunkX = Math.Floor(ChunkX);
-            ChunkZ = Math.Floor(ChunkZ);
+            chunkX = Math.Floor(chunkX);
+            chunkZ = Math.Floor(chunkZ);
 
-            if (ChunkX != x || ChunkZ != z)
-                return; // -- Block is not in this chunk, user-error somewhere.
+            if (chunkX != X || chunkZ != Z)
+                return; // -- lock is not in this chunk, user-error somewhere.
 
-            Section thisSection = GetSectionByNumber(By);
-            thisSection.SetBlock(GetXinSection(Bx), GetPositionInSection(By), GetZinSection(Bz), id);
+            var thisSection = GetSectionyNumer(y);
+            thisSection.SetBlock(GetXinSection(x), GetPositionInSection(y), GetZinSection(z), id);
             
         }
 
-        public int GetBlockId(int Bx, int By, int Bz) {
-            Section thisSection = GetSectionByNumber(By);
-            return thisSection.GetBlock(GetXinSection(Bx), GetPositionInSection(By), GetZinSection(Bz)).ID;
+        public int GetBlockId(int x, int y, int z) {
+            var thisSection = GetSectionyNumer(y);
+            return thisSection.GetBlock(GetXinSection(x), GetPositionInSection(y), GetZinSection(z)).Id;
         }
 
-        public Block GetBlock(int Bx, int By, int Bz) {
-            Section thisSection = GetSectionByNumber(By);
-            return thisSection.GetBlock(GetXinSection(Bx), GetPositionInSection(By), GetZinSection(Bz));
+        public Block GetBlock(int x, int y, int z) {
+            var thisSection = GetSectionyNumer(y);
+            return thisSection.GetBlock(GetXinSection(x), GetPositionInSection(y), GetZinSection(z));
         }
 
-        public int GetBlockMetadata(int Bx, int By, int Bz) {
-            Section thisSection = GetSectionByNumber(By);
-            return thisSection.GetBlockMetadata(GetXinSection(Bx), GetPositionInSection(By), GetZinSection(Bz));
+        public int GetBlockMetadata(int x, int y, int z) {
+            var thisSection = GetSectionyNumer(y);
+            return thisSection.GetBlockMetadata(GetXinSection(x), GetPositionInSection(y), GetZinSection(z));
         }
 
-        public void SetBlockData(int Bx, int By, int Bz, byte data) {
-            // -- Update the Skylight and Metadata on this block.
-            Section thisSection = GetSectionByNumber(By);
-            thisSection.SetBlockMetadata(GetXinSection(Bx), GetPositionInSection(By), GetZinSection(Bz), data);
+        public void SetBlockData(int x, int y, int z, byte data) {
+            // -- Update the Skylight and Metadata on this Block.
+            var thisSection = GetSectionyNumer(y);
+            thisSection.SetBlockMetadata(GetXinSection(x), GetPositionInSection(y), GetZinSection(z), data);
         }
 
         public byte GetBlockLight(int x, int y, int z) {
-            var thisSection = GetSectionByNumber(y);
+            var thisSection = GetSectionyNumer(y);
             return thisSection.GetBlockLighting(GetXinSection(x), GetPositionInSection(y), GetZinSection(z));
         }
 
         public void SetBlockLight(int x, int y, int z, byte light) {
-            var thisSection = GetSectionByNumber(y);
+            var thisSection = GetSectionyNumer(y);
             thisSection.SetBlockLighting(GetXinSection(x), GetPositionInSection(y), GetZinSection(z), light);
         }
 
         public byte GetBlockSkylight(int x, int y, int z) {
-            var thisSection = GetSectionByNumber(y);
+            var thisSection = GetSectionyNumer(y);
             return thisSection.GetBlockSkylight(GetXinSection(x), GetPositionInSection(y), GetZinSection(z));
         }
 
         public void SetBlockSkylight(int x, int y, int z, byte light) {
-            var thisSection = GetSectionByNumber(y);
+            var thisSection = GetSectionyNumer(y);
             thisSection.SetBlockSkylight(GetXinSection(x), GetPositionInSection(y), GetZinSection(z), light);
         }
 
-        public byte GetBlockBiome(int x, int z) {
+        public byte GetBlockiome(int x, int z) {
             return BiomeArray[(z * 16) + x];
         }
 
-        public void SetBlockBiome(int x, int z, byte biome) {
-            BiomeArray[(z * 16) + x] = biome;
+        public void SetBlockiome(int x, int z, byte iome) {
+            BiomeArray[(z * 16) + x] = iome;
         }
 
         #region Helping Methods
-        private Section GetSectionByNumber(int blockY) {
-            return sections[(byte)(blockY / 16)];
+        private Section GetSectionyNumer(int lockY) {
+            return Sections[(byte)(lockY / 16)];
         }
-        private int GetXinSection(int BlockX) {
-            return Math.Abs(BlockX - (x * 16));
+        private int GetXinSection(int lockX) {
+            return Math.Abs(lockX - (X * 16));
         }
-        private int GetPositionInSection(int blockY) {
-            return blockY % 16; // Credits: SirCmpwn Craft.net
+        private int GetPositionInSection(int lockY) {
+            return lockY % 16; // Credits: SirCmpwn Craft.net
         }
-        private int GetZinSection(int BlockZ) {
-            if (z == 0)
-                return BlockZ;
+        private int GetZinSection(int lockZ) {
+            if (Z == 0)
+                return lockZ;
 
-            return BlockZ % z;
+            return lockZ % Z;
         }
         #endregion
     }

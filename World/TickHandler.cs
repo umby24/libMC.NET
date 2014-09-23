@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading;
-using libMC.NET.Client;
+﻿using libMC.NET.Client;
 using libMC.NET.Network;
 
 namespace libMC.NET.MinecraftWorld {
@@ -15,8 +10,8 @@ namespace libMC.NET.MinecraftWorld {
         }
         public void DoTick() {
             var Player = new SBPlayer();
-            Player.OnGround = ThisMc.ThisPlayer.onGround;
-            Player.Write(ThisMc.nh.wSock);
+            Player.OnGround = ThisMc.ThisPlayer.OnGround;
+            Player.Write(ThisMc.Nh.wSock);
         }
     }
 }

@@ -1,31 +1,26 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-namespace libMC.NET.Entities {
+﻿namespace libMC.NET.Entities {
     public class Block {
-       public int ID;
+       public int Id;
        public string Name;
-       public int x;
-       public int y;
-       public int z;
-       public int cx;
-       public int cz;
+       public int X;
+       public int Y;
+       public int Z;
+       public int Cx;
+       public int Cz;
 
-       public Block(int id, int X, int Y, int Z,int CX, int CZ)
+       public Block(int id, int x, int y, int z,int cx, int cz)
        {
-           ID = id;
-           x = X;
-           y = Y;
-           z = Z;
-           cx = CX;
-           cz = CZ;
+           Id = id;
+           X = x;
+           Y = y;
+           Z = z;
+           Cx = cx;
+           Cz = cz;
 
-           Name = ((blockitemid)ID).ToString();
+           Name = ((Blockitemid)Id).ToString();
        }
 
-       public enum blockitemid {
+       public enum Blockitemid {
            Air,
            Stone,
            Grass,
@@ -72,7 +67,7 @@ namespace libMC.NET.Entities {
            DoubleSlabs,
            Slabs,
            BrickBlock,
-           TNT,
+           Tnt,
            BookShelf,
            MossStone,
            Obsidion,
@@ -85,7 +80,7 @@ namespace libMC.NET.Entities {
            DiamondOre,
            DiamondBlock,
            CraftingTable,
-           Seeds_Planted,
+           SeedsPlanted,
            Farmland,
            Furnace,
            BurningFurnace,
@@ -231,7 +226,7 @@ namespace libMC.NET.Entities {
            GoldShovel,
            GoldPickAxe,
            GoldAxe,
-           String_item,
+           StringItem,
            Feather,
            GunPowder,
            WoodenHoe,
@@ -268,7 +263,7 @@ namespace libMC.NET.Entities {
            Painting,
            GoldenApple,
            Sign,
-           WoodenDoor_Item,
+           WoodenDoorItem,
            Bucket,
            WaterBucket,
            LavaBucket,
@@ -282,7 +277,7 @@ namespace libMC.NET.Entities {
            Milk,
            ClayBrick,
            Clay,
-           SugarCane_Item,
+           SugarCaneItem,
            Paper,
            Book,
            SlimeBall,
@@ -299,7 +294,7 @@ namespace libMC.NET.Entities {
            Bone,
            Sugar,
            Cake,
-           Bed_Item,
+           BedItem,
            RedstoneRepeater,
            Cookie,
            Map,
@@ -316,15 +311,15 @@ namespace libMC.NET.Entities {
            BlazeRod,
            GhastTear,
            GoldNugget,
-           NetherWart_item,
+           NetherWartItem,
            Potions,
            GlassBottle,
            SpiderEye,
            FermentedSpiderEye,
            BlazePowder,
            MagmaCream,
-           BrewingStand_Item,
-           Cauldron_Item,
+           BrewingStandItem,
+           CauldronItem,
            EyeofEnder,
            GlisteringMelon,
            SpawnEgg,
@@ -332,26 +327,26 @@ namespace libMC.NET.Entities {
            FireCharge,
            BookNQuill,
            WrittenBook,
-           Emerald_item,
+           EmeraldItem,
            ItemFrame,
-           FlowerPot_item,
+           FlowerPotItem,
            Carrot,
            Potato,
            BakedPotato,
            PoisonPotato,
            EmptyMap,
            GoldenCarrot,
-           MobHead_item,
+           MobHeadItem,
            CarrotonStick,
            NetherStar,
            PumpkinPie,
            FireworkRocket,
            FireworkStar,
            EnchantedBook,
-           RedstoneComparator_Item,
+           RedstoneComparatorItem,
            NetherBrick,
-           netherQuartz,
-           TNTCart,
+           NetherQuartz,
+           TntCart,
            HopperCart,
            IronHorseArmor,
            GoldHorseArmor,
@@ -371,7 +366,7 @@ namespace libMC.NET.Entities {
            StradDisk,
            WardDisk,
            Disk11,
-           waitDisk
+           WaitDisk
        }
     }
 }

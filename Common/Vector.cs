@@ -1,15 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-namespace libMC.NET.Common {
+﻿namespace libMC.NET.Common {
     public class Vector {
-        public int x, y, z;
-        public Vector(int X = 0, int Y = 0, int Z = 0 ) {
-            x = X;
-            y = Y;
-            z = Z;
+        public int X, Y, Z;
+        public Vector(int x = 0, int y = 0, int z = 0 ) {
+            X = x;
+            Y = y;
+            Z = z;
         }
     }
 }

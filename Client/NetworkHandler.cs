@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using CWrapped;
 using System.Net.Sockets;
 using System.Threading;
@@ -105,7 +103,7 @@ namespace libMC.NET.Client {
         /// Sends a server handshake, and a ping request packet if NextState is set to 1.
         /// </summary>
         public void DoHandshake() {
-            var hs = new SBHandshake();
+            var hs = new SbHandshake();
             hs.ProtocolVersion = 5;
             hs.ServerAddress = MainMC.ServerIp;
             hs.ServerPort = (short)MainMC.ServerPort;
@@ -117,10 +115,10 @@ namespace libMC.NET.Client {
             hs.Write(wSock);
 
             if (MainMC.ServerState == 1) {
-                var PingRequest = new SBRequest();
+                var PingRequest = new SbRequest();
                 PingRequest.Write(wSock);
             } else {
-                var LoginStart = new SBLoginStart();
+                var LoginStart = new SbLoginStart();
                 LoginStart.Name = MainMC.ClientName;
                 LoginStart.Write(wSock);
             }
@@ -160,9 +158,9 @@ namespace libMC.NET.Client {
         /// </summary>
         void PopulateLists() {
             packetsLogin = new Dictionary<int,Func<IPacket>> {
-                {0, () => new CBLoginDisconnect() },
-                {1, () => new CBEncryptionRequest() },
-                {2, () => new CBLoginSuccess() }
+                {0, () => new CbLoginDisconnect() },
+                {1, () => new CbEncryptionRequest() },
+                {2, () => new CbLoginSuccess() }
             };
 
             packetsStatus = new Dictionary<int, Func<IPacket>> {
@@ -247,7 +245,7 @@ namespace libMC.NET.Client {
         /// </summary>
         void NetworkPacketHandler() {
             try {
-                int length = -1;
+                var length = -1;
 
                 while ((length = wSock.readVarInt()) != -1) {
                     if (baseSock.Connected) {

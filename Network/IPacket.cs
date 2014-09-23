@@ -1,9 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.Collections.Generic;
 using CWrapped;
-using libMC.NET.Entities;
 
 namespace libMC.NET.Network {
     public interface IPacket {
@@ -12,7 +8,7 @@ namespace libMC.NET.Network {
     }
 
     // -- Status 0: Handshake
-    public struct SBHandshake : IPacket {
+    public struct SbHandshake : IPacket {
         public int ProtocolVersion { get; set; }
         public string ServerAddress { get; set; }
         public short ServerPort { get; set; }
@@ -36,7 +32,7 @@ namespace libMC.NET.Network {
     }
 
     // -- Status 1: Login
-    public struct SBLoginStart : IPacket {
+    public struct SbLoginStart : IPacket {
         public string Name { get; set; }
 
         public void Read(Wrapped wSock) {
@@ -50,7 +46,7 @@ namespace libMC.NET.Network {
         }
     }
 
-    public struct SBEncryptionResponse : IPacket {
+    public struct SbEncryptionResponse : IPacket {
         public short SharedLength { get; set; }
         public byte[] SharedSecret { get; set; }
         public short VerifyLength { get; set; }
@@ -73,29 +69,29 @@ namespace libMC.NET.Network {
         }
     }
 
-    public struct CBLoginDisconnect : IPacket {
-        public string JSONData { get; set; }
+    public struct CbLoginDisconnect : IPacket {
+        public string JsonData { get; set; }
 
         public void Read(Wrapped wSock) {
-            JSONData = wSock.readString();
+            JsonData = wSock.readString();
         }
 
         public void Write(Wrapped wSock) {
             wSock.writeVarInt(0x00);
-            wSock.writeString(JSONData);
+            wSock.writeString(JsonData);
             wSock.Purge();
         }
     }
 
-    public struct CBEncryptionRequest : IPacket {
-        public string ServerID { get; set; }
+    public struct CbEncryptionRequest : IPacket {
+        public string ServerId { get; set; }
         public short PublicLength { get; set; }
         public byte[] PublicKey { get; set; }
         public short VerifyLength { get; set; }
         public byte[] VerifyToken { get; set; }
 
         public void Read(Wrapped wSock) {
-            ServerID = wSock.readString();
+            ServerId = wSock.readString();
             PublicLength = wSock.readShort();
             PublicKey = wSock.readByteArray(PublicLength);
             VerifyLength = wSock.readShort();
@@ -104,7 +100,7 @@ namespace libMC.NET.Network {
 
         public void Write(Wrapped wSock) {
             wSock.writeVarInt(0x01);
-            wSock.writeString(ServerID);
+            wSock.writeString(ServerId);
             wSock.writeShort(PublicLength);
             wSock.Send(PublicKey);
             wSock.writeShort(VerifyLength);
@@ -113,18 +109,18 @@ namespace libMC.NET.Network {
         }
     }
 
-    public struct CBLoginSuccess : IPacket {
-        public string UUID { get; set; }
+    public struct CbLoginSuccess : IPacket {
+        public string Uuid { get; set; }
         public string Username { get; set; }
 
         public void Read(Wrapped wSock) {
-            UUID = wSock.readString();
+            Uuid = wSock.readString();
             Username = wSock.readString();
         }
 
         public void Write(Wrapped wSock) {
             wSock.writeVarInt(0x02);
-            wSock.writeString(UUID);
+            wSock.writeString(Uuid);
             wSock.writeString(Username);
             wSock.Purge();
         }
@@ -132,7 +128,7 @@ namespace libMC.NET.Network {
 
 
     // -- Status 2: Status
-    public struct SBRequest : IPacket {
+    public struct SbRequest : IPacket {
 
         public void Read(Wrapped wSock) {
         }
@@ -143,7 +139,7 @@ namespace libMC.NET.Network {
         }
     }
 
-    public struct SBPing : IPacket {
+    public struct SbPing : IPacket {
         public long Time { get; set; }
 
         public void Read(Wrapped wSock) {
@@ -157,21 +153,21 @@ namespace libMC.NET.Network {
         }
     }
 
-    public struct CBResponse : IPacket {
-        public string JSONResponse { get; set; }
+    public struct CbResponse : IPacket {
+        public string JsonResponse { get; set; }
 
         public void Read(Wrapped wSock) {
-            JSONResponse = wSock.readString();
+            JsonResponse = wSock.readString();
         }
 
         public void Write(Wrapped wSock) {
             wSock.writeVarInt(0x00);
-            wSock.writeString(JSONResponse);
+            wSock.writeString(JsonResponse);
             wSock.Purge();
         }
     }
 
-    public struct CBPing : IPacket {
+    public struct CbPing : IPacket {
         public long Time { get; set; }
 
         public void Read(Wrapped wSock) {
@@ -187,21 +183,21 @@ namespace libMC.NET.Network {
 
 
     // -- Status 3: Play
-    public struct SBKeepAlive : IPacket {
-        public int KeepAliveID { get; set; }
+    public struct SbKeepAlive : IPacket {
+        public int KeepAliveId { get; set; }
 
         public void Read(Wrapped wSock) {
-            KeepAliveID = wSock.readInt();
+            KeepAliveId = wSock.readInt();
         }
 
         public void Write(Wrapped wSock) {
             wSock.writeVarInt(0x00);
-            wSock.writeInt(KeepAliveID);
+            wSock.writeInt(KeepAliveId);
             wSock.Purge();
         }
     }
 
-    public struct SBChatMessage : IPacket {
+    public struct SbChatMessage : IPacket {
         public string Message { get; set; }
 
         public void Read(Wrapped wSock) {
@@ -215,7 +211,7 @@ namespace libMC.NET.Network {
         }
     }
 
-    public struct SBUseEntity : IPacket {
+    public struct SbUseEntity : IPacket {
         public int Target { get; set; }
         public sbyte Mouse { get; set; }
 
@@ -232,7 +228,7 @@ namespace libMC.NET.Network {
         }
     }
 
-    public struct SBPlayer : IPacket {
+    public struct SbPlayer : IPacket {
         public bool OnGround { get; set; }
 
         public void Read(Wrapped wSock) {
@@ -246,7 +242,7 @@ namespace libMC.NET.Network {
         }
     }
 
-    public struct SBPlayerPosition : IPacket {
+    public struct SbPlayerPosition : IPacket {
         public double X { get; set; }
         public double FeetY { get; set; }
         public double HeadY { get; set; }
@@ -272,7 +268,7 @@ namespace libMC.NET.Network {
         }
     }
 
-    public struct SBPlayerLook : IPacket {
+    public struct SbPlayerLook : IPacket {
         public float Yaw { get; set; }
         public float Pitch { get; set; }
         public bool OnGround { get; set; }
@@ -292,7 +288,7 @@ namespace libMC.NET.Network {
         }
     }
 
-    public struct SBPlayerPositionAndLook : IPacket {
+    public struct SbPlayerPositionAndLook : IPacket {
         public double X { get; set; }
         public double FeetY { get; set; }
         public double HeadY { get; set; }
@@ -324,7 +320,7 @@ namespace libMC.NET.Network {
         }
     }
 
-    public struct SBPlayerDigging : IPacket {
+    public struct SbPlayerDigging : IPacket {
         public sbyte Status { get; set; }
         public int X { get; set; }
         public byte Y { get; set; }
@@ -350,7 +346,7 @@ namespace libMC.NET.Network {
         }
     }
 
-    public struct SBPlayerBlockPlacement : IPacket {
+    public struct SbPlayerBlockPlacement : IPacket {
         public int X { get; set; }
         public byte Y { get; set; }
         public int Z { get; set; }
@@ -388,7 +384,7 @@ namespace libMC.NET.Network {
         }
     }
 
-    public struct SBHeldItemChange : IPacket {
+    public struct SbHeldItemChange : IPacket {
         public short Slot { get; set; }
 
         public void Read(Wrapped wSock) {
@@ -401,44 +397,44 @@ namespace libMC.NET.Network {
             wSock.Purge();
         }
     }
-    public struct SBAnimation : IPacket {
-        public int EntityID { get; set; }
+    public struct SbAnimation : IPacket {
+        public int EntityId { get; set; }
         public sbyte Animation { get; set; }
 
         public void Read(Wrapped wSock) {
-            EntityID = wSock.readInt();
+            EntityId = wSock.readInt();
             Animation = wSock.readSByte();
         }
 
         public void Write(Wrapped wSock) {
             wSock.writeVarInt(0x0A);
-            wSock.writeInt(EntityID);
+            wSock.writeInt(EntityId);
             wSock.writeSByte(Animation);
             wSock.Purge();
         }
     }
 
-    public struct SBEntityAction : IPacket {
-        public int EntityID { get; set; }
-        public sbyte ActionID { get; set; }
+    public struct SbEntityAction : IPacket {
+        public int EntityId { get; set; }
+        public sbyte ActionId { get; set; }
         public int JumpBoost { get; set; }
 
         public void Read(Wrapped wSock) {
-            EntityID = wSock.readInt();
-            ActionID = wSock.readSByte();
+            EntityId = wSock.readInt();
+            ActionId = wSock.readSByte();
             JumpBoost = wSock.readInt();
         }
 
         public void Write(Wrapped wSock) {
             wSock.writeVarInt(0x0B);
-            wSock.writeInt(EntityID);
-            wSock.writeSByte(ActionID);
+            wSock.writeInt(EntityId);
+            wSock.writeSByte(ActionId);
             wSock.writeInt(JumpBoost);
             wSock.Purge();
         }
     }
 
-    public struct SBSteerVehicle : IPacket {
+    public struct SbSteerVehicle : IPacket {
         public float Sideways { get; set; }
         public float Forward { get; set; }
         public bool Jump { get; set; }
@@ -461,7 +457,7 @@ namespace libMC.NET.Network {
         }
     }
 
-    public struct SBCloseWindow : IPacket {
+    public struct SbCloseWindow : IPacket {
         public sbyte Windowid { get; set; }
 
         public void Read(Wrapped wSock) {
@@ -475,8 +471,8 @@ namespace libMC.NET.Network {
         }
     }
 
-    public struct SBClickWindow : IPacket {
-        public sbyte WindowID { get; set; }
+    public struct SbClickWindow : IPacket {
+        public sbyte WindowId { get; set; }
         public short Slot { get; set; }
         public sbyte Button { get; set; }
         public short Actionnumber { get; set; }
@@ -484,7 +480,7 @@ namespace libMC.NET.Network {
         public SlotData Clickeditem { get; set; }
 
         public void Read(Wrapped wSock) {
-            WindowID = wSock.readSByte();
+            WindowId = wSock.readSByte();
             Slot = wSock.readShort();
             Button = wSock.readSByte();
             Actionnumber = wSock.readShort();
@@ -494,7 +490,7 @@ namespace libMC.NET.Network {
 
         public void Write(Wrapped wSock) {
             wSock.writeVarInt(0x0E);
-            wSock.writeSByte(WindowID);
+            wSock.writeSByte(WindowId);
             wSock.writeShort(Slot);
             wSock.writeSByte(Button);
             wSock.writeShort(Actionnumber);
@@ -504,27 +500,27 @@ namespace libMC.NET.Network {
         }
     }
 
-    public struct SBConfirmTransaction : IPacket {
-        public sbyte WindowID { get; set; }
+    public struct SbConfirmTransaction : IPacket {
+        public sbyte WindowId { get; set; }
         public short Actionnumber { get; set; }
         public bool Accepted { get; set; }
 
         public void Read(Wrapped wSock) {
-            WindowID = wSock.readSByte();
+            WindowId = wSock.readSByte();
             Actionnumber = wSock.readShort();
             Accepted = wSock.readBool();
         }
 
         public void Write(Wrapped wSock) {
             wSock.writeVarInt(0x0F);
-            wSock.writeSByte(WindowID);
+            wSock.writeSByte(WindowId);
             wSock.writeShort(Actionnumber);
             wSock.writeBool(Accepted);
             wSock.Purge();
         }
     }
 
-    public struct SBCreativeInventoryAction : IPacket {
+    public struct SbCreativeInventoryAction : IPacket {
         public short Slot { get; set; }
         public SlotData Clickeditem { get; set; }
 
@@ -541,24 +537,24 @@ namespace libMC.NET.Network {
         }
     }
 
-    public struct SBEnchantItem : IPacket {
-        public sbyte WindowID { get; set; }
+    public struct SbEnchantItem : IPacket {
+        public sbyte WindowId { get; set; }
         public sbyte Enchantment { get; set; }
 
         public void Read(Wrapped wSock) {
-            WindowID = wSock.readSByte();
+            WindowId = wSock.readSByte();
             Enchantment = wSock.readSByte();
         }
 
         public void Write(Wrapped wSock) {
             wSock.writeVarInt(0x11);
-            wSock.writeSByte(WindowID);
+            wSock.writeSByte(WindowId);
             wSock.writeSByte(Enchantment);
             wSock.Purge();
         }
     }
 
-    public struct SBUpdateSign : IPacket {
+    public struct SbUpdateSign : IPacket {
         public int X { get; set; }
         public short Y { get; set; }
         public int Z { get; set; }
@@ -590,7 +586,7 @@ namespace libMC.NET.Network {
         }
     }
 
-    public struct SBPlayerAbilities : IPacket {
+    public struct SbPlayerAbilities : IPacket {
         public sbyte Flags { get; set; }
 
         public void Read(Wrapped wSock) {
@@ -604,7 +600,7 @@ namespace libMC.NET.Network {
         }
     }
 
-    public struct SBTabComplete : IPacket {
+    public struct SbTabComplete : IPacket {
         public string Text { get; set; }
 
         public void Read(Wrapped wSock) {
@@ -618,7 +614,7 @@ namespace libMC.NET.Network {
         }
     }
 
-    public struct SBClientSettings : IPacket {
+    public struct SbClientSettings : IPacket {
         public string Locale { get; set; }
         public sbyte Viewdistance { get; set; }
         public sbyte Chatflags { get; set; }
@@ -647,21 +643,21 @@ namespace libMC.NET.Network {
         }
     }
 
-    public struct SBClientStatus : IPacket {
-        public sbyte ActionID { get; set; }
+    public struct SbClientStatus : IPacket {
+        public sbyte ActionId { get; set; }
 
         public void Read(Wrapped wSock) {
-            ActionID = wSock.readSByte();
+            ActionId = wSock.readSByte();
         }
 
         public void Write(Wrapped wSock) {
             wSock.writeVarInt(0x16);
-            wSock.writeSByte(ActionID);
+            wSock.writeSByte(ActionId);
             wSock.Purge();
         }
     }
 
-    public struct SBPluginMessage : IPacket {
+    public struct SbPluginMessage : IPacket {
         public string Channel { get; set; }
         public short Length { get; set; }
         public byte[] Data { get; set; }
@@ -681,22 +677,22 @@ namespace libMC.NET.Network {
         }
     }
 
-    public struct CBKeepAlive : IPacket {
-        public int KeepAliveID { get; set; }
+    public struct CbKeepAlive : IPacket {
+        public int KeepAliveId { get; set; }
 
         public void Read(Wrapped wSock) {
-            KeepAliveID = wSock.readInt();
+            KeepAliveId = wSock.readInt();
         }
 
         public void Write(Wrapped wSock) {
             wSock.writeVarInt(0x00);
-            wSock.writeInt(KeepAliveID);
+            wSock.writeInt(KeepAliveId);
             wSock.Purge();
         }
     }
 
-    public struct CBJoinGame : IPacket {
-        public int EntityID { get; set; }
+    public struct CbJoinGame : IPacket {
+        public int EntityId { get; set; }
         public byte Gamemode { get; set; }
         public sbyte Dimension { get; set; }
         public byte Difficulty { get; set; }
@@ -704,7 +700,7 @@ namespace libMC.NET.Network {
         public string LevelType { get; set; }
 
         public void Read(Wrapped wSock) {
-            EntityID = wSock.readInt();
+            EntityId = wSock.readInt();
             Gamemode = wSock.readByte();
             Dimension = wSock.readSByte();
             Difficulty = wSock.readByte();
@@ -714,7 +710,7 @@ namespace libMC.NET.Network {
 
         public void Write(Wrapped wSock) {
             wSock.writeVarInt(0x01);
-            wSock.writeInt(EntityID);
+            wSock.writeInt(EntityId);
             wSock.writeByte(Gamemode);
             wSock.writeSByte(Dimension);
             wSock.writeByte(Difficulty);
@@ -724,21 +720,21 @@ namespace libMC.NET.Network {
         }
     }
 
-    public struct CBChatMessage : IPacket {
-        public string JSONData { get; set; }
+    public struct CbChatMessage : IPacket {
+        public string JsonData { get; set; }
 
         public void Read(Wrapped wSock) {
-            JSONData = wSock.readString();
+            JsonData = wSock.readString();
         }
 
         public void Write(Wrapped wSock) {
             wSock.writeVarInt(0x02);
-            wSock.writeString(JSONData);
+            wSock.writeString(JsonData);
             wSock.Purge();
         }
     }
 
-    public struct CBTimeUpdate : IPacket {
+    public struct CbTimeUpdate : IPacket {
         public long Ageoftheworld { get; set; }
         public long Timeofday { get; set; }
 
@@ -755,27 +751,27 @@ namespace libMC.NET.Network {
         }
     }
 
-    public struct CBEntityEquipment : IPacket {
-        public int EntityID { get; set; }
+    public struct CbEntityEquipment : IPacket {
+        public int EntityId { get; set; }
         public short Slot { get; set; }
         public SlotData Item { get; set; }
 
         public void Read(Wrapped wSock) {
-            EntityID = wSock.readInt();
+            EntityId = wSock.readInt();
             Slot = wSock.readShort();
             Item = WrappedExtension.ReadSlot(wSock);
         }
 
         public void Write(Wrapped wSock) {
             wSock.writeVarInt(0x04);
-            wSock.writeInt(EntityID);
+            wSock.writeInt(EntityId);
             wSock.writeShort(Slot);
             WrappedExtension.WriteSlot(wSock, Item);
             wSock.Purge();
         }
     }
 
-    public struct CBSpawnPosition : IPacket {
+    public struct CbSpawnPosition : IPacket {
         public int X { get; set; }
         public int Y { get; set; }
         public int Z { get; set; }
@@ -795,7 +791,7 @@ namespace libMC.NET.Network {
         }
     }
 
-    public struct CBUpdateHealth : IPacket {
+    public struct CbUpdateHealth : IPacket {
         public float Health { get; set; }
         public short Food { get; set; }
         public float FoodSaturation { get; set; }
@@ -815,7 +811,7 @@ namespace libMC.NET.Network {
         }
     }
 
-    public struct CBRespawn : IPacket {
+    public struct CbRespawn : IPacket {
         public int Dimension { get; set; }
         public byte Difficulty { get; set; }
         public byte Gamemode { get; set; }
@@ -838,7 +834,7 @@ namespace libMC.NET.Network {
         }
     }
 
-    public struct CBPlayerPositionAndLook : IPacket {
+    public struct CbPlayerPositionAndLook : IPacket {
         public double X { get; set; }
         public double Y { get; set; }
         public double Z { get; set; }
@@ -867,7 +863,7 @@ namespace libMC.NET.Network {
         }
     }
 
-    public struct CBHeldItemChange : IPacket {
+    public struct CbHeldItemChange : IPacket {
         public sbyte Slot { get; set; }
 
         public void Read(Wrapped wSock) {
@@ -881,14 +877,14 @@ namespace libMC.NET.Network {
         }
     }
 
-    public struct CBUseBed : IPacket {
-        public int EntityID { get; set; }
+    public struct CbUseBed : IPacket {
+        public int EntityId { get; set; }
         public int X { get; set; }
         public byte Y { get; set; }
         public int Z { get; set; }
 
         public void Read(Wrapped wSock) {
-            EntityID = wSock.readInt();
+            EntityId = wSock.readInt();
             X = wSock.readInt();
             Y = wSock.readByte();
             Z = wSock.readInt();
@@ -896,7 +892,7 @@ namespace libMC.NET.Network {
 
         public void Write(Wrapped wSock) {
             wSock.writeVarInt(0x0A);
-            wSock.writeInt(EntityID);
+            wSock.writeInt(EntityId);
             wSock.writeInt(X);
             wSock.writeByte(Y);
             wSock.writeInt(Z);
@@ -904,26 +900,26 @@ namespace libMC.NET.Network {
         }
     }
 
-    public struct CBAnimation : IPacket {
-        public int EntityID { get; set; }
+    public struct CbAnimation : IPacket {
+        public int EntityId { get; set; }
         public byte Animation { get; set; }
 
         public void Read(Wrapped wSock) {
-            EntityID = wSock.readVarInt();
+            EntityId = wSock.readVarInt();
             Animation = wSock.readByte();
         }
 
         public void Write(Wrapped wSock) {
             wSock.writeVarInt(0x0B);
-            wSock.writeVarInt(EntityID);
+            wSock.writeVarInt(EntityId);
             wSock.writeByte(Animation);
             wSock.Purge();
         }
     }
 
-    public struct CBSpawnPlayer : IPacket {
-        public int EntityID { get; set; }
-        public string PlayerUUID { get; set; }
+    public struct CbSpawnPlayer : IPacket {
+        public int EntityId { get; set; }
+        public string PlayerUuid { get; set; }
         public string PlayerName { get; set; }
         public int Datacount { get; set; }
         public PlayerData[] Data;
@@ -936,13 +932,13 @@ namespace libMC.NET.Network {
         public object[] Metadata { get; set; }
 
         public void Read(Wrapped wSock) {
-            EntityID = wSock.readVarInt();
-            PlayerUUID = wSock.readString();
+            EntityId = wSock.readVarInt();
+            PlayerUuid = wSock.readString();
             PlayerName = wSock.readString();
             Datacount = wSock.readVarInt();
             Data = new PlayerData[Datacount];
 
-            for (int i = 0; i < Datacount; i++) {
+            for (var i = 0; i < Datacount; i++) {
                 Data[i].Name = wSock.readString();
                 Data[i].Value = wSock.readString();
                 Data[i].Signature = wSock.readString();
@@ -959,15 +955,16 @@ namespace libMC.NET.Network {
 
         public void Write(Wrapped wSock) {
             wSock.writeVarInt(0x0C);
-            wSock.writeVarInt(EntityID);
-            wSock.writeString(PlayerUUID);
+            wSock.writeVarInt(EntityId);
+            wSock.writeString(PlayerUuid);
             wSock.writeString(PlayerName);
             wSock.writeVarInt(Data.Length);
 
-            for (int i = 0; i < Data.Length; i++) {
-                wSock.writeString(Data[i].Name);
-                wSock.writeString(Data[i].Value);
-                wSock.writeString(Data[i].Signature);
+            foreach (PlayerData t in Data)
+            {
+                wSock.writeString(t.Name);
+                wSock.writeString(t.Value);
+                wSock.writeString(t.Signature);
             }
 
             wSock.writeInt(X);
@@ -981,25 +978,25 @@ namespace libMC.NET.Network {
         }
     }
 
-    public struct CBCollectItem : IPacket {
-        public int CollectedEntityID { get; set; }
-        public int CollectorEntityID { get; set; }
+    public struct CbCollectItem : IPacket {
+        public int CollectedEntityId { get; set; }
+        public int CollectorEntityId { get; set; }
 
         public void Read(Wrapped wSock) {
-            CollectedEntityID = wSock.readInt();
-            CollectorEntityID = wSock.readInt();
+            CollectedEntityId = wSock.readInt();
+            CollectorEntityId = wSock.readInt();
         }
 
         public void Write(Wrapped wSock) {
             wSock.writeVarInt(0x0D);
-            wSock.writeInt(CollectedEntityID);
-            wSock.writeInt(CollectorEntityID);
+            wSock.writeInt(CollectedEntityId);
+            wSock.writeInt(CollectorEntityId);
             wSock.Purge();
         }
     }
 
-    public struct CBSpawnObject : IPacket {
-        public int EntityID { get; set; }
+    public struct CbSpawnObject : IPacket {
+        public int EntityId { get; set; }
         public sbyte Type { get; set; }
         public int X { get; set; }
         public int Y { get; set; }
@@ -1009,7 +1006,7 @@ namespace libMC.NET.Network {
         public ObjectMetadata Data { get; set; }
 
         public void Read(Wrapped wSock) {
-            EntityID = wSock.readVarInt();
+            EntityId = wSock.readVarInt();
             Type = wSock.readSByte();
             X = wSock.readInt();
             Y = wSock.readInt();
@@ -1021,7 +1018,7 @@ namespace libMC.NET.Network {
 
         public void Write(Wrapped wSock) {
             wSock.writeVarInt(0x0E);
-            wSock.writeVarInt(EntityID);
+            wSock.writeVarInt(EntityId);
             wSock.writeSByte(Type);
             wSock.writeInt(X);
             wSock.writeInt(Y);
@@ -1033,8 +1030,8 @@ namespace libMC.NET.Network {
         }
     }
 
-    public struct CBSpawnMob : IPacket {
-        public int EntityID { get; set; }
+    public struct CbSpawnMob : IPacket {
+        public int EntityId { get; set; }
         public byte Type { get; set; }
         public int X { get; set; }
         public int Y { get; set; }
@@ -1048,7 +1045,7 @@ namespace libMC.NET.Network {
         public object[] Metadata { get; set; }
 
         public void Read(Wrapped wSock) {
-            EntityID = wSock.readVarInt();
+            EntityId = wSock.readVarInt();
             Type = wSock.readByte();
             X = wSock.readInt();
             Y = wSock.readInt();
@@ -1064,7 +1061,7 @@ namespace libMC.NET.Network {
 
         public void Write(Wrapped wSock) {
             wSock.writeVarInt(0x0F);
-            wSock.writeVarInt(EntityID);
+            wSock.writeVarInt(EntityId);
             wSock.writeByte(Type);
             wSock.writeInt(X);
             wSock.writeInt(Y);
@@ -1080,8 +1077,8 @@ namespace libMC.NET.Network {
         }
     }
 
-    public struct CBSpawnPainting : IPacket {
-        public int EntityID { get; set; }
+    public struct CbSpawnPainting : IPacket {
+        public int EntityId { get; set; }
         public string Title { get; set; }
         public int X { get; set; }
         public int Y { get; set; }
@@ -1089,7 +1086,7 @@ namespace libMC.NET.Network {
         public int Direction { get; set; }
 
         public void Read(Wrapped wSock) {
-            EntityID = wSock.readVarInt();
+            EntityId = wSock.readVarInt();
             Title = wSock.readString();
             X = wSock.readInt();
             Y = wSock.readInt();
@@ -1099,7 +1096,7 @@ namespace libMC.NET.Network {
 
         public void Write(Wrapped wSock) {
             wSock.writeVarInt(0x10);
-            wSock.writeVarInt(EntityID);
+            wSock.writeVarInt(EntityId);
             wSock.writeString(Title);
             wSock.writeInt(X);
             wSock.writeInt(Y);
@@ -1109,15 +1106,15 @@ namespace libMC.NET.Network {
         }
     }
 
-    public struct CBSpawnExperienceOrb : IPacket {
-        public int EntityID { get; set; }
+    public struct CbSpawnExperienceOrb : IPacket {
+        public int EntityId { get; set; }
         public int X { get; set; }
         public int Y { get; set; }
         public int Z { get; set; }
         public short Count { get; set; }
 
         public void Read(Wrapped wSock) {
-            EntityID = wSock.readVarInt();
+            EntityId = wSock.readVarInt();
             X = wSock.readInt();
             Y = wSock.readInt();
             Z = wSock.readInt();
@@ -1126,7 +1123,7 @@ namespace libMC.NET.Network {
 
         public void Write(Wrapped wSock) {
             wSock.writeVarInt(0x11);
-            wSock.writeVarInt(EntityID);
+            wSock.writeVarInt(EntityId);
             wSock.writeInt(X);
             wSock.writeInt(Y);
             wSock.writeInt(Z);
@@ -1135,14 +1132,14 @@ namespace libMC.NET.Network {
         }
     }
 
-    public struct CBEntityVelocity : IPacket {
-        public int EntityID { get; set; }
+    public struct CbEntityVelocity : IPacket {
+        public int EntityId { get; set; }
         public short VelocityX { get; set; }
         public short VelocityY { get; set; }
         public short VelocityZ { get; set; }
 
         public void Read(Wrapped wSock) {
-            EntityID = wSock.readInt();
+            EntityId = wSock.readInt();
             VelocityX = wSock.readShort();
             VelocityY = wSock.readShort();
             VelocityZ = wSock.readShort();
@@ -1150,7 +1147,7 @@ namespace libMC.NET.Network {
 
         public void Write(Wrapped wSock) {
             wSock.writeVarInt(0x12);
-            wSock.writeInt(EntityID);
+            wSock.writeInt(EntityId);
             wSock.writeShort(VelocityX);
             wSock.writeShort(VelocityY);
             wSock.writeShort(VelocityZ);
@@ -1158,7 +1155,7 @@ namespace libMC.NET.Network {
         }
     }
 
-    public struct CBDestroyEntities : IPacket {
+    public struct CbDestroyEntities : IPacket {
         public sbyte Count { get; set; }
         public int[] EntityIDs { get; set; }
 
@@ -1166,7 +1163,7 @@ namespace libMC.NET.Network {
             Count = wSock.readSByte();
             EntityIDs = new int[Count];
 
-            for (int i = 0; i < Count; i++)
+            for (var i = 0; i < Count; i++)
                 EntityIDs[i] = wSock.readInt();
         }
 
@@ -1174,101 +1171,101 @@ namespace libMC.NET.Network {
             wSock.writeVarInt(0x13);
             wSock.writeSByte(Count);
 
-            for (int i = 0; i < Count; i++)
+            for (var i = 0; i < Count; i++)
                 wSock.writeInt(EntityIDs[i]);
 
             wSock.Purge();
         }
     }
 
-    public struct CBEntity : IPacket {
-        public int EntityID { get; set; }
+    public struct CbEntity : IPacket {
+        public int EntityId { get; set; }
 
         public void Read(Wrapped wSock) {
-            EntityID = wSock.readInt();
+            EntityId = wSock.readInt();
         }
 
         public void Write(Wrapped wSock) {
             wSock.writeVarInt(0x14);
-            wSock.writeInt(EntityID);
+            wSock.writeInt(EntityId);
             wSock.Purge();
         }
     }
 
-    public struct CBEntityRelativeMove : IPacket {
-        public int EntityID { get; set; }
-        public sbyte DX { get; set; }
-        public sbyte DY { get; set; }
-        public sbyte DZ { get; set; }
+    public struct CbEntityRelativeMove : IPacket {
+        public int EntityId { get; set; }
+        public sbyte Dx { get; set; }
+        public sbyte Dy { get; set; }
+        public sbyte Dz { get; set; }
 
         public void Read(Wrapped wSock) {
-            EntityID = wSock.readInt();
-            DX = wSock.readSByte();
-            DY = wSock.readSByte();
-            DZ = wSock.readSByte();
+            EntityId = wSock.readInt();
+            Dx = wSock.readSByte();
+            Dy = wSock.readSByte();
+            Dz = wSock.readSByte();
         }
 
         public void Write(Wrapped wSock) {
             wSock.writeVarInt(0x15);
-            wSock.writeInt(EntityID);
-            wSock.writeSByte(DX);
-            wSock.writeSByte(DY);
-            wSock.writeSByte(DZ);
+            wSock.writeInt(EntityId);
+            wSock.writeSByte(Dx);
+            wSock.writeSByte(Dy);
+            wSock.writeSByte(Dz);
             wSock.Purge();
         }
     }
 
-    public struct CBEntityLook : IPacket {
-        public int EntityID { get; set; }
+    public struct CbEntityLook : IPacket {
+        public int EntityId { get; set; }
         public sbyte Yaw { get; set; }
         public sbyte Pitch { get; set; }
 
         public void Read(Wrapped wSock) {
-            EntityID = wSock.readInt();
+            EntityId = wSock.readInt();
             Yaw = wSock.readSByte();
             Pitch = wSock.readSByte();
         }
 
         public void Write(Wrapped wSock) {
             wSock.writeVarInt(0x16);
-            wSock.writeInt(EntityID);
+            wSock.writeInt(EntityId);
             wSock.writeSByte(Yaw);
             wSock.writeSByte(Pitch);
             wSock.Purge();
         }
     }
 
-    public struct CBEntityLookandRelativeMove : IPacket {
-        public int EntityID { get; set; }
-        public sbyte DX { get; set; }
-        public sbyte DY { get; set; }
-        public sbyte DZ { get; set; }
+    public struct CbEntityLookandRelativeMove : IPacket {
+        public int EntityId { get; set; }
+        public sbyte Dx { get; set; }
+        public sbyte Dy { get; set; }
+        public sbyte Dz { get; set; }
         public sbyte Yaw { get; set; }
         public sbyte Pitch { get; set; }
 
         public void Read(Wrapped wSock) {
-            EntityID = wSock.readInt();
-            DX = wSock.readSByte();
-            DY = wSock.readSByte();
-            DZ = wSock.readSByte();
+            EntityId = wSock.readInt();
+            Dx = wSock.readSByte();
+            Dy = wSock.readSByte();
+            Dz = wSock.readSByte();
             Yaw = wSock.readSByte();
             Pitch = wSock.readSByte();
         }
 
         public void Write(Wrapped wSock) {
             wSock.writeVarInt(0x17);
-            wSock.writeInt(EntityID);
-            wSock.writeSByte(DX);
-            wSock.writeSByte(DY);
-            wSock.writeSByte(DZ);
+            wSock.writeInt(EntityId);
+            wSock.writeSByte(Dx);
+            wSock.writeSByte(Dy);
+            wSock.writeSByte(Dz);
             wSock.writeSByte(Yaw);
             wSock.writeSByte(Pitch);
             wSock.Purge();
         }
     }
 
-    public struct CBEntityTeleport : IPacket {
-        public int EntityID { get; set; }
+    public struct CbEntityTeleport : IPacket {
+        public int EntityId { get; set; }
         public int X { get; set; }
         public int Y { get; set; }
         public int Z { get; set; }
@@ -1276,7 +1273,7 @@ namespace libMC.NET.Network {
         public sbyte Pitch { get; set; }
 
         public void Read(Wrapped wSock) {
-            EntityID = wSock.readInt();
+            EntityId = wSock.readInt();
             X = wSock.readInt();
             Y = wSock.readInt();
             Z = wSock.readInt();
@@ -1286,7 +1283,7 @@ namespace libMC.NET.Network {
 
         public void Write(Wrapped wSock) {
             wSock.writeVarInt(0x18);
-            wSock.writeInt(EntityID);
+            wSock.writeInt(EntityId);
             wSock.writeInt(X);
             wSock.writeInt(Y);
             wSock.writeInt(Z);
@@ -1296,118 +1293,118 @@ namespace libMC.NET.Network {
         }
     }
 
-    public struct CBEntityHeadLook : IPacket {
-        public int EntityID { get; set; }
+    public struct CbEntityHeadLook : IPacket {
+        public int EntityId { get; set; }
         public sbyte HeadYaw { get; set; }
 
         public void Read(Wrapped wSock) {
-            EntityID = wSock.readInt();
+            EntityId = wSock.readInt();
             HeadYaw = wSock.readSByte();
         }
 
         public void Write(Wrapped wSock) {
             wSock.writeVarInt(0x19);
-            wSock.writeInt(EntityID);
+            wSock.writeInt(EntityId);
             wSock.writeSByte(HeadYaw);
             wSock.Purge();
         }
     }
 
-    public struct CBEntityStatus : IPacket {
-        public int EntityID { get; set; }
+    public struct CbEntityStatus : IPacket {
+        public int EntityId { get; set; }
         public sbyte EntityStatus { get; set; }
 
         public void Read(Wrapped wSock) {
-            EntityID = wSock.readInt();
+            EntityId = wSock.readInt();
             EntityStatus = wSock.readSByte();
         }
 
         public void Write(Wrapped wSock) {
             wSock.writeVarInt(0x1A);
-            wSock.writeInt(EntityID);
+            wSock.writeInt(EntityId);
             wSock.writeSByte(EntityStatus);
             wSock.Purge();
         }
     }
 
-    public struct CBAttachEntity : IPacket {
-        public int EntityID { get; set; }
-        public int VehicleID { get; set; }
+    public struct CbAttachEntity : IPacket {
+        public int EntityId { get; set; }
+        public int VehicleId { get; set; }
         public bool Leash { get; set; }
 
         public void Read(Wrapped wSock) {
-            EntityID = wSock.readInt();
-            VehicleID = wSock.readInt();
+            EntityId = wSock.readInt();
+            VehicleId = wSock.readInt();
             Leash = wSock.readBool();
         }
 
         public void Write(Wrapped wSock) {
             wSock.writeVarInt(0x1B);
-            wSock.writeInt(EntityID);
-            wSock.writeInt(VehicleID);
+            wSock.writeInt(EntityId);
+            wSock.writeInt(VehicleId);
             wSock.writeBool(Leash);
             wSock.Purge();
         }
     }
 
-    public struct CBEntityMetadata : IPacket {
-        public int EntityID { get; set; }
+    public struct CbEntityMetadata : IPacket {
+        public int EntityId { get; set; }
         public object[] Metadata { get; set; }
 
         public void Read(Wrapped wSock) {
-            EntityID = wSock.readInt();
+            EntityId = wSock.readInt();
             Metadata = WrappedExtension.ReadEntityMetadata(wSock);
         }
 
         public void Write(Wrapped wSock) {
             wSock.writeVarInt(0x1C);
-            wSock.writeInt(EntityID);
+            wSock.writeInt(EntityId);
             WrappedExtension.WriteEntityMetadata(wSock, Metadata);
             wSock.Purge();
         }
     }
 
-    public struct CBEntityEffect : IPacket {
-        public int EntityID { get; set; }
-        public sbyte EffectID { get; set; }
+    public struct CbEntityEffect : IPacket {
+        public int EntityId { get; set; }
+        public sbyte EffectId { get; set; }
         public sbyte Amplifier { get; set; }
         public short Duration { get; set; }
 
         public void Read(Wrapped wSock) {
-            EntityID = wSock.readInt();
-            EffectID = wSock.readSByte();
+            EntityId = wSock.readInt();
+            EffectId = wSock.readSByte();
             Amplifier = wSock.readSByte();
             Duration = wSock.readShort();
         }
 
         public void Write(Wrapped wSock) {
             wSock.writeVarInt(0x1D);
-            wSock.writeInt(EntityID);
-            wSock.writeSByte(EffectID);
+            wSock.writeInt(EntityId);
+            wSock.writeSByte(EffectId);
             wSock.writeSByte(Amplifier);
             wSock.writeShort(Duration);
             wSock.Purge();
         }
     }
 
-    public struct CBRemoveEntityEffect : IPacket {
-        public int EntityID { get; set; }
-        public sbyte EffectID { get; set; }
+    public struct CbRemoveEntityEffect : IPacket {
+        public int EntityId { get; set; }
+        public sbyte EffectId { get; set; }
 
         public void Read(Wrapped wSock) {
-            EntityID = wSock.readInt();
-            EffectID = wSock.readSByte();
+            EntityId = wSock.readInt();
+            EffectId = wSock.readSByte();
         }
 
         public void Write(Wrapped wSock) {
             wSock.writeVarInt(0x1E);
-            wSock.writeInt(EntityID);
-            wSock.writeSByte(EffectID);
+            wSock.writeInt(EntityId);
+            wSock.writeSByte(EffectId);
             wSock.Purge();
         }
     }
 
-    public struct CBSetExperience : IPacket {
+    public struct CbSetExperience : IPacket {
         public float Experiencebar { get; set; }
         public short Level { get; set; }
         public short TotalExperience { get; set; }
@@ -1427,33 +1424,33 @@ namespace libMC.NET.Network {
         }
     }
 
-    public struct CBEntityProperties : IPacket {
-        public int EntityID { get; set; }
+    public struct CbEntityProperties : IPacket {
+        public int EntityId { get; set; }
         public int Count { get; set; }
         public PropertyData[] Properties { get; set; }
 
         public void Read(Wrapped wSock) {
-            EntityID = wSock.readInt();
+            EntityId = wSock.readInt();
             Count = wSock.readInt();
             Properties = new PropertyData[Count];
 
-            for (int x = 0; x < Count; x++ )
+            for (var x = 0; x < Count; x++ )
                 Properties[x] = WrappedExtension.ReadPropertyData(wSock);
         }
 
         public void Write(Wrapped wSock) {
             wSock.writeVarInt(0x20);
-            wSock.writeInt(EntityID);
+            wSock.writeInt(EntityId);
             wSock.writeInt(Count);
 
-            for (int x = 0; x < Count; x++)
+            for (var x = 0; x < Count; x++)
                 WrappedExtension.WritePropertyData(wSock, Properties[x]);
 
             wSock.Purge();
         }
     }
 
-    public struct CBChunkData : IPacket {
+    public struct CbChunkData : IPacket {
         public int ChunkX { get; set; }
         public int ChunkZ { get; set; }
         public bool GroundUpcontinuous { get; set; }
@@ -1485,7 +1482,7 @@ namespace libMC.NET.Network {
         }
     }
 
-    public struct CBMultiBlockChange : IPacket {
+    public struct CbMultiBlockChange : IPacket {
         public int ChunkX { get; set; }
         public int ChunkZ { get; set; }
         public short Recordcount { get; set; }
@@ -1499,7 +1496,7 @@ namespace libMC.NET.Network {
             Datasize = wSock.readInt();
             Records = new Record[Recordcount];
 
-            for (int x = 0; x < Recordcount; x++)
+            for (var x = 0; x < Recordcount; x++)
                 Records[x] = WrappedExtension.ReadRecord(wSock);
         }
 
@@ -1510,25 +1507,25 @@ namespace libMC.NET.Network {
             wSock.writeShort(Recordcount);
             wSock.writeInt(Datasize);
 
-            for (int x = 0; x < Recordcount; x++)
+            for (var x = 0; x < Recordcount; x++)
                 WrappedExtension.WriteRecord(wSock, Records[x]);
 
             wSock.Purge();
         }
     }
 
-    public struct CBBlockChange : IPacket {
+    public struct CbBlockChange : IPacket {
         public int X { get; set; }
         public byte Y { get; set; }
         public int Z { get; set; }
-        public int BlockID { get; set; }
+        public int BlockId { get; set; }
         public byte BlockMetadata { get; set; }
 
         public void Read(Wrapped wSock) {
             X = wSock.readInt();
             Y = wSock.readByte();
             Z = wSock.readInt();
-            BlockID = wSock.readVarInt();
+            BlockId = wSock.readVarInt();
             BlockMetadata = wSock.readByte();
         }
 
@@ -1537,13 +1534,13 @@ namespace libMC.NET.Network {
             wSock.writeInt(X);
             wSock.writeByte(Y);
             wSock.writeInt(Z);
-            wSock.writeVarInt(BlockID);
+            wSock.writeVarInt(BlockId);
             wSock.writeByte(BlockMetadata);
             wSock.Purge();
         }
     }
 
-    public struct CBBlockAction : IPacket {
+    public struct CbBlockAction : IPacket {
         public int X { get; set; }
         public short Y { get; set; }
         public int Z { get; set; }
@@ -1572,15 +1569,15 @@ namespace libMC.NET.Network {
         }
     }
 
-    public struct CBBlockBreakAnimation : IPacket {
-        public int EntityID { get; set; }
+    public struct CbBlockBreakAnimation : IPacket {
+        public int EntityId { get; set; }
         public int X { get; set; }
         public int Y { get; set; } // -- This shouldn't be an int..
         public int Z { get; set; }
         public sbyte Stage { get; set; }
 
         public void Read(Wrapped wSock) {
-            EntityID = wSock.readVarInt();
+            EntityId = wSock.readVarInt();
             X = wSock.readInt();
             Y = wSock.readInt();
             Z = wSock.readInt();
@@ -1589,7 +1586,7 @@ namespace libMC.NET.Network {
 
         public void Write(Wrapped wSock) {
             wSock.writeVarInt(0x25);
-            wSock.writeVarInt(EntityID);
+            wSock.writeVarInt(EntityId);
             wSock.writeInt(X);
             wSock.writeInt(Y);
             wSock.writeInt(Z);
@@ -1598,7 +1595,7 @@ namespace libMC.NET.Network {
         }
     }
 
-    public struct CBMapChunkBulk : IPacket {
+    public struct CbMapChunkBulk : IPacket {
         public short Chunkcolumncount { get; set; }
         public int Datalength { get; set; }
         public bool Skylightsent { get; set; }
@@ -1624,7 +1621,7 @@ namespace libMC.NET.Network {
         }
     }
 
-    public struct CBExplosion : IPacket {
+    public struct CbExplosion : IPacket {
         public float X { get; set; }
         public float Y { get; set; }
         public float Z { get; set; }
@@ -1643,7 +1640,7 @@ namespace libMC.NET.Network {
             Recordcount = wSock.readInt();
             Records = new sbyte[Recordcount * 3];
 
-            for (int x = 0; x < Records.Length - 1; x++) {
+            for (var x = 0; x < Records.Length - 1; x++) {
                 Records[x] = wSock.readSByte();
             }
 
@@ -1660,7 +1657,7 @@ namespace libMC.NET.Network {
             wSock.writeFloat(Radius);
             wSock.writeInt(Recordcount);
 
-            for (int x = 0; x < Records.Length - 1; x++) {
+            for (var x = 0; x < Records.Length - 1; x++) {
                 wSock.writeSByte(Records[x]);
             }
 
@@ -1671,8 +1668,8 @@ namespace libMC.NET.Network {
         }
     }
 
-    public struct CBEffect : IPacket {
-        public int EffectID { get; set; }
+    public struct CbEffect : IPacket {
+        public int EffectId { get; set; }
         public int X { get; set; }
         public sbyte Y { get; set; }
         public int Z { get; set; }
@@ -1680,7 +1677,7 @@ namespace libMC.NET.Network {
         public bool Disablerelativevolume { get; set; }
 
         public void Read(Wrapped wSock) {
-            EffectID = wSock.readInt();
+            EffectId = wSock.readInt();
             X = wSock.readInt();
             Y = wSock.readSByte();
             Z = wSock.readInt();
@@ -1690,7 +1687,7 @@ namespace libMC.NET.Network {
 
         public void Write(Wrapped wSock) {
             wSock.writeVarInt(0x28);
-            wSock.writeInt(EffectID);
+            wSock.writeInt(EffectId);
             wSock.writeInt(X);
             wSock.writeSByte(Y);
             wSock.writeInt(Z);
@@ -1700,7 +1697,7 @@ namespace libMC.NET.Network {
         }
     }
 
-    public struct CBSoundEffect : IPacket {
+    public struct CbSoundEffect : IPacket {
         public string SoundName { get; set; }
         public int EffectpositionX { get; set; }
         public int EffectpositionY { get; set; }
@@ -1729,7 +1726,7 @@ namespace libMC.NET.Network {
         }
     }
 
-    public struct CBParticle : IPacket {
+    public struct CbParticle : IPacket {
         public string Particlename { get; set; }
         public float X { get; set; }
         public float Y { get; set; }
@@ -1767,7 +1764,7 @@ namespace libMC.NET.Network {
         }
     }
 
-    public struct CBChangeGameState : IPacket {
+    public struct CbChangeGameState : IPacket {
         public byte Reason { get; set; }
         public float Value { get; set; }
 
@@ -1784,15 +1781,15 @@ namespace libMC.NET.Network {
         }
     }
 
-    public struct CBSpawnGlobalEntity : IPacket {
-        public int EntityID { get; set; }
+    public struct CbSpawnGlobalEntity : IPacket {
+        public int EntityId { get; set; }
         public sbyte Type { get; set; }
         public int X { get; set; }
         public int Y { get; set; }
         public int Z { get; set; }
 
         public void Read(Wrapped wSock) {
-            EntityID = wSock.readVarInt();
+            EntityId = wSock.readVarInt();
             Type = wSock.readSByte();
             X = wSock.readInt();
             Y = wSock.readInt();
@@ -1801,7 +1798,7 @@ namespace libMC.NET.Network {
 
         public void Write(Wrapped wSock) {
             wSock.writeVarInt(0x2C);
-            wSock.writeVarInt(EntityID);
+            wSock.writeVarInt(EntityId);
             wSock.writeSByte(Type);
             wSock.writeInt(X);
             wSock.writeInt(Y);
@@ -1810,13 +1807,13 @@ namespace libMC.NET.Network {
         }
     }
 
-    public struct CBOpenWindow : IPacket {
+    public struct CbOpenWindow : IPacket {
         public byte Windowid { get; set; }
         public byte InventoryType { get; set; }
         public string Windowtitle { get; set; }
         public byte NumberofSlots { get; set; }
         public bool Useprovidedwindowtitle { get; set; }
-        public int EntityID { get; set; }
+        public int EntityId { get; set; }
 
         public void Read(Wrapped wSock) {
             Windowid = wSock.readByte();
@@ -1824,7 +1821,7 @@ namespace libMC.NET.Network {
             Windowtitle = wSock.readString();
             NumberofSlots = wSock.readByte();
             Useprovidedwindowtitle = wSock.readBool();
-            EntityID = wSock.readInt();
+            EntityId = wSock.readInt();
         }
 
         public void Write(Wrapped wSock) {
@@ -1834,112 +1831,112 @@ namespace libMC.NET.Network {
             wSock.writeString(Windowtitle);
             wSock.writeByte(NumberofSlots);
             wSock.writeBool(Useprovidedwindowtitle);
-            wSock.writeInt(EntityID);
+            wSock.writeInt(EntityId);
             wSock.Purge();
         }
     }
 
-    public struct CBCloseWindow : IPacket {
-        public byte WindowID { get; set; }
+    public struct CbCloseWindow : IPacket {
+        public byte WindowId { get; set; }
 
         public void Read(Wrapped wSock) {
-            WindowID = wSock.readByte();
+            WindowId = wSock.readByte();
         }
 
         public void Write(Wrapped wSock) {
             wSock.writeVarInt(0x2E);
-            wSock.writeByte(WindowID);
+            wSock.writeByte(WindowId);
             wSock.Purge();
         }
     }
 
-    public struct CBSetSlot : IPacket {
-        public sbyte WindowID { get; set; }
+    public struct CbSetSlot : IPacket {
+        public sbyte WindowId { get; set; }
         public short Slot { get; set; }
         public SlotData Slotdata { get; set; }
 
         public void Read(Wrapped wSock) {
-            WindowID = wSock.readSByte();
+            WindowId = wSock.readSByte();
             Slot = wSock.readShort();
             Slotdata = WrappedExtension.ReadSlot(wSock);
         }
 
         public void Write(Wrapped wSock) {
             wSock.writeVarInt(0x2F);
-            wSock.writeSByte(WindowID);
+            wSock.writeSByte(WindowId);
             wSock.writeShort(Slot);
             WrappedExtension.WriteSlot(wSock, Slotdata);
             wSock.Purge();
         }
     }
 
-    public struct CBWindowItems : IPacket {
-        public byte WindowID { get; set; }
+    public struct CbWindowItems : IPacket {
+        public byte WindowId { get; set; }
         public short Count { get; set; }
         public SlotData[] Slotdata { get; set; }
 
         public void Read(Wrapped wSock) {
-            WindowID = wSock.readByte();
+            WindowId = wSock.readByte();
             Count = wSock.readShort();
             Slotdata = new SlotData[Count];
 
-            for (int x = 0; x < Count; x++)
+            for (var x = 0; x < Count; x++)
                 Slotdata[x] = WrappedExtension.ReadSlot(wSock);
         }
 
         public void Write(Wrapped wSock) {
             wSock.writeVarInt(0x30);
-            wSock.writeByte(WindowID);
+            wSock.writeByte(WindowId);
             wSock.writeShort(Count);
 
-            for (int x = 0; x < Count; x++)
+            for (var x = 0; x < Count; x++)
                 WrappedExtension.WriteSlot(wSock, Slotdata[x]);
 
             wSock.Purge();
         }
     }
 
-    public struct CBWindowProperty : IPacket {
-        public byte WindowID { get; set; }
+    public struct CbWindowProperty : IPacket {
+        public byte WindowId { get; set; }
         public short Property { get; set; }
         public short Value { get; set; }
 
         public void Read(Wrapped wSock) {
-            WindowID = wSock.readByte();
+            WindowId = wSock.readByte();
             Property = wSock.readShort();
             Value = wSock.readShort();
         }
 
         public void Write(Wrapped wSock) {
             wSock.writeVarInt(0x31);
-            wSock.writeByte(WindowID);
+            wSock.writeByte(WindowId);
             wSock.writeShort(Property);
             wSock.writeShort(Value);
             wSock.Purge();
         }
     }
 
-    public struct CBConfirmTransaction : IPacket {
-        public byte WindowID { get; set; }
+    public struct CbConfirmTransaction : IPacket {
+        public byte WindowId { get; set; }
         public short Actionnumber { get; set; }
         public bool Accepted { get; set; }
 
         public void Read(Wrapped wSock) {
-            WindowID = wSock.readByte();
+            WindowId = wSock.readByte();
             Actionnumber = wSock.readShort();
             Accepted = wSock.readBool();
         }
 
         public void Write(Wrapped wSock) {
             wSock.writeVarInt(0x32);
-            wSock.writeByte(WindowID);
+            wSock.writeByte(WindowId);
             wSock.writeShort(Actionnumber);
             wSock.writeBool(Accepted);
             wSock.Purge();
         }
     }
 
-    public struct CBUpdateSign : IPacket {
+    public struct CbUpdateSign : IPacket {
         public int X { get; set; }
         public short Y { get; set; }
         public int Z { get; set; }
@@ -1971,7 +1968,7 @@ namespace libMC.NET.Network {
         }
     }
 
-    public struct CBMaps : IPacket {
+    public struct CbMaps : IPacket {
         public int ItemDamage { get; set; }
         public short Length { get; set; }
         public byte[] Data { get; set; }
@@ -1991,13 +1988,13 @@ namespace libMC.NET.Network {
         }
     }
 
-    public struct CBUpdateBlockEntity : IPacket {
+    public struct CbUpdateBlockEntity : IPacket {
         public int X { get; set; }
         public short Y { get; set; }
         public int Z { get; set; }
         public byte Action { get; set; }
         public short Datalength { get; set; }
-        public byte[] NBTData { get; set; }
+        public byte[] NbtData { get; set; }
 
         public void Read(Wrapped wSock) {
             X = wSock.readInt();
@@ -2005,7 +2002,7 @@ namespace libMC.NET.Network {
             Z = wSock.readInt();
             Action = wSock.readByte();
             Datalength = wSock.readShort();
-            NBTData = wSock.readByteArray(Datalength);
+            NbtData = wSock.readByteArray(Datalength);
         }
 
         public void Write(Wrapped wSock) {
@@ -2015,12 +2012,12 @@ namespace libMC.NET.Network {
             wSock.writeInt(Z);
             wSock.writeByte(Action);
             wSock.writeShort(Datalength);
-            wSock.Send(NBTData);
+            wSock.Send(NbtData);
             wSock.Purge();
         }
     }
 
-    public struct CBSignEditorOpen : IPacket {
+    public struct CbSignEditorOpen : IPacket {
         public int X { get; set; }
         public int Y { get; set; }
         public int Z { get; set; }
@@ -2040,7 +2037,7 @@ namespace libMC.NET.Network {
         }
     }
 
-    public struct CBStatistics : IPacket {
+    public struct CbStatistics : IPacket {
         public int Count { get; set; }
         public Dictionary<string, int> Entries { get; set; }
         public string Statisticsname { get; set; }
@@ -2053,9 +2050,9 @@ namespace libMC.NET.Network {
             Entries = new Dictionary<string, int>();
             Count = wSock.readVarInt();
 
-            for (int i = 0; i < Count; i++) {
-                string name = wSock.readString();
-                int value = wSock.readVarInt();
+            for (var i = 0; i < Count; i++) {
+                var name = wSock.readString();
+                var value = wSock.readVarInt();
 
                 Entries.Add(name, value);
             }
@@ -2065,7 +2062,7 @@ namespace libMC.NET.Network {
             wSock.writeVarInt(0x37);
             wSock.writeVarInt(Count);
 
-            foreach (string s in Entries.Keys) {
+            foreach (var s in Entries.Keys) {
                 wSock.writeString(s);
                 wSock.writeVarInt(Entries[s]);
             }
@@ -2074,7 +2071,7 @@ namespace libMC.NET.Network {
         }
     }
 
-    public struct CBPlayerListItem : IPacket {
+    public struct CbPlayerListItem : IPacket {
         public string Playername { get; set; }
         public bool Online { get; set; }
         public short Ping { get; set; }
@@ -2094,7 +2091,7 @@ namespace libMC.NET.Network {
         }
     }
 
-    public struct CBPlayerAbilities : IPacket {
+    public struct CbPlayerAbilities : IPacket {
         public sbyte Flags { get; set; }
         public float Flyingspeed { get; set; }
         public float Walkingspeed { get; set; }
@@ -2114,7 +2111,7 @@ namespace libMC.NET.Network {
         }
     }
 
-    public struct CBTabComplete : IPacket {
+    public struct CbTabComplete : IPacket {
         public int Count { get; set; }
         public string[] Matches { get; set; }
 
@@ -2122,7 +2119,7 @@ namespace libMC.NET.Network {
             Count = wSock.readVarInt();
             Matches = new string[Count];
 
-            for (int i = 0; i < Count; i++)
+            for (var i = 0; i < Count; i++)
                 Matches[i] = wSock.readString();
         }
 
@@ -2130,14 +2127,14 @@ namespace libMC.NET.Network {
             wSock.writeVarInt(0x3A);
             wSock.writeVarInt(Count);
 
-            for (int i = 0; i < Count; i++)
+            for (var i = 0; i < Count; i++)
                 wSock.writeString(Matches[i]);
 
             wSock.Purge();
         }
     }
 
-    public struct CBScoreboardObjective : IPacket {
+    public struct CbScoreboardObjective : IPacket {
         public string Objectivename { get; set; }
         public string Objectivevalue { get; set; }
         public sbyte Create { get; set; }
@@ -2157,7 +2154,7 @@ namespace libMC.NET.Network {
         }
     }
 
-    public struct CBUpdateScore : IPacket {
+    public struct CbUpdateScore : IPacket {
         public string ItemName { get; set; }
         public sbyte Update { get; set; }
         public string ScoreName { get; set; }
@@ -2180,7 +2177,7 @@ namespace libMC.NET.Network {
         }
     }
 
-    public struct CBDisplayScoreboard : IPacket {
+    public struct CbDisplayScoreboard : IPacket {
         public sbyte Position { get; set; }
         public string ScoreName { get; set; }
 
@@ -2197,7 +2194,7 @@ namespace libMC.NET.Network {
         }
     }
 
-    public struct CBTeams : IPacket {
+    public struct CbTeams : IPacket {
         public string TeamName { get; set; }
         public sbyte Mode { get; set; }
         public string TeamDisplayName { get; set; }
@@ -2219,7 +2216,7 @@ namespace libMC.NET.Network {
                     Friendlyfire = wSock.readSByte();
                     Playercount = wSock.readShort();
 
-                    for (int x = 0; x < Playercount - 1; x++)
+                    for (var x = 0; x < Playercount - 1; x++)
                         Players[x] = wSock.readString();
                     break;
                 case 2:
@@ -2231,13 +2228,13 @@ namespace libMC.NET.Network {
                 case 3:
                     Playercount = wSock.readShort();
 
-                    for (int x = 0; x < Playercount - 1; x++)
+                    for (var x = 0; x < Playercount - 1; x++)
                         Players[x] = wSock.readString();
                     break;
                 case 4:
                     Playercount = wSock.readShort();
 
-                    for (int x = 0; x < Playercount - 1; x++)
+                    for (var x = 0; x < Playercount - 1; x++)
                         Players[x] = wSock.readString();
                     break;
             }
@@ -2253,14 +2250,14 @@ namespace libMC.NET.Network {
             wSock.writeSByte(Friendlyfire);
             wSock.writeShort(Playercount);
 
-            for (int x = 0; x < Playercount - 1; x++)
+            for (var x = 0; x < Playercount - 1; x++)
                 wSock.writeString(Players[x]);
 
             wSock.Purge();
         }
     }
 
-    public struct CBPluginMessage : IPacket {
+    public struct CbPluginMessage : IPacket {
         public string Channel { get; set; }
         public short Length { get; set; }
         public byte[] Data { get; set; }
@@ -2280,7 +2277,7 @@ namespace libMC.NET.Network {
         }
     }
 
-    public struct CBDisconnect : IPacket {
+    public struct CbDisconnect : IPacket {
         public string Reason { get; set; }
 
         public void Read(Wrapped wSock) {

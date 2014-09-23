@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.Collections.Generic;
 using libMC.NET.Common;
 
 namespace libMC.NET.Entities {
@@ -9,27 +6,27 @@ namespace libMC.NET.Entities {
     /// This class holds all information for the minecraft client. This includes location, inventory, direction, and names.
     /// </summary>
     public class Player {
-        public int Entity_ID; // -- The client's Entity ID on the server.
-        public string playerName;
-        public byte gameMode, Animation;
-        public sbyte selectedSlot;
-        public float playerHealth, foodSaturation, ExpBar, flyingSpeed, WalkingSpeed;
-        public short playerHunger, level, totalExp;
-        public bool inBed, onGround;
+        public int EntityId; // -- The client's Entity ID on the server.
+        public string PlayerName;
+        public byte GameMode, Animation;
+        public sbyte SelectedSlot;
+        public float PlayerHealth, FoodSaturation, ExpBar, FlyingSpeed, WalkingSpeed;
+        public short PlayerHunger, Level, TotalExp;
+        public bool InBed, OnGround;
 
         #region Location Information
-        public DoubleVector location = new DoubleVector();
-        public float[] look = new float[2];
+        public DoubleVector Location = new DoubleVector();
+        public float[] Look = new float[2];
         #endregion
 
         public Dictionary<int, Item> Inventory = new Dictionary<int,Item>();
 
-        public void SetInventory(Item newItem, short slotID) {
+        public void SetInventory(Item newItem, short slotId) {
             //TODO: Maybe change this to Player.Inventory.SetItem(Item, SlotID)
-            if (Inventory.ContainsKey(slotID)) {
-                Inventory.Remove(slotID);
+            if (Inventory.ContainsKey(slotId)) {
+                Inventory.Remove(slotId);
             }
-            Inventory.Add(slotID, newItem);
+            Inventory.Add(slotId, newItem);
         }
         //TODO: -- Make events for health updated, game mode updated, inventory updated, ect.
 

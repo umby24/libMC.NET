@@ -17,7 +17,7 @@ namespace libMC.NET.Client {
         public string ServerIp, ClientName, ClientPassword, AccessToken, ClientToken, SelectedProfile, ClientBrand;
         public int ServerPort, ServerState;
         public bool VerifyNames, Running, First = false;
-        public NetworkHandler nh;
+        public NetworkHandler Nh;
 
         #region Trackers
         public WorldClass MinecraftWorld; // -- Holds all of the world information. Time, chunks, players, ect.
@@ -49,7 +49,7 @@ namespace libMC.NET.Client {
         public void Login() {
             if (VerifyNames) {
                 var loginHandler = new Minecraft_Net_Interaction();
-                string[] credentials = loginHandler.Login(ClientName, ClientPassword);
+                var credentials = loginHandler.Login(ClientName, ClientPassword);
 
                 if (credentials[0] == "") {  // -- Fall back to no auth.
                     RaiseError(this, "Failed to login to Minecraft.net! (Incorrect username or password)");
@@ -81,7 +81,7 @@ namespace libMC.NET.Client {
             }
 
             var sessionVerifier = new Minecraft_Net_Interaction();
-            string[] response = sessionVerifier.SessionRefresh(AccessToken, ClientToken);
+            var response = sessionVerifier.SessionRefresh(AccessToken, ClientToken);
 
             if (response[0] == "") {
                 RaiseError(this, "Unable to Verify Session!");
@@ -107,7 +107,7 @@ namespace libMC.NET.Client {
             ClientToken = clientToken;
 
             var sessionVerifier = new Minecraft_Net_Interaction();
-            string[] response = sessionVerifier.SessionRefresh(AccessToken, ClientToken);
+            var response = sessionVerifier.SessionRefresh(AccessToken, ClientToken);
 
             if (response[0] == "") {
                 RaiseError(this, "Unable to Verify Session!");
@@ -126,22 +126,22 @@ namespace libMC.NET.Client {
         /// Connects to the MinecraftClient Server.
         /// </summary>
         public void Connect() {
-            if (nh != null)
+            if (Nh != null)
                 Disconnect();
 
             Players = new Dictionary<string,short>();
 
-            nh = new NetworkHandler(this);
+            Nh = new NetworkHandler(this);
 
             // -- Register our event handlers.
-            nh.InfoMessage += NetworkInfo;
-            nh.DebugMessage += NetworkDebug;
-            nh.SocketError += NetworkError;
-            nh.PacketHandled += RaisePacketHandled;
+            Nh.InfoMessage += NetworkInfo;
+            Nh.DebugMessage += NetworkDebug;
+            Nh.SocketError += NetworkError;
+            Nh.PacketHandled += RaisePacketHandled;
 
             // -- Connect to the server and begin reading packets.
 
-            nh.Start();
+            Nh.Start();
 
             RaiseDebug(this, "Network handler created, Connecting to server...");
         }
@@ -150,14 +150,14 @@ namespace libMC.NET.Client {
         /// Disconnects from the Minecraft server.
         /// </summary>
         public void Disconnect() {
-            if (nh != null)
-                nh.Stop();
+            if (Nh != null)
+                Nh.Stop();
 
             // -- Reset all variables to default so we can make a new connection.
 
             Running = false;
             ServerState = 0;
-            nh = null;
+            Nh = null;
             MinecraftWorld = null;
             ThisPlayer = null;
             Players = null;
@@ -171,17 +171,17 @@ namespace libMC.NET.Client {
         /// </summary>
         /// <param name="message">The message to send.</param>
         public void SendChat(string message) {
-            if (nh == null) return;
+            if (Nh == null) return;
 
             var chatPacket = new SBChatMessage {Message = message};
-            chatPacket.Write(nh.wSock);
+            chatPacket.Write(Nh.wSock);
         }
         /// <summary>
         /// Respawns the client.
         /// </summary>
         public void Respawn() {
             var respawnPacket = new SBClientStatus {ActionID = 0};
-            respawnPacket.Write(nh.wSock);
+            respawnPacket.Write(Nh.wSock);
         }
         /// <summary>
         /// Receives a list of completion words from the server
@@ -189,9 +189,8 @@ namespace libMC.NET.Client {
         /// </summary>
         /// <param name="message">The message to receive completion items for.</param>
         public void TabComplete(string message) {
-            var completePacket = new SBTabComplete();
-            completePacket.Text = message;
-            completePacket.Write(nh.wSock);
+            var completePacket = new SBTabComplete {Text = message};
+            completePacket.Write(Nh.wSock);
         }
         #endregion
         #region Event Messengers
@@ -291,7 +290,7 @@ namespace libMC.NET.Client {
             if (DebugMessage != null)
                 DebugMessage(sender, message);
         }
-        public void RaiseMC(object sender, string mcMessage, string raw) {
+        public void RaiseMc(object sender, string mcMessage, string raw) {
             if (Message != null)
                 Message(sender, mcMessage, raw);
         }
@@ -319,14 +318,14 @@ namespace libMC.NET.Client {
 
         #endregion
         #region World Events
-        public void RaiseChunkUnload(int X, int Z) {
+        public void RaiseChunkUnload(int x, int z) {
             if (ChunkUnloaded != null)
-                ChunkUnloaded(X, Z);
+                ChunkUnloaded(x, z);
         }
 
-        public void RaiseChunkLoad(int X, int Z) {
+        public void RaiseChunkLoad(int x, int z) {
             if (ChunkLoaded != null)
-                ChunkLoaded(X, Z);
+                ChunkLoaded(x, z);
         }
 
         public void RaiseNoteBlockSound(byte instrument, byte pitch, int x, short y, int z) {
@@ -339,9 +338,9 @@ namespace libMC.NET.Client {
                 GameStateChanged(eventName, value);
         }
 
-        public void RaiseMultiBlockChange(int Chunk_X, int Chunk_Z) {
+        public void RaiseMultiBlockChange(int chunkX, int chunkZ) {
             if (MultiBlockChange != null)
-                MultiBlockChange(Chunk_X, Chunk_Z);
+                MultiBlockChange(chunkX, chunkZ);
         }
         #endregion
         #region Entity Events
@@ -418,8 +417,8 @@ namespace libMC.NET.Client {
                 PlayerRespawned();
         }
         public void RaiseExperienceUpdate(float expBar, short level, short totalExp) {
-            if (experienceSet != null)
-                experienceSet(expBar, level, totalExp);
+            if (ExperienceSet != null)
+                ExperienceSet(expBar, level, totalExp);
         }
 
         public void RaiseSetWindowSlot(sbyte windowid, short slot, Item item) {
@@ -454,8 +453,8 @@ namespace libMC.NET.Client {
         }
 
         public void RaiseScoreboardUpdate(string name, string value) {
-            if (scoreboardObjectiveUpdate != null)
-                scoreboardObjectiveUpdate(name, value);
+            if (ScoreboardObjectiveUpdate != null)
+                ScoreboardObjectiveUpdate(name, value);
         }
         #endregion
         #endregion
@@ -509,42 +508,42 @@ namespace libMC.NET.Client {
         public event MultiBlockChangeHandler MultiBlockChange;
         #endregion
         #region Entity Events
-        public delegate void EntityVelocityChangedHandler(int Entity_ID, int X, int Y, int Z);
+        public delegate void EntityVelocityChangedHandler(int entityId, int x, int y, int z);
         public event EntityVelocityChangedHandler EntityVelocityChanged;
 
-        public delegate void EntityTeleportHandler(int Entity_ID, int X, int Y, int Z);
+        public delegate void EntityTeleportHandler(int entityId, int x, int y, int z);
         public event EntityTeleportHandler EntityTeleport;
 
-        public delegate void EntityRelMoveHandler(int Entity_ID, int Change_X, int Change_Y, int Change_Z);
+        public delegate void EntityRelMoveHandler(int entityId, int changeX, int changeY, int changeZ);
         public event EntityRelMoveHandler EntityRelMove;
 
-        public delegate void EntityLookChangedHandler(int Entity_ID, sbyte yaw, sbyte pitch);
+        public delegate void EntityLookChangedHandler(int entityId, sbyte yaw, sbyte pitch);
         public event EntityLookChangedHandler EntityLookChanged;
 
-        public delegate void EntityHeadLookChangedHandler(int Entity_ID, sbyte head_yaw);
+        public delegate void EntityHeadLookChangedHandler(int entityId, sbyte headYaw);
         public event EntityHeadLookChangedHandler EntityHeadLookChanged;
 
-        public delegate void EntityEquipmentChangedHandler(int Entity_ID, int slot, Item newItem);
+        public delegate void EntityEquipmentChangedHandler(int entityId, int slot, Item newItem);
         public event EntityEquipmentChangedHandler EntityEquipmentChanged;
 
-        public delegate void EntityAnimationChangedHandler(object sender, int Entity_ID, byte Animation);
+        public delegate void EntityAnimationChangedHandler(object sender, int entityId, byte animation);
         public event EntityAnimationChangedHandler EntityAnimationChanged;
 
-        public delegate void EntityAttachedHandler(int Entity_ID, int Vehicle_ID, bool Leashed);
+        public delegate void EntityAttachedHandler(int entityId, int vehicleId, bool leashed);
         public event EntityAttachedHandler EntityAttached;
 
-        public delegate void ItemCollectedHandler(int item_EID, int collector_eid);
+        public delegate void ItemCollectedHandler(int itemEid, int collectorEid);
         public event ItemCollectedHandler ItemCollected;
 
-        public delegate void EntityDestroyedHandler(int Entity_ID);
+        public delegate void EntityDestroyedHandler(int entityId);
         public event EntityDestroyedHandler EntityDestroyed;
 
-        public delegate void EntityStatusChangedHandler(int Entity_ID);
+        public delegate void EntityStatusChangedHandler(int entityId);
         public event EntityStatusChangedHandler EntityStatusChanged;
         #endregion
         #region Player Events
         public delegate void ExperienceSetHandler(float expBar, short level, short totalExp);
-        public event ExperienceSetHandler experienceSet;
+        public event ExperienceSetHandler ExperienceSet;
 
         public delegate void PlayerRespawnedHandler();
         public event PlayerRespawnedHandler PlayerRespawned;
@@ -552,16 +551,16 @@ namespace libMC.NET.Client {
         public delegate void LocationChangedHandler();
         public event LocationChangedHandler LocationChanged;
 
-        public delegate void OpenWindowHandler(byte Window_ID, byte Type, string Title, byte slots, bool useTitle);
+        public delegate void OpenWindowHandler(byte windowId, byte type, string title, byte slots, bool useTitle);
         public event OpenWindowHandler OpenWindow;
 
-        public delegate void CloseWindowHandler(byte windowID);
+        public delegate void CloseWindowHandler(byte windowId);
         public event CloseWindowHandler CloseWindow;
 
         public delegate void HeldSlotChangedHandler(byte slot);
         public event HeldSlotChangedHandler HeldSlotChanged;
 
-        public delegate void SetWindowItemHandler(sbyte window_ID, short slot, Item item);
+        public delegate void SetWindowItemHandler(sbyte windowId, short slot, Item item);
         public event SetWindowItemHandler SetWindowItem;
 
         public delegate void SetInventoryItemHandler(short slot, Item item);
@@ -576,7 +575,7 @@ namespace libMC.NET.Client {
         public event ScoreboardObjectiveAddHandler ScoreboardObjectiveAdd;
 
         public delegate void ScoreboardObjectiveUpdateHandler(string name, string value);
-        public event ScoreboardObjectiveUpdateHandler scoreboardObjectiveUpdate;
+        public event ScoreboardObjectiveUpdateHandler ScoreboardObjectiveUpdate;
 
         public delegate void ScoreboardObjectiveRemoveHandler(string name);
         public event ScoreboardObjectiveRemoveHandler ScoreboardObjectiveRemove;
@@ -606,10 +605,10 @@ namespace libMC.NET.Client {
         public delegate void JoinGameHandler();
         public event JoinGameHandler JoinedGame;
 
-        public delegate void TransactionRejectedHandler(byte Window_ID, short Action_ID);
+        public delegate void TransactionRejectedHandler(byte windowId, short actionId);
         public event TransactionRejectedHandler TransactionRejected;
 
-        public delegate void TransactionAcceptedHandler(byte Window_ID, short Action_ID);
+        public delegate void TransactionAcceptedHandler(byte windowId, short actionId);
         public event TransactionAcceptedHandler TransactionAccepted;
 
         public delegate void PlayerKickedHandler(string reason);
@@ -618,7 +617,7 @@ namespace libMC.NET.Client {
         public delegate void PingMsReceivedHandler(int msPing);
         public event PingMsReceivedHandler MsPingReceived;
 
-        public delegate void PingResponseReceivedHandler(string VersionName, int ProtocolVersion, int MaxPlayers, int OnlinePlayers, string[] PlayersSample, string MOTD, Image Favicon);
+        public delegate void PingResponseReceivedHandler(string versionName, int protocolVersion, int maxPlayers, int onlinePlayers, string[] playersSample, string motd, Image favicon);
         public event PingResponseReceivedHandler PingResponseReceived;
 
         public delegate void TabCompleteReceivedHandler(string[] results);
