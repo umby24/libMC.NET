@@ -7,18 +7,18 @@ namespace libMC.NET.Entities {
     /// Handles all Entities, including mobs and other players.
     /// </summary>
     public class Entity {
-        public int Entity_ID, direction, Vehicle_ID, potion_color; // -- 0 = -z, 1 = -z, 2 = +z, 3 = +x
-        public bool onFire, crouched, sprinting, eating, invisible, inBed, attached, leashed;
+        public int Entity_ID, Direction, VehicleId, PotionColor; // -- 0 = -z, 1 = -z, 2 = +z, 3 = +x
+        public bool OnFire, Crouched, Sprinting, Eating, Invisible, InBed, Attached, Leashed;
         public dynamic[] Metadata;
-        public string Type, UUID, playerName;
+        public string Type, Uuid, PlayerName;
         public Vector Location;
-        public byte mobType;
-        public sbyte pitch, headPitch, yaw, status, amplifier, animation, rotation, ambient, arrows, nametag; // -- mobType is optional, only for mobs.
-        public short Velocity_X, Velocity_Y, Velocity_Z, heldItem, count, duration, air;
-        public Item itemFrame;
-        public float health;
+        public byte MobType;
+        public sbyte Pitch, HeadPitch, Yaw, Status, Amplifier, Animation, Rotation, Ambient, Arrows, Nametag; // -- mobType is optional, only for mobs.
+        public short VelocityX, VelocityY, VelocityZ, HeldItem, Count, Duration, Air;
+        public Item ItemFrame;
+        public float Health;
 
-        public double jumpStrength, movementSpeed;
+        public double JumpStrength, MovementSpeed;
 
         public Dictionary<int, Item> Inventory;
 
@@ -36,21 +36,21 @@ namespace libMC.NET.Entities {
             switch (index) { // -- Parsing this is pretty much impossible without making things 300x more complicated than need-be. As such, this is as much as im parsing :).
                 case 0:
                     var bitmask = (byte)data;
-                    onFire = Convert.ToBoolean(bitmask & 0x01);
-                    crouched = Convert.ToBoolean(bitmask & 0x02);
-                    sprinting = Convert.ToBoolean(bitmask & 0x08);
-                    eating = Convert.ToBoolean(bitmask & 0x10);
-                    invisible = Convert.ToBoolean(bitmask & 0x20);
+                    OnFire = Convert.ToBoolean(bitmask & 0x01);
+                    Crouched = Convert.ToBoolean(bitmask & 0x02);
+                    Sprinting = Convert.ToBoolean(bitmask & 0x08);
+                    Eating = Convert.ToBoolean(bitmask & 0x10);
+                    Invisible = Convert.ToBoolean(bitmask & 0x20);
                     break;
 
                 case 1:
-                    air = (short)data;
+                    Air = (short)data;
                     break;
                 case 2:
-                    itemFrame = (Item)data;
+                    ItemFrame = (Item)data;
                     break;
                 case 3:
-                    rotation = (sbyte)data;
+                    Rotation = (sbyte)data;
                     break;
                     
 

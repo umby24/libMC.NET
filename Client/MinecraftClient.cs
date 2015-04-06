@@ -48,7 +48,7 @@ namespace libMC.NET.Client {
         /// </summary>
         public void Login() {
             if (VerifyNames) {
-                var loginHandler = new Minecraft_Net_Interaction();
+                var loginHandler = new MinecraftNetInteraction();
                 var credentials = loginHandler.Login(ClientName, ClientPassword);
 
                 if (credentials[0] == "") {  // -- Fall back to no auth.
@@ -80,7 +80,7 @@ namespace libMC.NET.Client {
                 return false;
             }
 
-            var sessionVerifier = new Minecraft_Net_Interaction();
+            var sessionVerifier = new MinecraftNetInteraction();
             var response = sessionVerifier.SessionRefresh(AccessToken, ClientToken);
 
             if (response[0] == "") {
@@ -106,7 +106,7 @@ namespace libMC.NET.Client {
             AccessToken = accessToken;
             ClientToken = clientToken;
 
-            var sessionVerifier = new Minecraft_Net_Interaction();
+            var sessionVerifier = new MinecraftNetInteraction();
             var response = sessionVerifier.SessionRefresh(AccessToken, ClientToken);
 
             if (response[0] == "") {
@@ -174,14 +174,14 @@ namespace libMC.NET.Client {
             if (Nh == null) return;
 
             var chatPacket = new SBChatMessage {Message = message};
-            chatPacket.Write(Nh.wSock);
+            chatPacket.Write(Nh.WSock);
         }
         /// <summary>
         /// Respawns the client.
         /// </summary>
         public void Respawn() {
             var respawnPacket = new SBClientStatus {ActionID = 0};
-            respawnPacket.Write(Nh.wSock);
+            respawnPacket.Write(Nh.WSock);
         }
         /// <summary>
         /// Receives a list of completion words from the server
@@ -190,7 +190,7 @@ namespace libMC.NET.Client {
         /// <param name="message">The message to receive completion items for.</param>
         public void TabComplete(string message) {
             var completePacket = new SBTabComplete {Text = message};
-            completePacket.Write(Nh.wSock);
+            completePacket.Write(Nh.WSock);
         }
         #endregion
         #region Event Messengers

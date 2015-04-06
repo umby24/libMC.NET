@@ -11,17 +11,17 @@ namespace libMC.NET.Client {
     public class NetworkHandler {
         #region Variables
         Thread _handler;
-        MinecraftClient MainMC;
-        TcpClient baseSock;
-        NetworkStream baseStream;
-        PacketEventHandler PacketHandlers;
-        public Wrapped wSock;
-        public TickHandler worldTick;
+        MinecraftClient _mainMc;
+        TcpClient _baseSock;
+        NetworkStream _baseStream;
+        PacketEventHandler _packetHandlers;
+        public Wrapped WSock;
+        public TickHandler WorldTick;
 
         #region Packet Dictionaries
-        Dictionary<int, Func<IPacket>> packetsLogin;
-        Dictionary<int, Func<IPacket>> packetsPlay;
-        Dictionary<int, Func<IPacket>> packetsStatus;
+        Dictionary<int, Func<IPacket>> _packetsLogin;
+        Dictionary<int, Func<IPacket>> _packetsPlay;
+        Dictionary<int, Func<IPacket>> _packetsStatus;
 
         // -- Packet Handler Delegate...
         public delegate void PacketHandler(MinecraftClient client, IPacket packet);
@@ -34,7 +34,7 @@ namespace libMC.NET.Client {
         #endregion
 
         public NetworkHandler(MinecraftClient mc) {
-            MainMC = mc;
+            _mainMc = mc;
             LoginHandlers = new PacketHandler[3];
             PlayHandlers = new PacketHandler[65];
             StatusHandlers = new PacketHandler[2];
@@ -46,17 +46,17 @@ namespace libMC.NET.Client {
         /// </summary>
         public void Start() {
             try {
-                baseSock = new TcpClient();
-                var AR = baseSock.BeginConnect(MainMC.ServerIp, MainMC.ServerPort, null, null);
+                _baseSock = new TcpClient();
+                var ar = _baseSock.BeginConnect(_mainMc.ServerIp, _mainMc.ServerPort, null, null);
 
-                using (var wh = AR.AsyncWaitHandle) {
-                    if (!AR.AsyncWaitHandle.WaitOne(TimeSpan.FromSeconds(5), false)) {
-                        baseSock.Close();
+                using (var wh = ar.AsyncWaitHandle) {
+                    if (!ar.AsyncWaitHandle.WaitOne(TimeSpan.FromSeconds(5), false)) {
+                        _baseSock.Close();
                         RaiseSocketError(this, "Failed to connect: Connection Timeout");
                         return;
                     }
 
-                    baseSock.EndConnect(AR);
+                    _baseSock.EndConnect(ar);
                 }
 
             } catch (Exception e) {
@@ -64,19 +64,19 @@ namespace libMC.NET.Client {
                 return;
             }
             
-            MainMC.Running = true;
+            _mainMc.Running = true;
 
             RaiseSocketInfo(this, "Connected to server.");
-            RaiseSocketDebug(this, string.Format("IP: {0} Port: {1}", MainMC.ServerIp, MainMC.ServerPort.ToString()));
+            RaiseSocketDebug(this, string.Format("IP: {0} Port: {1}", _mainMc.ServerIp, _mainMc.ServerPort.ToString()));
 
             // -- Create our Wrapped socket.
-            baseStream = baseSock.GetStream();
-            wSock = new Wrapped(baseStream);
+            _baseStream = _baseSock.GetStream();
+            WSock = new Wrapped(_baseStream);
             RaiseSocketDebug(this, "Socket Created");
 
             DoHandshake();
 
-            PacketHandlers = new PacketEventHandler(this);
+            _packetHandlers = new PacketEventHandler(this);
 
             // -- Start network parsing.
             _handler = new Thread(NetworkPacketHandler);
@@ -91,10 +91,10 @@ namespace libMC.NET.Client {
             DebugMessage(this, "Stopping network handler...");
             _handler.Abort();
 
-            wSock = null;
-            baseStream = null;
+            WSock = null;
+            _baseStream = null;
 
-            baseSock.Close();
+            _baseSock.Close();
             InfoMessage(this, "Disconnected from Minecraft Server.");
 
         }
@@ -105,22 +105,22 @@ namespace libMC.NET.Client {
         public void DoHandshake() {
             var hs = new SbHandshake();
             hs.ProtocolVersion = 5;
-            hs.ServerAddress = MainMC.ServerIp;
-            hs.ServerPort = (short)MainMC.ServerPort;
+            hs.ServerAddress = _mainMc.ServerIp;
+            hs.ServerPort = (short)_mainMc.ServerPort;
             hs.NextState = 2;
 
-            if (MainMC.ServerState == 1)
+            if (_mainMc.ServerState == 1)
                 hs.NextState = 1;
 
-            hs.Write(wSock);
+            hs.Write(WSock);
 
-            if (MainMC.ServerState == 1) {
-                var PingRequest = new SbRequest();
-                PingRequest.Write(wSock);
+            if (_mainMc.ServerState == 1) {
+                var pingRequest = new SbRequest();
+                pingRequest.Write(WSock);
             } else {
-                var LoginStart = new SbLoginStart();
-                LoginStart.Name = MainMC.ClientName;
-                LoginStart.Write(wSock);
+                var loginStart = new SbLoginStart();
+                loginStart.Name = _mainMc.ClientName;
+                loginStart.Write(WSock);
             }
 
             RaiseSocketDebug(this, "Handshake sent.");
@@ -129,47 +129,47 @@ namespace libMC.NET.Client {
         /// <summary>
         /// Registers a method to be the handler of a given packet.
         /// </summary>
-        /// <param name="packetID"></param>
+        /// <param name="packetId"></param>
         /// <param name="method"></param>
-        public void RegisterLoginHandler(int packetID, PacketHandler method) {
-            LoginHandlers[packetID] = method;
+        public void RegisterLoginHandler(int packetId, PacketHandler method) {
+            LoginHandlers[packetId] = method;
         }
 
         /// <summary>
         /// Registers a method to be the handler of a given packet.
         /// </summary>
-        /// <param name="packetID"></param>
+        /// <param name="packetId"></param>
         /// <param name="method"></param>
-        public void RegisterPlayHandler(int packetID, PacketHandler method) {
-            PlayHandlers[packetID] = method;
+        public void RegisterPlayHandler(int packetId, PacketHandler method) {
+            PlayHandlers[packetId] = method;
         }
 
         /// <summary>
         /// Registers a method to be the handler of a given packet.
         /// </summary>
-        /// <param name="packetID"></param>
+        /// <param name="packetId"></param>
         /// <param name="method"></param>
-        public void RegisterStatusHandler(int packetID, PacketHandler method) {
-            StatusHandlers[packetID] = method;
+        public void RegisterStatusHandler(int packetId, PacketHandler method) {
+            StatusHandlers[packetId] = method;
         }
 
         /// <summary>
         /// Populates the packet lists with reconized types.
         /// </summary>
         void PopulateLists() {
-            packetsLogin = new Dictionary<int,Func<IPacket>> {
+            _packetsLogin = new Dictionary<int,Func<IPacket>> {
                 {0, () => new CbLoginDisconnect() },
                 {1, () => new CbEncryptionRequest() },
                 {2, () => new CbLoginSuccess() }
             };
 
-            packetsStatus = new Dictionary<int, Func<IPacket>> {
+            _packetsStatus = new Dictionary<int, Func<IPacket>> {
                 {0, () => new CBResponse() },
                 {1, () => new CBPing() }
             };
 
             //-------------------
-            packetsPlay = new Dictionary<int, Func<IPacket>> {
+            _packetsPlay = new Dictionary<int, Func<IPacket>> {
                 {0, () => new CBKeepAlive() },
                 {1, () => new CBJoinGame() },
                 {2, () => new CBChatMessage() },
@@ -247,70 +247,70 @@ namespace libMC.NET.Client {
             try {
                 var length = -1;
 
-                while ((length = wSock.readVarInt()) != -1) {
-                    if (baseSock.Connected) {
-                        var packetID = wSock.readVarInt();
+                while ((length = WSock.readVarInt()) != -1) {
+                    if (_baseSock.Connected) {
+                        var packetId = WSock.readVarInt();
 
-                        RaiseSocketDebug(this, MainMC.ServerState + " " + packetID.ToString() + " " + length.ToString());
+                        RaiseSocketDebug(this, _mainMc.ServerState + " " + packetId.ToString() + " " + length.ToString());
 
-                        switch (MainMC.ServerState) {
+                        switch (_mainMc.ServerState) {
                             case (int)ServerState.Status:
-                                if (packetsStatus.Keys.Contains(packetID) == false) {
-                                    RaiseSocketError(this, "Unknown Packet ID. State: 1, Packet: " + packetID);
-                                    wSock.readByteArray(length - 1); // -- bypass the packet
+                                if (_packetsStatus.Keys.Contains(packetId) == false) {
+                                    RaiseSocketError(this, "Unknown Packet ID. State: 1, Packet: " + packetId);
+                                    WSock.readByteArray(length - 1); // -- bypass the packet
                                     continue;
                                 }
 
-                                var packet = packetsStatus[packetID]();
-                                packet.Read(wSock);
+                                var packet = _packetsStatus[packetId]();
+                                packet.Read(WSock);
 
-                                if (StatusHandlers[packetID] != null)
-                                    StatusHandlers[packetID](MainMC, packet);
+                                if (StatusHandlers[packetId] != null)
+                                    StatusHandlers[packetId](_mainMc, packet);
 
-                                RaisePacketHandled(this, packet, packetID);
+                                RaisePacketHandled(this, packet, packetId);
 
                                 break;
 
                             case (int)ServerState.Login:
-                                if (packetsLogin.Keys.Contains(packetID) == false) {
-                                    RaiseSocketError(this, "Unknown Packet ID. State: 2, Packet: " + packetID);
-                                    wSock.readByteArray(length - 1); // -- bypass the packet
+                                if (_packetsLogin.Keys.Contains(packetId) == false) {
+                                    RaiseSocketError(this, "Unknown Packet ID. State: 2, Packet: " + packetId);
+                                    WSock.readByteArray(length - 1); // -- bypass the packet
                                     continue;
                                 }
 
-                                var packetl = packetsLogin[packetID]();
-                                packetl.Read(wSock);
+                                var packetl = _packetsLogin[packetId]();
+                                packetl.Read(WSock);
 
-                                if (LoginHandlers[packetID] != null)
-                                    LoginHandlers[packetID](MainMC, packetl);
+                                if (LoginHandlers[packetId] != null)
+                                    LoginHandlers[packetId](_mainMc, packetl);
 
-                                RaisePacketHandled(this, packetl, packetID);
+                                RaisePacketHandled(this, packetl, packetId);
 
                                 break;
 
                             case (int)ServerState.Play:
-                                if (packetsPlay.Keys.Contains(packetID) == false) {
-                                    RaiseSocketError(this, "Unknown Packet ID. State: 3, Packet: " + packetID);
-                                    wSock.readByteArray(length - 1); // -- bypass the packet
+                                if (_packetsPlay.Keys.Contains(packetId) == false) {
+                                    RaiseSocketError(this, "Unknown Packet ID. State: 3, Packet: " + packetId);
+                                    WSock.readByteArray(length - 1); // -- bypass the packet
                                     continue;
                                 }
 
-                                var packetp = packetsPlay[packetID]();
-                                packetp.Read(wSock);
+                                var packetp = _packetsPlay[packetId]();
+                                packetp.Read(WSock);
 
                                 
-                                if (PlayHandlers[packetID] != null)
-                                    PlayHandlers[packetID](MainMC, packetp);
+                                if (PlayHandlers[packetId] != null)
+                                    PlayHandlers[packetId](_mainMc, packetp);
 
-                                RaisePacketHandled(this, packetp, packetID);
+                                RaisePacketHandled(this, packetp, packetId);
 
                                 break;
                             default:
                                 RaiseSocketDebug(this, "Uhhhh what????");
                                 break;
                         }
-                        if (worldTick != null)
-                            worldTick.DoTick();
+                        if (WorldTick != null)
+                            WorldTick.DoTick();
                     }
                 }
                 RaiseSocketDebug(this, "whhaaat??");

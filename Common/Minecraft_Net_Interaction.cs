@@ -8,12 +8,12 @@ using Newtonsoft.Json.Linq;
 
 namespace libMC.NET.Common
 {
-    public class Minecraft_Net_Interaction
+    public class MinecraftNetInteraction
     {
 
         public string[] Login(string username, string password) {
             var json = "{\"agent\": {\"name\": \"minecraft\",\"version\": 1},\"username\": \"" + username + "\",\"password\": \"" + password + "\"}";
-            string accessToken = "", profileID = "", profileName = "", clientToken = "", clientName = "";
+            string accessToken = "", profileId = "", profileName = "", clientToken = "", clientName = "";
 
             var wreq = (HttpWebRequest)WebRequest.Create("https://authserver.mojang.com/authenticate");
 
@@ -49,7 +49,7 @@ namespace libMC.NET.Common
                         clientToken = app.Value.ToString();
                         break;
                     case "selectedProfile":
-                        profileID = app.Value.First.First.ToString();
+                        profileId = app.Value.First.First.ToString();
                         profileName = (string)app.Value["name"];
                         break;
                     case "availableProfiles":
@@ -60,7 +60,7 @@ namespace libMC.NET.Common
                 }
             }
 
-            return new string[] { accessToken, profileID, profileName, clientToken, clientName };
+            return new string[] { accessToken, profileId, profileName, clientToken, clientName };
         }
 
         static string Parser(string str) {
@@ -69,8 +69,8 @@ namespace libMC.NET.Common
             return v.Groups[1].ToString();
         }
 
-        public bool VerifyName(string username, string accessToken, string selectedProfile, string ServerHash) {
-            var json = "{\"accessToken\": \"" + accessToken + "\",\"selectedProfile\": \"" + selectedProfile + "\",\"serverId\": \"" + ServerHash + "\"}";
+        public bool VerifyName(string username, string accessToken, string selectedProfile, string serverHash) {
+            var json = "{\"accessToken\": \"" + accessToken + "\",\"selectedProfile\": \"" + selectedProfile + "\",\"serverId\": \"" + serverHash + "\"}";
 
             var wreq = (HttpWebRequest)WebRequest.Create("https://sessionserver.mojang.com/session/minecraft/join");
 

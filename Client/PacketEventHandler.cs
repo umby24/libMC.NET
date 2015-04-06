@@ -94,7 +94,7 @@ namespace libMC.NET.Client {
                 var hashData = hashList.ToArray();
                 var hash = JavaHexDigest(hashData);
 
-                var verify = new Minecraft_Net_Interaction();
+                var verify = new MinecraftNetInteraction();
 
                 if (!verify.VerifyName(client.ClientName, client.AccessToken, client.SelectedProfile, hash)) {
                     client.RaiseLoginFailure(this, "Failed to verify name with Minecraft session server.");
@@ -122,7 +122,7 @@ namespace libMC.NET.Client {
             var encryptedSecret = cryptoService.Encrypt(sharedKey, false); // -- Encrypt the Secret key and verification token.
             var encryptedVerify = cryptoService.Encrypt(er.VerifyToken, false);
 
-            client.Nh.wSock.InitEncryption(sharedKey); // -- Give the shared secret key to the socket
+            client.Nh.WSock.InitEncryption(sharedKey); // -- Give the shared secret key to the socket
 
             var response = new SbEncryptionResponse
             {
@@ -132,9 +132,9 @@ namespace libMC.NET.Client {
                 VerifyToken = encryptedVerify
             }; // -- Respond to the server
 
-            response.Write(client.Nh.wSock);
+            response.Write(client.Nh.WSock);
 
-            client.Nh.wSock.EncEnabled = true;
+            client.Nh.WSock.EncEnabled = true;
             client.Nh.RaiseSocketInfo(this, "Encryption Enabled.");
         }
 
@@ -235,7 +235,7 @@ namespace libMC.NET.Client {
                 client.RaisePingResponse(versionName, protocolVersion, maxPlayers, onlinePlayers, players.ToArray(), motd, favicon);
 
             var ping = new SbPing {Time = DateTime.UtcNow.Ticks};
-            ping.Write(client.Nh.wSock);
+            ping.Write(client.Nh.WSock);
         }
         public void HandleStatusPing(MinecraftClient client, IPacket packet) {
             var ping = (CbPing)packet;
@@ -253,7 +253,7 @@ namespace libMC.NET.Client {
             if (client.MinecraftWorld != null) {
                 var index = client.MinecraftWorld.GetEntityById(animation.EntityId);
                 if (index != -1)
-                    client.MinecraftWorld.Entities[index].animation = (sbyte)animation.Animation;
+                    client.MinecraftWorld.Entities[index].Animation = (sbyte)animation.Animation;
             }
 
             client.RaiseEntityAnimationChanged(this, animation.EntityId, animation.Animation);
@@ -266,9 +266,9 @@ namespace libMC.NET.Client {
                 var eIndex = client.MinecraftWorld.GetEntityById(attach.EntityId);
 
                 if (eIndex != -1) {
-                    client.MinecraftWorld.Entities[eIndex].attached = true;
-                    client.MinecraftWorld.Entities[eIndex].Vehicle_ID = attach.VehicleId;
-                    client.MinecraftWorld.Entities[eIndex].leashed = attach.Leash;
+                    client.MinecraftWorld.Entities[eIndex].Attached = true;
+                    client.MinecraftWorld.Entities[eIndex].VehicleId = attach.VehicleId;
+                    client.MinecraftWorld.Entities[eIndex].Leashed = attach.Leash;
                 }
             }
 
@@ -517,7 +517,7 @@ namespace libMC.NET.Client {
             }
 
             mainObj.Names.RemoveAll(string.IsNullOrWhiteSpace);
-            return final += string.Format(ParseBaseMessage(mainObj.Translate), mainObj.Names.ToArray());
+            return string.Format(ParseBaseMessage(mainObj.Translate), mainObj.Names.ToArray());
         }
 
         public string Color_To_Code(string color) {
@@ -670,9 +670,9 @@ namespace libMC.NET.Client {
             var eIndex = client.MinecraftWorld.GetEntityById(myPacket.EntityId);
 
             if (eIndex != -1) {
-                client.MinecraftWorld.Entities[eIndex].amplifier = myPacket.Amplifier;
-                client.MinecraftWorld.Entities[eIndex].duration = myPacket.Duration;
-                client.MinecraftWorld.Entities[eIndex].status = myPacket.EffectId;
+                client.MinecraftWorld.Entities[eIndex].Amplifier = myPacket.Amplifier;
+                client.MinecraftWorld.Entities[eIndex].Duration = myPacket.Duration;
+                client.MinecraftWorld.Entities[eIndex].Status = myPacket.EffectId;
                 client.RaiseEntityStatus(myPacket.EntityId);
             }
         }
@@ -698,7 +698,7 @@ namespace libMC.NET.Client {
                 var eIndex = client.MinecraftWorld.GetEntityById(myPacket.EntityId);
 
                 if (eIndex != -1)
-                    client.MinecraftWorld.Entities[eIndex].headPitch = myPacket.HeadYaw;
+                    client.MinecraftWorld.Entities[eIndex].HeadPitch = myPacket.HeadYaw;
             }
 
             client.RaiseEntityHeadLookChanged(myPacket.EntityId, myPacket.HeadYaw);
@@ -711,8 +711,8 @@ namespace libMC.NET.Client {
                 var eIndex = client.MinecraftWorld.GetEntityById(myPacket.EntityId);
 
                 if (eIndex != -1) {
-                    client.MinecraftWorld.Entities[eIndex].pitch = myPacket.Pitch;
-                    client.MinecraftWorld.Entities[eIndex].yaw = myPacket.Yaw;
+                    client.MinecraftWorld.Entities[eIndex].Pitch = myPacket.Pitch;
+                    client.MinecraftWorld.Entities[eIndex].Yaw = myPacket.Yaw;
                 }
             }
 
@@ -729,8 +729,8 @@ namespace libMC.NET.Client {
                     client.MinecraftWorld.Entities[eIndex].Location.X += (myPacket.Dx * 32);
                     client.MinecraftWorld.Entities[eIndex].Location.Y += (myPacket.Dy * 32);
                     client.MinecraftWorld.Entities[eIndex].Location.Z += (myPacket.Dz * 32);
-                    client.MinecraftWorld.Entities[eIndex].yaw = myPacket.Yaw;
-                    client.MinecraftWorld.Entities[eIndex].pitch = myPacket.Pitch;
+                    client.MinecraftWorld.Entities[eIndex].Yaw = myPacket.Yaw;
+                    client.MinecraftWorld.Entities[eIndex].Pitch = myPacket.Pitch;
                 }
             }
 
@@ -770,7 +770,7 @@ namespace libMC.NET.Client {
                 var eIndex = client.MinecraftWorld.GetEntityById(myPacket.EntityId);
 
                 if (eIndex != -1)
-                    client.MinecraftWorld.Entities[eIndex].status = myPacket.EntityStatus;
+                    client.MinecraftWorld.Entities[eIndex].Status = myPacket.EntityStatus;
             }
 
             client.RaiseEntityStatus(myPacket.EntityId);
@@ -786,8 +786,8 @@ namespace libMC.NET.Client {
                     client.MinecraftWorld.Entities[eIndex].Location.X = myPacket.X;
                     client.MinecraftWorld.Entities[eIndex].Location.Y = myPacket.Y;
                     client.MinecraftWorld.Entities[eIndex].Location.Z = myPacket.Z;
-                    client.MinecraftWorld.Entities[eIndex].yaw = myPacket.Yaw;
-                    client.MinecraftWorld.Entities[eIndex].pitch = myPacket.Pitch;
+                    client.MinecraftWorld.Entities[eIndex].Yaw = myPacket.Yaw;
+                    client.MinecraftWorld.Entities[eIndex].Pitch = myPacket.Pitch;
                 }
             }
 
@@ -802,9 +802,9 @@ namespace libMC.NET.Client {
                 var eIndex = client.MinecraftWorld.GetEntityById(myPacket.EntityId);
 
                 if (eIndex != -1) {
-                    client.MinecraftWorld.Entities[eIndex].Velocity_X = myPacket.VelocityX;
-                    client.MinecraftWorld.Entities[eIndex].Velocity_Y = myPacket.VelocityY;
-                    client.MinecraftWorld.Entities[eIndex].Velocity_Z = myPacket.VelocityZ;
+                    client.MinecraftWorld.Entities[eIndex].VelocityX = myPacket.VelocityX;
+                    client.MinecraftWorld.Entities[eIndex].VelocityY = myPacket.VelocityY;
+                    client.MinecraftWorld.Entities[eIndex].VelocityZ = myPacket.VelocityZ;
                 }
             }
 
@@ -826,7 +826,7 @@ namespace libMC.NET.Client {
             client.ThisPlayer.SelectedSlot = myPacket.Slot;
 
             var mySend = new SbHeldItemChange {Slot = client.ThisPlayer.SelectedSlot};
-            mySend.Write(client.Nh.wSock);
+            mySend.Write(client.Nh.WSock);
         }
 
         public void HandleJoinGame(MinecraftClient client, IPacket packet) {
@@ -858,18 +858,18 @@ namespace libMC.NET.Client {
                 Difficulty = 1,
                 ShowCape = false
             };
-            b.Write(client.Nh.wSock);
+            b.Write(client.Nh.WSock);
 
             var c = new SbPluginMessage {Channel = "MC|Brand", Data = Encoding.UTF8.GetBytes(client.ClientBrand)};
             c.Length = (short)c.Data.Length;
-            c.Write(client.Nh.wSock);
+            c.Write(client.Nh.WSock);
         }
 
         public void HandleKeepAlive(MinecraftClient client, IPacket packet) {
             var ka = (CbKeepAlive)packet;
 
             var kas = new SbKeepAlive {KeepAliveId = ka.KeepAliveId};
-            kas.Write(client.Nh.wSock);
+            kas.Write(client.Nh.WSock);
         }
         public void HandleMapChunkBulk(MinecraftClient client, IPacket packet) {
             var chunkPacket = (CbMapChunkBulk)packet;
@@ -983,7 +983,7 @@ namespace libMC.NET.Client {
                 Pitch = client.ThisPlayer.Look[1],
                 OnGround = client.ThisPlayer.OnGround
             };
-            sending.Write(client.Nh.wSock);
+            sending.Write(client.Nh.WSock);
 
         }
         public void HandlePluginMessage(MinecraftClient client, IPacket packet) {
@@ -997,7 +997,7 @@ namespace libMC.NET.Client {
                 var eIndex = client.MinecraftWorld.GetEntityById(myPacket.EntityId);
 
                 if (eIndex != -1) {
-                    client.MinecraftWorld.Entities[eIndex].status = myPacket.EffectId;
+                    client.MinecraftWorld.Entities[eIndex].Status = myPacket.EffectId;
                     client.RaiseEntityStatus(myPacket.EntityId);
                 }
             }
@@ -1061,14 +1061,14 @@ namespace libMC.NET.Client {
             var newMob = new Entity("Mob")
             {
                 Entity_ID = myPacket.EntityId,
-                mobType = myPacket.Type,
+                MobType = myPacket.Type,
                 Location = new Vector(myPacket.X, myPacket.Y, myPacket.Z),
-                pitch = myPacket.Pitch,
-                headPitch = myPacket.HeadPitch,
-                yaw = myPacket.Yaw,
-                Velocity_X = myPacket.VelocityX,
-                Velocity_Y = myPacket.VelocityY,
-                Velocity_Z = myPacket.VelocityZ
+                Pitch = myPacket.Pitch,
+                HeadPitch = myPacket.HeadPitch,
+                Yaw = myPacket.Yaw,
+                VelocityX = myPacket.VelocityX,
+                VelocityY = myPacket.VelocityY,
+                VelocityZ = myPacket.VelocityZ
             };
 
             if (client.MinecraftWorld == null)
@@ -1103,9 +1103,9 @@ namespace libMC.NET.Client {
             var newEntity = new Entity("Painting")
             {
                 Entity_ID = myPacket.EntityId,
-                playerName = myPacket.Title,
+                PlayerName = myPacket.Title,
                 Location = new Vector(myPacket.X, myPacket.Y, myPacket.Z),
-                direction = myPacket.Direction
+                Direction = myPacket.Direction
             };
 
             if (client.MinecraftWorld == null)
@@ -1121,12 +1121,12 @@ namespace libMC.NET.Client {
             var newPlayer = new Entity("Player")
             {
                 Entity_ID = myPacket.EntityId,
-                UUID = myPacket.PlayerUuid,
-                playerName = myPacket.PlayerName,
+                Uuid = myPacket.PlayerUuid,
+                PlayerName = myPacket.PlayerName,
                 Location = new Vector(myPacket.X, myPacket.Y, myPacket.Z),
-                yaw = myPacket.Yaw,
-                pitch = myPacket.Pitch,
-                heldItem = myPacket.CurrentItem
+                Yaw = myPacket.Yaw,
+                Pitch = myPacket.Pitch,
+                HeldItem = myPacket.CurrentItem
             };
 
             //TODO: Metadata..
@@ -1167,10 +1167,10 @@ namespace libMC.NET.Client {
             client.MinecraftWorld.CurrentTime = myPacket.Timeofday;
 
             var playerPacket = new SbPlayer {OnGround = client.ThisPlayer.OnGround};
-            playerPacket.Write(client.Nh.wSock);
+            playerPacket.Write(client.Nh.WSock);
 
-            if (client.Nh.worldTick == null)
-                client.Nh.worldTick = new MinecraftWorld.TickHandler(ref client);
+            if (client.Nh.WorldTick == null)
+                client.Nh.WorldTick = new MinecraftWorld.TickHandler(ref client);
 
         }
         public void HandleUpdateHealth(MinecraftClient client, IPacket packet) {
