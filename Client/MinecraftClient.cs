@@ -173,14 +173,14 @@ namespace libMC.NET.Client {
         public void SendChat(string message) {
             if (Nh == null) return;
 
-            var chatPacket = new SBChatMessage {Message = message};
+            var chatPacket = new SbChatMessage {Message = message};
             chatPacket.Write(Nh.WSock);
         }
         /// <summary>
         /// Respawns the client.
         /// </summary>
         public void Respawn() {
-            var respawnPacket = new SBClientStatus {ActionID = 0};
+            var respawnPacket = new SbClientStatus {ActionId = 0};
             respawnPacket.Write(Nh.WSock);
         }
         /// <summary>
@@ -189,7 +189,7 @@ namespace libMC.NET.Client {
         /// </summary>
         /// <param name="message">The message to receive completion items for.</param>
         public void TabComplete(string message) {
-            var completePacket = new SBTabComplete {Text = message};
+            var completePacket = new SbTabComplete {Text = message};
             completePacket.Write(Nh.WSock);
         }
         #endregion
