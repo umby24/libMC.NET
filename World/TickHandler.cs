@@ -9,7 +9,7 @@ namespace libMC.NET.MinecraftWorld {
             ThisMc = mc;
         }
         public void DoTick() {
-            var player = new SBPlayer();
+            var player = new SbPlayer();
             player.OnGround = ThisMc.ThisPlayer.OnGround;
             player.Write(ThisMc.Nh.WSock);
         }
