@@ -61,6 +61,7 @@
     <Compile Include="Common\DoubleVector.cs" />
     <Compile Include="Entities\Block.cs" />
     <Compile Include="Network\IPacket.cs" />
+    <Compile Include="Network\Packets.cs" />
     <Compile Include="Network\WrappedExtension.cs" />
     <Compile Include="World\Chunk.cs" />
     <Compile Include="Common\Decompressor.cs" />

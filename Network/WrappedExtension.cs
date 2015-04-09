@@ -12,6 +12,20 @@ namespace libMC.NET.Network {
         public byte[] NbtData { get; set; }
     }
 
+    public struct Position {
+        public int X;
+        public short Y;
+        public int Z;
+
+        public Position Unpack(long value) { // -- TODO: 
+            return this;
+        }
+
+        public long Pack() {
+            return 0L;
+        }
+    }
+
     public struct ObjectMetadata {
         public int ObjectId;
         public short SpeedX { get; set; }
@@ -22,12 +36,11 @@ namespace libMC.NET.Network {
     public struct PropertyData {
         public string Key { get; set; }
         public double Value { get; set; }
-        public short ListLength { get; set; }
         public ModifierData[] Modifiers { get; set; }
     }
 
     public struct ModifierData {
-        public byte[] Uuid { get; set; } // -- 128 bit signed integer, wtf.
+        public Guid Uuid { get; set; }
         public double Amount { get; set; }
         public byte Operation { get; set; }
     }
@@ -36,8 +49,7 @@ namespace libMC.NET.Network {
         public byte X { get; set; }
         public byte Y { get; set; }
         public byte Z { get; set; }
-        public short BlockId { get; set; }
-        public byte Metadata { get; set; }
+        public int BlockId { get; set; }
     }
 
     public struct PlayerData {
@@ -121,13 +133,14 @@ namespace libMC.NET.Network {
             var data = new PropertyData
             {
                 Key = wSock.readString(),
-                Value = wSock.readDouble(),
-                ListLength = wSock.readShort()
+                Value = wSock.readDouble()
             };
 
-            data.Modifiers = new ModifierData[data.ListLength];
+            var items = wSock.readVarInt();
 
-            for (var x = 0; x < data.ListLength; x++) 
+            data.Modifiers = new ModifierData[items];
+
+            for (var x = 0; x < items; x++) 
                 data.Modifiers[x] = ReadModifierData(wSock);
             
             return data;
@@ -136,16 +149,16 @@ namespace libMC.NET.Network {
         public static void WritePropertyData(Wrapped wSock, PropertyData data) {
             wSock.writeString(data.Key);
             wSock.writeDouble(data.Value);
-            wSock.writeShort(data.ListLength);
-            
-            for (var x = 0; x < data.ListLength; x++)
-                WriteModifierData(wSock, data.Modifiers[x]);
+            wSock.writeVarInt(data.Modifiers.Length);
+
+            foreach (var modifierData in data.Modifiers)
+                WriteModifierData(wSock, modifierData);
         }
 
         public static ModifierData ReadModifierData(Wrapped wSock) {
             var data = new ModifierData
             {
-                Uuid = wSock.readByteArray(16),
+                Uuid = new Guid(wSock.readByteArray(16)),
                 Amount = wSock.readDouble(),
                 Operation = wSock.readByte()
             };
@@ -154,7 +167,7 @@ namespace libMC.NET.Network {
         }
 
         public static void WriteModifierData(Wrapped wSock, ModifierData data) {
-            wSock.Send(data.Uuid);
+            wSock.Send(data.Uuid.ToByteArray());
             wSock.writeDouble(data.Amount);
             wSock.writeByte(data.Operation);
         }
@@ -201,20 +214,21 @@ namespace libMC.NET.Network {
 
         public static Record ReadRecord(Wrapped wSock) {
             var data = new Record();
-            var recordData = wSock.readInt();
 
-            data.Metadata = (byte)(recordData & 0xF);
-            data.BlockId = (short)((recordData >> 4) & 0xFFF);
-            data.Y = (byte)((recordData >> 16) & 0xFF);
-            data.Z = (byte)((recordData >> 24) & 0xF);
-            data.X = (byte)((recordData >> 28) & 0xF);
+            var horizional = wSock.readByte();
+            data.X = (byte)(horizional & 0xF0);
+            data.Z = (byte) (horizional & 0x0F);
+
+            data.Y = wSock.readByte();
+            data.BlockId = wSock.readVarInt();
 
             return data;
         }
 
         public static void WriteRecord(Wrapped wSock, Record data) {
-            var recordData = data.Metadata & 0xF | (data.BlockId & 0xFFF) << 4 | (data.Y & 0xFF) << 16 | (data.Z & 0xF) << 24 | (data.X & 0xF) << 28;
-            wSock.writeInt(recordData);
+            wSock.writeByte((byte)(data.X << 4 | data.Z));
+            wSock.writeByte(data.Y);
+            wSock.writeVarInt(data.BlockId);
         }
     }
 }

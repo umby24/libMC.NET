@@ -2,6 +2,7 @@
 using CWrapped;
 
 namespace libMC.NET.Network {
+
     public interface IPacket {
         void Read(Wrapped wSock);
         void Write(Wrapped wSock);

@@ -2,12 +2,12 @@ require 'open-uri'
 require 'JSON'
 
 def getTableName(myData)
-	name = /<span class=\"mw-headline\" .*?> (.*?) <\/span>/.match(myData)
+	name = /<span class=\"mw-headline\" .*?> (.*?) <\/span><\/h4>/.match(myData)
 	return name
 end
 
 def getTableId(myData)
-	id = /<td.*?> (.*?) <\/td>/m.match(myData)
+	id = /<td.*?> (.*?)\n<\/td>/m.match(myData)
 	return id
 end
 
@@ -17,7 +17,7 @@ def getTableFields(mydata)
 	
 	while running == 1
 		begin
-			subsection = /<tr.*?>(.*?)<\/tr>/m.match(mydata)
+			subsection = /<tr>(.*?)<\/tr>/m.match(mydata)
 			mysub = subsection[1]
 			
 			if mysub.include?("Packet ID") and mysub.include?("Field Name")
@@ -25,10 +25,20 @@ def getTableFields(mydata)
 				next
 			end
 			
-			fieldName = /<td.*?> (.*?) <\/td>/.match(mysub)
+			if (/<td.*?> 0x\d\d\n<\/td>/m.match(mysub) != nil)
+				packetId = /<td.*?> (.*?)\n<\/td>/.match(mysub)
+				mysub = mysub.gsub(packetId[0], "")
+				
+				packetName = /<td.*?> (.*?)\n<\/td>/.match(mysub)
+				mysub = mysub.gsub(packetName[0], "")
+				
+				packetDirection = /<td.*?> (.*?)\n<\/td>/.match(mysub)
+				mysub = mysub.gsub(packetDirection[0], "")
+			end
+			fieldName = /<td.*?> (.*?)\n<\/td>/.match(mysub)
 			mysub = mysub.gsub(fieldName[0], "")
 			
-			fieldType = /<td.*?> (.*?) <\/td>/.match(mysub)
+			fieldType = /<td.*?> (.*?)\n<\/td>/.match(mysub)
 			mysub = mysub.gsub(fieldType[0], "")
 			
 			fields[fieldName[1]] = fieldType[1]
@@ -49,7 +59,7 @@ def getTables(myData)
 	
 	while running == 1
 		begin
-			tempTable = /<span class=\"mw-headline\" .*?<table class=\"wikitable\">\n<tr>\n<th> Packet ID <\/th>(.*?)<\/table>/m.match(myData)
+			tempTable = /<span class=\"mw-headline\" .*?<table class=\"wikitable\">\n<tr>\n<th> Packet ID\n<\/th>(.*?)<\/table>/m.match(myData)
 			tempTables.push(tempTable[0])
 			myData = myData.gsub(tempTable[0], "")
 		rescue
@@ -74,7 +84,9 @@ end
 def variableTypeConversion(text)
 	text = text.downcase
 	text = text.gsub("varint", "int")
+	text = text.gsub("boolean", "bool")
 	text = text.gsub("unsigned byte", "----")
+	text = text.gsub("unsigned short", "ushort")
 	text = text.gsub("byte array", "++++")
 	text = text.gsub("byte", "sbyte")
 	text = text.gsub("----", "byte")
@@ -84,7 +96,9 @@ end
 def wsockTypeConversion(text)
 	text = text.gsub("Unsigned Byte", "----")
 	text = text.gsub("Byte array", "++++")
+	text = text.gsub("unsigned short", "Short")
 	text = text.gsub("Byte", "SByte")
+	text = text.gsub("boolean", "Bool")
 	text = text.gsub("----", "Byte")
 	text = text.gsub("++++", "Send")
 end
@@ -129,6 +143,10 @@ end
 def arrayBuilder(myArr, test=false)
 	tempArr = []
 	
+	if myArr == nil
+		return tempArr
+	end
+	
 	myArr.each do |z|
 		tempArr.push(Hash.new())
 		
@@ -162,7 +180,7 @@ puts "Extracting Sections..."
 
 # Retreives the chunk we're looking for (All packet info)
 
-filtered = /title=\"Edit section: Handshaking\">edit<\/a>\]<\/span>(.*?)<span class=\"mw-headline\" id=\"See_Also\"> See Also <\/span>/m.match(data)
+filtered = /title=\"Edit section: Handshaking\">edit<\/a>\]<\/span>(.*?)<!-- \nNewPP limit report\nPreprocessor visited node/m.match(data)
 
 data = filtered[1] #Sets it as our first capture.
 
@@ -228,21 +246,29 @@ lines
 
 generatedFile = iPacketBase # Set down the file base...
 
+aFile = File.new("Output/HandServerTables.html", "w+")
+aFile.syswrite(handServerTables)
+aFile.close()
+
 puts "Building Arrays..."
 
-handServerArr = arrayBuilder(handServerTables)
+handServerArr = arrayBuilder(handServerTables, true)
 
-playClientArr = arrayBuilder(playClientTables)
+aFile = File.new("Output/serverarr.html", "w+")
+aFile.syswrite(handServerArr)
+aFile.close()
 
-playServerArr = arrayBuilder(playServerTables)
+playClientArr = arrayBuilder(playClientTables, true)
 
-statusClientArr = arrayBuilder(statusClientTables)
+playServerArr = arrayBuilder(playServerTables, true)
+
+statusClientArr = arrayBuilder(statusClientTables, true)
 
 statusServerArr = arrayBuilder(statusServerTables, true)
 
-loginClientArr = arrayBuilder(loginClientTables)
+loginClientArr = arrayBuilder(loginClientTables, true)
 
-loginServerArr = arrayBuilder(loginServerTables)
+loginServerArr = arrayBuilder(loginServerTables, true)
 
 puts "Arrays created."
 puts "Building code!\n"
@@ -269,5 +295,4 @@ aFile.close()
 
 puts "Done!"
 gets()
-
 
